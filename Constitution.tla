@@ -275,6 +275,7 @@ NominateVP(p) ==
 
 ConfirmVP(hAyes, sAyes) ==
   /\ vpNominee # NoOne
+  /\ vpNominee \notin disqualified      \* re-checked at confirmation (TLC found this)
   /\ Majority(hAyes, House)
   /\ Majority(sAyes, Senate)
   /\ vicePresident' = vpNominee
@@ -402,10 +403,10 @@ Next ==
   \/ Convene \/ Adjourn
   \/ \E b \in Bills :
        \/ \E c \in Chambers : Introduce(b, c)
-       \/ \E c \in Chambers, n \in VotesIn(c) : PassChamber(b, c, n)
+       \/ \E c \in Chambers : \E n \in VotesIn(c) : PassChamber(b, c, n)
        \/ FailChamber(b) \/ Sign(b) \/ Veto(b) \/ Tick(b)
        \/ BecomeLawUnsigned(b) \/ PocketVeto(b) \/ FailOverride(b)
-       \/ \E c \in Chambers, n \in VotesIn(c) : Override(b, c, n)
+       \/ \E c \in Chambers : \E n \in VotesIn(c) : Override(b, c, n)
   \/ \E p, v \in Persons : Elect(p, v)
   \/ PresidentVacates \/ VicePresidentVacates \/ RejectVP
   \/ \E p \in Persons : NominateVP(p)

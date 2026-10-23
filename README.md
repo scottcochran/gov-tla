@@ -24,18 +24,11 @@ review, the age/residency/natural-born tests (folded into the constant
 `Eligible`), and the "more than two years of another's term" nuance in the
 22nd Amendment.
 
-## Running
+## Modules
 
-```
-java -jar tla2tools.jar -config Constitution.cfg Constitution.tla
-```
+### `Constitution.tla` — Articles I, II, V
 
-or open `Constitution.tla` in the TLA+ Toolbox / VS Code extension and use
-`Constitution.cfg` as the model. The config describes a tiny republic: three
-Representatives, two Senators, four States, one bill, one office, one
-amendment.
-
-## Properties
+Properties:
 
 - `Safety` — bicameralism, origination, presentment, incompatibility,
   members of Congress are not impeachable (Blount, 1799), two-term limit,
@@ -44,9 +37,63 @@ amendment.
 - `PresentedBillsResolve` — the ten-day rule is the only liveness guarantee
   the text gives; a presented bill cannot sit on the President's desk forever.
 
+### `Judiciary.tla` — Article III and every federal court
+
+Covers the one Supreme Court, the inferior Article III courts Congress
+ordains and establishes, and Article I tribunals.
+
+| Provision | Where |
+|---|---|
+| Art. III §1 — one Supreme Court, never abolished, size set by Congress | `OneSupremeCourt`, `SetSeats` |
+| Art. III §1 — inferior courts by statute; abolition unseats judges (Stuart v. Laird) | `EstablishCourt`, `AbolishCourt` |
+| Art. III §1 — tenure during good behaviour | `GoodBehaviour` (action property) |
+| Art. III §1 — Compensation Clause | `CompensationClause` (action property) |
+| Art. III §2 — original vs. appellate jurisdiction; Marbury | `HasOriginalJurisdiction`, `OriginalJurisdiction` |
+| Art. III §2 — Exceptions Clause (McCardle) | `SetExceptions`, `ExceptionsHonoured` |
+| Art. III §2 — jury and venue for crimes | `JuryAndVenue` |
+| Art. III §3 — treason needs two witnesses or open-court confession | `TreasonProof` |
+| Art. II §2 — advice and consent; Chief Justice as a separate office | `NominateJudge`, `ConfirmChief` |
+| Art. II §4 — judges removable only by impeachment | `Impeach`, `Convict` |
+| Amend. V — no appeal from an acquittal | `NoDoubleJeopardy` |
+| Amend. XI — no federal suit against a State by an outsider | `EleventhAmendment` |
+| Article I judges serve fixed terms | `TermExpires` |
+
+The President and presentment are abstracted (a "statute" is a majority of
+both houses); compose with `Constitution.tla` for the full path.
+
+## Running
+
+```
+java -cp tla2tools.jar tlc2.TLC -workers auto -config Constitution.cfg Constitution.tla
+java -cp tla2tools.jar tlc2.TLC -workers auto -config Judiciary.cfg Judiciary.tla
+```
+
+The configs describe a tiny republic: three Representatives, two Senators, a
+handful of States, one bill, one office, one amendment, one case. Even so the
+exhaustive state space runs into the millions, so for a quick check use
+simulation mode:
+
+```
+java -cp tla2tools.jar tlc2.TLC -simulate num=100000 -depth 40 -workers auto -config Judiciary.cfg Judiciary.tla
+```
+
+Both specs pass `Safety` and the action properties across several hundred
+thousand random traces of depth 40–50.
+
+### Bugs TLC found while writing this
+
+Both were the same shape: a check made at nomination but not at confirmation.
+
+- `Constitution.tla` — a Vice-Presidential nominee could be impeached,
+  convicted and disqualified while pending, then confirmed anyway.
+- `Judiciary.tla` — a Chief Justice nominee could be confirmed to a district
+  court while pending, then confirmed as Chief Justice and sit on two courts.
+
 ## Ideas for next steps
 
-- A `Judiciary` module: life tenure, original vs. appellate jurisdiction.
+- A `Government.tla` that instantiates both modules so statutes go through
+  real presentment and judges are nominated by the modelled President.
+- Judicial review as a holding that voids a law in `Constitution.tla`.
 - Staggered Senate classes (Art. I §3 cl. 2).
 - Named-member votes instead of counts, to express conflict-of-interest rules
   such as the Chief Justice presiding at a presidential trial.
