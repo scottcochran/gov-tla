@@ -61,11 +61,37 @@ ordains and establishes, and Article I tribunals.
 The President and presentment are abstracted (a "statute" is a majority of
 both houses); compose with `Constitution.tla` for the full path.
 
+### `Executive.tla` — Article II and the administrative state
+
+The Constitution creates no bureaus. It refers to "executive Departments"
+and their "principal Officer[s]", but every department, agency and
+commission is a creature of statute, so `Init` has none. Congress creates
+them, and the model asks the questions the case law asks: who appoints their
+officers, who may remove them, and which branch they belong to.
+
+| Provision | Where |
+|---|---|
+| Art. II §1 — one President; VP as Acting President has the full power | `Executive`, `OneExecutive` |
+| Art. II §2 — pardons for federal offences only, never impeachment | `Pardon`, `PardonScope` |
+| Art. II §2 — treaties need two-thirds of the Senate | `RatifyTreaty` |
+| Art. II §2 — principal officers by advice and consent; inferior officers vested in President, courts or heads (Buckley: never Congress) | `ConfirmHead`, `AppointInferior`, `NoCongressionalAppointment` |
+| Art. II §3 — President may convene Congress | `ConveneByPresident` |
+| Art. I §8 — Congress creates departments and declares war | `CreateAgency`, `DeclareWar`, `WarIsCongressional` |
+| Amend. XXV §§3–4 — inability, voluntary and involuntary, and the contest before Congress | `DeclareInability` … `CongressDecides` |
+| Bowsher v. Synar — an officer who executes the laws is in the Executive branch and not removable by Congress | `ExecutionIsExecutive`, `CongressDoesNotRemoveExecutors` |
+| Trump v. Slaughter (2026) — for-cause removal protection only for a body with no executive power | `UnitaryExecutive` |
+| Federal Vacancies Reform Act — acting officers are time-limited | `ActAsHead`, `ActingIsTemporary`, `ActingEventuallyEnds` |
+
+Legislative-branch agencies (GAO, CBO) and judicial-branch agencies
+(Administrative Office, Sentencing Commission) are modelled by `branch`;
+they can exist, but they cannot execute the laws.
+
 ## Running
 
 ```
 java -cp tla2tools.jar tlc2.TLC -workers auto -config Constitution.cfg Constitution.tla
 java -cp tla2tools.jar tlc2.TLC -workers auto -config Judiciary.cfg Judiciary.tla
+java -cp tla2tools.jar tlc2.TLC -workers auto -config Executive.cfg Executive.tla
 ```
 
 The configs describe a tiny republic: three Representatives, two Senators, a
@@ -77,8 +103,8 @@ simulation mode:
 java -cp tla2tools.jar tlc2.TLC -simulate num=100000 -depth 40 -workers auto -config Judiciary.cfg Judiciary.tla
 ```
 
-Both specs pass `Safety` and the action properties across several hundred
-thousand random traces of depth 40–50.
+All three specs pass `Safety` and their action and liveness properties
+across several hundred thousand random traces of depth 40–50.
 
 ### Bugs TLC found while writing this
 
@@ -91,8 +117,9 @@ Both were the same shape: a check made at nomination but not at confirmation.
 
 ## Ideas for next steps
 
-- A `Government.tla` that instantiates both modules so statutes go through
-  real presentment and judges are nominated by the modelled President.
+- A `Government.tla` that instantiates all three modules so statutes go
+  through real presentment and officers are nominated by the modelled
+  President.
 - Judicial review as a holding that voids a law in `Constitution.tla`.
 - Staggered Senate classes (Art. I §3 cl. 2).
 - Named-member votes instead of counts, to express conflict-of-interest rules
