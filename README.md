@@ -86,12 +86,45 @@ Legislative-branch agencies (GAO, CBO) and judicial-branch agencies
 (Administrative Office, Sentencing Commission) are modelled by `branch`;
 they can exist, but they cannot execute the laws.
 
+### `Government.tla` — the authority graph
+
+The other three modules model what each branch does. This one models how
+authority runs *between* them: a directed, labelled multigraph over the
+People, the States, the Constitution, the three branches, and the agencies
+and inferior courts Congress creates. Edges come in two layers:
+
+- **Grant** — where authority comes from: `Power` (vesting clauses, enabling
+  acts), `Select` (elections, nomination, consent), `Amend` (Articles V, VII).
+- **Control** — one holder acting on another's exercise of power: veto,
+  override, purse, impeachment, removal, review, pardon.
+
+Every exercise of authority is the firing of an edge present in the graph at
+that moment, under its condition (a sitting Congress, a seated President, a
+pending case, a presidential trial). Firing can reshape the graph: statutes
+add and remove edges and nodes, amendments rewrite text edges (XVII moves the
+Senate from the States to the People; XXV gives Congress two new edges onto
+the Executive), and courts sever unconstitutional statutory edges.
+
+| Claim | Where |
+|---|---|
+| Grant layer is partially linear: outside the People and the States it is acyclic and every edge runs forward along Constitution → Congress → Executive → Judiciary → statute | `GrantCyclesPassThroughPeopleOrStates`, `GrantFollowsChain` |
+| Only the People and the States write the Constitution | `ConstitutionWrittenByPeopleAndStates` |
+| Every branch, agency and court traces back to the People; power (as opposed to office) reaches them only through the Constitution | `PowerTracesToPeople`, `ConstitutionIsTheOnlyDoor` |
+| Agencies and inferior courts exist only by statute | `EveryBodyIsCreatedByLaw` |
+| Control layer is cyclic and complete among the branches | `MutualChecks`, `ControlLayerIsCyclic` |
+| Control layer is asymmetric toward Congress | `LegislativePrimacy` |
+| Text edges change only by Article V; statutory edges only by presentment, override or judicial review | `TextChangesOnlyByArticleV`, `StatutesChangeOnlyByLawOrCourt` |
+| Every act is an edge firing by an active node | `EveryActIsAnEdge` |
+| Buckley, Bowsher, Chadha, Seila Law / Slaughter, Compensation Clause: forbidden statutory edges can be enacted, but once challenged are severed | `Forbidden`, `Sever`, `UnconstitutionalEdgesAreStruck` |
+| Inferior-court judges leave only by resignation, impeachment, or abolition | `GoodBehaviour` |
+
 ## Running
 
 ```
 java -cp tla2tools.jar tlc2.TLC -workers auto -config Constitution.cfg Constitution.tla
 java -cp tla2tools.jar tlc2.TLC -workers auto -config Judiciary.cfg Judiciary.tla
 java -cp tla2tools.jar tlc2.TLC -workers auto -config Executive.cfg Executive.tla
+java -cp tla2tools.jar tlc2.TLC -workers auto -config Government.cfg Government.tla
 ```
 
 The configs describe a tiny republic: three Representatives, two Senators, a
@@ -105,6 +138,7 @@ java -cp tla2tools.jar tlc2.TLC -simulate num=100000 -depth 40 -workers auto -co
 
 All three specs pass `Safety` and their action and liveness properties
 across several hundred thousand random traces of depth 40–50.
+`Government.tla` has not yet been run through TLC.
 
 ### Bugs TLC found while writing this
 
@@ -117,9 +151,9 @@ Both were the same shape: a check made at nomination but not at confirmation.
 
 ## Ideas for next steps
 
-- A `Government.tla` that instantiates all three modules so statutes go
-  through real presentment and officers are nominated by the modelled
-  President.
+- Refinement mappings from `Constitution.tla`, `Executive.tla` and
+  `Judiciary.tla` to `Government.tla`, so every action in the detailed
+  modules is shown to be the firing of an edge in the authority graph.
 - Judicial review as a holding that voids a law in `Constitution.tla`.
 - Staggered Senate classes (Art. I §3 cl. 2).
 - Named-member votes instead of counts, to express conflict-of-interest rules
