@@ -146,10 +146,12 @@ java -cp tla2tools.jar tlc2.TLC -simulate num=100000 -depth 40 -workers auto -co
 
 All three specs pass `Safety` and their action and liveness properties
 across several hundred thousand random traces of depth 40–50.
-`Government.tla`'s `Safety` held across about 3.4 million states of
-random simulation (before the Vice President was added); with the Vice
-President, `Government_strict.cfg` gives the counterexample below, and an
-exhaustive check of the revised `Safety` is in progress.
+`Government.tla` (with the Vice President) passes `TypeOK` and `Safety`
+exhaustively for every behaviour of up to four steps (884,039 distinct
+states), and `Safety` plus its four action properties across about 1.9
+million states of random simulation at depth 40. The liveness property
+`UnconstitutionalEdgesAreStruck` has not been checked: simulation with it
+stalls. `Government_strict.cfg` gives the counterexample below.
 
 ### A claim TLC refuted
 
