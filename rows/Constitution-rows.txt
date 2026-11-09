@@ -1,0 +1,377 @@
+# module: Constitution
+# title: Constitution.tla - Articles I, II and V, Amendments XXII and XXV (the procedural core)
+# expected: Mut = "none" HOLDS on TypeOK, Safety and every one of the thirteen properties, with no deadlock reached.
+# expected: Each mutation is COUNTEREXAMPLE on the properties it is listed against and HOLDS on every other:
+# expected: M_UNICAMERAL breaks Bicameralism; M_ORIGIN Origination; M_OVR_ONE_HOUSE and M_OVR_VOTE Presentment;
+# expected: M_NO_POCKET and M_POCKET_SITTING TenDayRule; M_INCOMPAT Incompatibility and CongressNotImpeachable;
+# expected: M_BLOUNT CongressNotImpeachable; M_CONVICT_VOTE ConvictionTwoThirds; M_XXII TwoTermLimit;
+# expected: M_DQ, M_VP_RECHECK, M_CONSENT_RECHECK and M_NO_REMOVAL Disqualification; M_ONE_PERSON PresidentNotVP;
+# expected: M_RATIFY_VOTE and M_SUFFRAGE ArticleV; M_XXV_SENATE XXVBothHouses; M_PRO_FORMA RecessAppointmentsInRecess.
+# expected: TypeOK HOLDS under every mutation. Every Never... witness is COUNTEREXAMPLE unmutated.
+# expected: PresentedBillsResolve HOLDS under FairSpec (one and two bills) and is COUNTEREXAMPLE under Spec (TimeRuns dropped)
+# expected: and under SpecPresidentActs (the President's diligence in the clock's place); NoBehaviour is COUNTEREXAMPLE under FairSpec.
+#
+# The module is three machines over one Executive: legislation (Bills), the Executive with impeachment
+# and appointments (Offices), and Article V (Amendments). Their product is 634,620 states with all on, so
+# each row switches on the machine its property reads and sets the other two empty (Bills={}, Offices={},
+# Amendments={}). Legislation reads only the President's presence and the session, and Article V reads
+# nothing, so no action of a property's machine reads a variable of a machine switched off: a mutation
+# whose check lies in a machine switched off is inert in that row, which then records only that the
+# property holds with Mut set to it. Those cells are M_UNICAMERAL..M_POCKET_SITTING against the
+# Executive, appointment and Article V properties; M_INCOMPAT, M_VP_RECHECK, M_CONSENT_RECHECK and
+# M_PRO_FORMA against the legislative and Article V properties; M_RATIFY_VOTE and M_SUFFRAGE against all
+# but ArticleV. The mutations of the Executive itself act in every row. The theorems in
+# Constitution_proof.tla, whose hypotheses omit these mutations, cover every such cell at every constant.
+# (Run with both machines on, M_INCOMPAT against Bicameralism alone is 2,756,172 states.)
+# TypeOK, Safety and the deadlock audit run with all three on; TypeOK under each mutation runs with the
+# machine the mutation changes.
+#
+# Constants: one member per House (enough for every vote check, since each mutation removes its threshold
+# and a vote of none then carries); two persons eligible to be President, so two can alternate and three
+# terms are reachable under M_XXII; four States, the fewest at which three-fourths is not every State.
+# The one amendment, a1, touches equal suffrage, so it needs every State whatever M_RATIFY_VOTE does;
+# m-ratifyvote-artv and w-none-ratfewer therefore make it an ordinary amendment (SuffrageAmendments={}).
+# ElectionsBound (terms <= 3) binds only under M_XXII, whose state space is otherwise infinite.
+#
+# DEADLOCK: Convene or Adjourn is always enabled, so no state is terminal; d-none-deadlock checks it.
+#
+# const: Persons = {h1, s1, p1, p2}
+# const: House = {h1}
+# const: Senate = {s1}
+# const: Eligible = {p1, p2}
+# const: States = {t1, t2, t3, t4}
+# const: Bills = {b1}
+# const: RevenueBills = {b1}
+# const: Offices = {o1}
+# const: Amendments = {a1}
+# const: SuffrageAmendments = {a1}
+# const: NoOne = NoOne
+# cfg: CONSTRAINT ElectionsBound
+#
+# name                       mut                spec               kind      property                    expected        [KEY=value ...]
+# --- TypeOK, Safety and the deadlock audit, unmutated, all three machines on
+t-none-typeok                none               Spec               INVARIANT TypeOK                      HOLDS
+s-none-safety                none               Spec               INVARIANT Safety                      HOLDS
+d-none-deadlock              none               Spec               DEADLOCK  Safety                      HOLDS
+# --- every property unmutated, with the machine it reads
+p-none-bicam                 none               Spec               INVARIANT Bicameralism                HOLDS           Offices={} Amendments={} SuffrageAmendments={}
+p-none-orig                  none               Spec               INVARIANT Origination                 HOLDS           Offices={} Amendments={} SuffrageAmendments={}
+p-none-present               none               Spec               INVARIANT Presentment                 HOLDS           Offices={} Amendments={} SuffrageAmendments={}
+p-none-tenday                none               Spec               INVARIANT TenDayRule                  HOLDS           Offices={} Amendments={} SuffrageAmendments={}
+p-none-incompat              none               Spec               INVARIANT Incompatibility             HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+p-none-cni                   none               Spec               INVARIANT CongressNotImpeachable      HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+p-none-convict               none               Spec               INVARIANT ConvictionTwoThirds         HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+p-none-terms                 none               Spec               INVARIANT TwoTermLimit                HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+p-none-disq                  none               Spec               INVARIANT Disqualification            HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+p-none-pnotvp                none               Spec               INVARIANT PresidentNotVP              HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+p-none-artv                  none               Spec               INVARIANT ArticleV                    HOLDS           Bills={} RevenueBills={} Offices={}
+p-none-xxv                   none               Spec               INVARIANT XXVBothHouses               HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+p-none-recess                none               Spec               INVARIANT RecessAppointmentsInRecess  HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+# --- M_UNICAMERAL: must break Bicameralism; holds elsewhere
+m-unicameral-bicam           M_UNICAMERAL       Spec               INVARIANT Bicameralism                COUNTEREXAMPLE  Offices={} Amendments={} SuffrageAmendments={}
+m-unicameral-orig            M_UNICAMERAL       Spec               INVARIANT Origination                 HOLDS           Offices={} Amendments={} SuffrageAmendments={}
+m-unicameral-present         M_UNICAMERAL       Spec               INVARIANT Presentment                 HOLDS           Offices={} Amendments={} SuffrageAmendments={}
+m-unicameral-tenday          M_UNICAMERAL       Spec               INVARIANT TenDayRule                  HOLDS           Offices={} Amendments={} SuffrageAmendments={}
+m-unicameral-incompat        M_UNICAMERAL       Spec               INVARIANT Incompatibility             HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-unicameral-cni             M_UNICAMERAL       Spec               INVARIANT CongressNotImpeachable      HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-unicameral-convict         M_UNICAMERAL       Spec               INVARIANT ConvictionTwoThirds         HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-unicameral-terms           M_UNICAMERAL       Spec               INVARIANT TwoTermLimit                HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-unicameral-disq            M_UNICAMERAL       Spec               INVARIANT Disqualification            HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-unicameral-pnotvp          M_UNICAMERAL       Spec               INVARIANT PresidentNotVP              HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-unicameral-artv            M_UNICAMERAL       Spec               INVARIANT ArticleV                    HOLDS           Bills={} RevenueBills={} Offices={}
+m-unicameral-xxv             M_UNICAMERAL       Spec               INVARIANT XXVBothHouses               HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-unicameral-recess          M_UNICAMERAL       Spec               INVARIANT RecessAppointmentsInRecess  HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+# --- M_ORIGIN: must break Origination; holds elsewhere
+m-origin-bicam               M_ORIGIN           Spec               INVARIANT Bicameralism                HOLDS           Offices={} Amendments={} SuffrageAmendments={}
+m-origin-orig                M_ORIGIN           Spec               INVARIANT Origination                 COUNTEREXAMPLE  Offices={} Amendments={} SuffrageAmendments={}
+m-origin-present             M_ORIGIN           Spec               INVARIANT Presentment                 HOLDS           Offices={} Amendments={} SuffrageAmendments={}
+m-origin-tenday              M_ORIGIN           Spec               INVARIANT TenDayRule                  HOLDS           Offices={} Amendments={} SuffrageAmendments={}
+m-origin-incompat            M_ORIGIN           Spec               INVARIANT Incompatibility             HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-origin-cni                 M_ORIGIN           Spec               INVARIANT CongressNotImpeachable      HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-origin-convict             M_ORIGIN           Spec               INVARIANT ConvictionTwoThirds         HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-origin-terms               M_ORIGIN           Spec               INVARIANT TwoTermLimit                HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-origin-disq                M_ORIGIN           Spec               INVARIANT Disqualification            HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-origin-pnotvp              M_ORIGIN           Spec               INVARIANT PresidentNotVP              HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-origin-artv                M_ORIGIN           Spec               INVARIANT ArticleV                    HOLDS           Bills={} RevenueBills={} Offices={}
+m-origin-xxv                 M_ORIGIN           Spec               INVARIANT XXVBothHouses               HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-origin-recess              M_ORIGIN           Spec               INVARIANT RecessAppointmentsInRecess  HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+# --- M_OVR_ONE_HOUSE: must break Presentment; holds elsewhere
+m-ovronehouse-bicam          M_OVR_ONE_HOUSE    Spec               INVARIANT Bicameralism                HOLDS           Offices={} Amendments={} SuffrageAmendments={}
+m-ovronehouse-orig           M_OVR_ONE_HOUSE    Spec               INVARIANT Origination                 HOLDS           Offices={} Amendments={} SuffrageAmendments={}
+m-ovronehouse-present        M_OVR_ONE_HOUSE    Spec               INVARIANT Presentment                 COUNTEREXAMPLE  Offices={} Amendments={} SuffrageAmendments={}
+m-ovronehouse-tenday         M_OVR_ONE_HOUSE    Spec               INVARIANT TenDayRule                  HOLDS           Offices={} Amendments={} SuffrageAmendments={}
+m-ovronehouse-incompat       M_OVR_ONE_HOUSE    Spec               INVARIANT Incompatibility             HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-ovronehouse-cni            M_OVR_ONE_HOUSE    Spec               INVARIANT CongressNotImpeachable      HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-ovronehouse-convict        M_OVR_ONE_HOUSE    Spec               INVARIANT ConvictionTwoThirds         HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-ovronehouse-terms          M_OVR_ONE_HOUSE    Spec               INVARIANT TwoTermLimit                HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-ovronehouse-disq           M_OVR_ONE_HOUSE    Spec               INVARIANT Disqualification            HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-ovronehouse-pnotvp         M_OVR_ONE_HOUSE    Spec               INVARIANT PresidentNotVP              HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-ovronehouse-artv           M_OVR_ONE_HOUSE    Spec               INVARIANT ArticleV                    HOLDS           Bills={} RevenueBills={} Offices={}
+m-ovronehouse-xxv            M_OVR_ONE_HOUSE    Spec               INVARIANT XXVBothHouses               HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-ovronehouse-recess         M_OVR_ONE_HOUSE    Spec               INVARIANT RecessAppointmentsInRecess  HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+# --- M_OVR_VOTE: must break Presentment; holds elsewhere
+m-ovrvote-bicam              M_OVR_VOTE         Spec               INVARIANT Bicameralism                HOLDS           Offices={} Amendments={} SuffrageAmendments={}
+m-ovrvote-orig               M_OVR_VOTE         Spec               INVARIANT Origination                 HOLDS           Offices={} Amendments={} SuffrageAmendments={}
+m-ovrvote-present            M_OVR_VOTE         Spec               INVARIANT Presentment                 COUNTEREXAMPLE  Offices={} Amendments={} SuffrageAmendments={}
+m-ovrvote-tenday             M_OVR_VOTE         Spec               INVARIANT TenDayRule                  HOLDS           Offices={} Amendments={} SuffrageAmendments={}
+m-ovrvote-incompat           M_OVR_VOTE         Spec               INVARIANT Incompatibility             HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-ovrvote-cni                M_OVR_VOTE         Spec               INVARIANT CongressNotImpeachable      HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-ovrvote-convict            M_OVR_VOTE         Spec               INVARIANT ConvictionTwoThirds         HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-ovrvote-terms              M_OVR_VOTE         Spec               INVARIANT TwoTermLimit                HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-ovrvote-disq               M_OVR_VOTE         Spec               INVARIANT Disqualification            HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-ovrvote-pnotvp             M_OVR_VOTE         Spec               INVARIANT PresidentNotVP              HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-ovrvote-artv               M_OVR_VOTE         Spec               INVARIANT ArticleV                    HOLDS           Bills={} RevenueBills={} Offices={}
+m-ovrvote-xxv                M_OVR_VOTE         Spec               INVARIANT XXVBothHouses               HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-ovrvote-recess             M_OVR_VOTE         Spec               INVARIANT RecessAppointmentsInRecess  HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+# --- M_NO_POCKET: must break TenDayRule; holds elsewhere
+m-nopocket-bicam             M_NO_POCKET        Spec               INVARIANT Bicameralism                HOLDS           Offices={} Amendments={} SuffrageAmendments={}
+m-nopocket-orig              M_NO_POCKET        Spec               INVARIANT Origination                 HOLDS           Offices={} Amendments={} SuffrageAmendments={}
+m-nopocket-present           M_NO_POCKET        Spec               INVARIANT Presentment                 HOLDS           Offices={} Amendments={} SuffrageAmendments={}
+m-nopocket-tenday            M_NO_POCKET        Spec               INVARIANT TenDayRule                  COUNTEREXAMPLE  Offices={} Amendments={} SuffrageAmendments={}
+m-nopocket-incompat          M_NO_POCKET        Spec               INVARIANT Incompatibility             HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-nopocket-cni               M_NO_POCKET        Spec               INVARIANT CongressNotImpeachable      HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-nopocket-convict           M_NO_POCKET        Spec               INVARIANT ConvictionTwoThirds         HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-nopocket-terms             M_NO_POCKET        Spec               INVARIANT TwoTermLimit                HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-nopocket-disq              M_NO_POCKET        Spec               INVARIANT Disqualification            HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-nopocket-pnotvp            M_NO_POCKET        Spec               INVARIANT PresidentNotVP              HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-nopocket-artv              M_NO_POCKET        Spec               INVARIANT ArticleV                    HOLDS           Bills={} RevenueBills={} Offices={}
+m-nopocket-xxv               M_NO_POCKET        Spec               INVARIANT XXVBothHouses               HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-nopocket-recess            M_NO_POCKET        Spec               INVARIANT RecessAppointmentsInRecess  HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+# --- M_POCKET_SITTING: must break TenDayRule; holds elsewhere
+m-pocketsitting-bicam        M_POCKET_SITTING   Spec               INVARIANT Bicameralism                HOLDS           Offices={} Amendments={} SuffrageAmendments={}
+m-pocketsitting-orig         M_POCKET_SITTING   Spec               INVARIANT Origination                 HOLDS           Offices={} Amendments={} SuffrageAmendments={}
+m-pocketsitting-present      M_POCKET_SITTING   Spec               INVARIANT Presentment                 HOLDS           Offices={} Amendments={} SuffrageAmendments={}
+m-pocketsitting-tenday       M_POCKET_SITTING   Spec               INVARIANT TenDayRule                  COUNTEREXAMPLE  Offices={} Amendments={} SuffrageAmendments={}
+m-pocketsitting-incompat     M_POCKET_SITTING   Spec               INVARIANT Incompatibility             HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-pocketsitting-cni          M_POCKET_SITTING   Spec               INVARIANT CongressNotImpeachable      HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-pocketsitting-convict      M_POCKET_SITTING   Spec               INVARIANT ConvictionTwoThirds         HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-pocketsitting-terms        M_POCKET_SITTING   Spec               INVARIANT TwoTermLimit                HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-pocketsitting-disq         M_POCKET_SITTING   Spec               INVARIANT Disqualification            HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-pocketsitting-pnotvp       M_POCKET_SITTING   Spec               INVARIANT PresidentNotVP              HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-pocketsitting-artv         M_POCKET_SITTING   Spec               INVARIANT ArticleV                    HOLDS           Bills={} RevenueBills={} Offices={}
+m-pocketsitting-xxv          M_POCKET_SITTING   Spec               INVARIANT XXVBothHouses               HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-pocketsitting-recess       M_POCKET_SITTING   Spec               INVARIANT RecessAppointmentsInRecess  HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+# --- M_INCOMPAT: must break CongressNotImpeachable, Incompatibility; holds elsewhere
+m-incompat-bicam             M_INCOMPAT         Spec               INVARIANT Bicameralism                HOLDS           Offices={} Amendments={} SuffrageAmendments={}
+m-incompat-orig              M_INCOMPAT         Spec               INVARIANT Origination                 HOLDS           Offices={} Amendments={} SuffrageAmendments={}
+m-incompat-present           M_INCOMPAT         Spec               INVARIANT Presentment                 HOLDS           Offices={} Amendments={} SuffrageAmendments={}
+m-incompat-tenday            M_INCOMPAT         Spec               INVARIANT TenDayRule                  HOLDS           Offices={} Amendments={} SuffrageAmendments={}
+m-incompat-incompat          M_INCOMPAT         Spec               INVARIANT Incompatibility             COUNTEREXAMPLE  Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-incompat-cni               M_INCOMPAT         Spec               INVARIANT CongressNotImpeachable      COUNTEREXAMPLE  Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-incompat-convict           M_INCOMPAT         Spec               INVARIANT ConvictionTwoThirds         HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-incompat-terms             M_INCOMPAT         Spec               INVARIANT TwoTermLimit                HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-incompat-disq              M_INCOMPAT         Spec               INVARIANT Disqualification            HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-incompat-pnotvp            M_INCOMPAT         Spec               INVARIANT PresidentNotVP              HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-incompat-artv              M_INCOMPAT         Spec               INVARIANT ArticleV                    HOLDS           Bills={} RevenueBills={} Offices={}
+m-incompat-xxv               M_INCOMPAT         Spec               INVARIANT XXVBothHouses               HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-incompat-recess            M_INCOMPAT         Spec               INVARIANT RecessAppointmentsInRecess  HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+# --- M_BLOUNT: must break CongressNotImpeachable; holds elsewhere
+m-blount-bicam               M_BLOUNT           Spec               INVARIANT Bicameralism                HOLDS           Offices={} Amendments={} SuffrageAmendments={}
+m-blount-orig                M_BLOUNT           Spec               INVARIANT Origination                 HOLDS           Offices={} Amendments={} SuffrageAmendments={}
+m-blount-present             M_BLOUNT           Spec               INVARIANT Presentment                 HOLDS           Offices={} Amendments={} SuffrageAmendments={}
+m-blount-tenday              M_BLOUNT           Spec               INVARIANT TenDayRule                  HOLDS           Offices={} Amendments={} SuffrageAmendments={}
+m-blount-incompat            M_BLOUNT           Spec               INVARIANT Incompatibility             HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-blount-cni                 M_BLOUNT           Spec               INVARIANT CongressNotImpeachable      COUNTEREXAMPLE  Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-blount-convict             M_BLOUNT           Spec               INVARIANT ConvictionTwoThirds         HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-blount-terms               M_BLOUNT           Spec               INVARIANT TwoTermLimit                HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-blount-disq                M_BLOUNT           Spec               INVARIANT Disqualification            HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-blount-pnotvp              M_BLOUNT           Spec               INVARIANT PresidentNotVP              HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-blount-artv                M_BLOUNT           Spec               INVARIANT ArticleV                    HOLDS           Bills={} RevenueBills={} Offices={}
+m-blount-xxv                 M_BLOUNT           Spec               INVARIANT XXVBothHouses               HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-blount-recess              M_BLOUNT           Spec               INVARIANT RecessAppointmentsInRecess  HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+# --- M_CONVICT_VOTE: must break ConvictionTwoThirds; holds elsewhere
+m-convictvote-bicam          M_CONVICT_VOTE     Spec               INVARIANT Bicameralism                HOLDS           Offices={} Amendments={} SuffrageAmendments={}
+m-convictvote-orig           M_CONVICT_VOTE     Spec               INVARIANT Origination                 HOLDS           Offices={} Amendments={} SuffrageAmendments={}
+m-convictvote-present        M_CONVICT_VOTE     Spec               INVARIANT Presentment                 HOLDS           Offices={} Amendments={} SuffrageAmendments={}
+m-convictvote-tenday         M_CONVICT_VOTE     Spec               INVARIANT TenDayRule                  HOLDS           Offices={} Amendments={} SuffrageAmendments={}
+m-convictvote-incompat       M_CONVICT_VOTE     Spec               INVARIANT Incompatibility             HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-convictvote-cni            M_CONVICT_VOTE     Spec               INVARIANT CongressNotImpeachable      HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-convictvote-convict        M_CONVICT_VOTE     Spec               INVARIANT ConvictionTwoThirds         COUNTEREXAMPLE  Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-convictvote-terms          M_CONVICT_VOTE     Spec               INVARIANT TwoTermLimit                HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-convictvote-disq           M_CONVICT_VOTE     Spec               INVARIANT Disqualification            HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-convictvote-pnotvp         M_CONVICT_VOTE     Spec               INVARIANT PresidentNotVP              HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-convictvote-artv           M_CONVICT_VOTE     Spec               INVARIANT ArticleV                    HOLDS           Bills={} RevenueBills={} Offices={}
+m-convictvote-xxv            M_CONVICT_VOTE     Spec               INVARIANT XXVBothHouses               HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-convictvote-recess         M_CONVICT_VOTE     Spec               INVARIANT RecessAppointmentsInRecess  HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+# --- M_XXII: must break TwoTermLimit; holds elsewhere
+m-xxii-bicam                 M_XXII             Spec               INVARIANT Bicameralism                HOLDS           Offices={} Amendments={} SuffrageAmendments={}
+m-xxii-orig                  M_XXII             Spec               INVARIANT Origination                 HOLDS           Offices={} Amendments={} SuffrageAmendments={}
+m-xxii-present               M_XXII             Spec               INVARIANT Presentment                 HOLDS           Offices={} Amendments={} SuffrageAmendments={}
+m-xxii-tenday                M_XXII             Spec               INVARIANT TenDayRule                  HOLDS           Offices={} Amendments={} SuffrageAmendments={}
+m-xxii-incompat              M_XXII             Spec               INVARIANT Incompatibility             HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-xxii-cni                   M_XXII             Spec               INVARIANT CongressNotImpeachable      HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-xxii-convict               M_XXII             Spec               INVARIANT ConvictionTwoThirds         HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-xxii-terms                 M_XXII             Spec               INVARIANT TwoTermLimit                COUNTEREXAMPLE  Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-xxii-disq                  M_XXII             Spec               INVARIANT Disqualification            HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-xxii-pnotvp                M_XXII             Spec               INVARIANT PresidentNotVP              HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-xxii-artv                  M_XXII             Spec               INVARIANT ArticleV                    HOLDS           Bills={} RevenueBills={} Offices={}
+m-xxii-xxv                   M_XXII             Spec               INVARIANT XXVBothHouses               HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-xxii-recess                M_XXII             Spec               INVARIANT RecessAppointmentsInRecess  HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+# --- M_DQ: must break Disqualification; holds elsewhere
+m-dq-bicam                   M_DQ               Spec               INVARIANT Bicameralism                HOLDS           Offices={} Amendments={} SuffrageAmendments={}
+m-dq-orig                    M_DQ               Spec               INVARIANT Origination                 HOLDS           Offices={} Amendments={} SuffrageAmendments={}
+m-dq-present                 M_DQ               Spec               INVARIANT Presentment                 HOLDS           Offices={} Amendments={} SuffrageAmendments={}
+m-dq-tenday                  M_DQ               Spec               INVARIANT TenDayRule                  HOLDS           Offices={} Amendments={} SuffrageAmendments={}
+m-dq-incompat                M_DQ               Spec               INVARIANT Incompatibility             HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-dq-cni                     M_DQ               Spec               INVARIANT CongressNotImpeachable      HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-dq-convict                 M_DQ               Spec               INVARIANT ConvictionTwoThirds         HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-dq-terms                   M_DQ               Spec               INVARIANT TwoTermLimit                HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-dq-disq                    M_DQ               Spec               INVARIANT Disqualification            COUNTEREXAMPLE  Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-dq-pnotvp                  M_DQ               Spec               INVARIANT PresidentNotVP              HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-dq-artv                    M_DQ               Spec               INVARIANT ArticleV                    HOLDS           Bills={} RevenueBills={} Offices={}
+m-dq-xxv                     M_DQ               Spec               INVARIANT XXVBothHouses               HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-dq-recess                  M_DQ               Spec               INVARIANT RecessAppointmentsInRecess  HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+# --- M_VP_RECHECK: must break Disqualification; holds elsewhere
+m-vprecheck-bicam            M_VP_RECHECK       Spec               INVARIANT Bicameralism                HOLDS           Offices={} Amendments={} SuffrageAmendments={}
+m-vprecheck-orig             M_VP_RECHECK       Spec               INVARIANT Origination                 HOLDS           Offices={} Amendments={} SuffrageAmendments={}
+m-vprecheck-present          M_VP_RECHECK       Spec               INVARIANT Presentment                 HOLDS           Offices={} Amendments={} SuffrageAmendments={}
+m-vprecheck-tenday           M_VP_RECHECK       Spec               INVARIANT TenDayRule                  HOLDS           Offices={} Amendments={} SuffrageAmendments={}
+m-vprecheck-incompat         M_VP_RECHECK       Spec               INVARIANT Incompatibility             HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-vprecheck-cni              M_VP_RECHECK       Spec               INVARIANT CongressNotImpeachable      HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-vprecheck-convict          M_VP_RECHECK       Spec               INVARIANT ConvictionTwoThirds         HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-vprecheck-terms            M_VP_RECHECK       Spec               INVARIANT TwoTermLimit                HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-vprecheck-disq             M_VP_RECHECK       Spec               INVARIANT Disqualification            COUNTEREXAMPLE  Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-vprecheck-pnotvp           M_VP_RECHECK       Spec               INVARIANT PresidentNotVP              HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-vprecheck-artv             M_VP_RECHECK       Spec               INVARIANT ArticleV                    HOLDS           Bills={} RevenueBills={} Offices={}
+m-vprecheck-xxv              M_VP_RECHECK       Spec               INVARIANT XXVBothHouses               HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-vprecheck-recess           M_VP_RECHECK       Spec               INVARIANT RecessAppointmentsInRecess  HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+# --- M_CONSENT_RECHECK: must break Disqualification; holds elsewhere
+m-consentrecheck-bicam       M_CONSENT_RECHECK  Spec               INVARIANT Bicameralism                HOLDS           Offices={} Amendments={} SuffrageAmendments={}
+m-consentrecheck-orig        M_CONSENT_RECHECK  Spec               INVARIANT Origination                 HOLDS           Offices={} Amendments={} SuffrageAmendments={}
+m-consentrecheck-present     M_CONSENT_RECHECK  Spec               INVARIANT Presentment                 HOLDS           Offices={} Amendments={} SuffrageAmendments={}
+m-consentrecheck-tenday      M_CONSENT_RECHECK  Spec               INVARIANT TenDayRule                  HOLDS           Offices={} Amendments={} SuffrageAmendments={}
+m-consentrecheck-incompat    M_CONSENT_RECHECK  Spec               INVARIANT Incompatibility             HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-consentrecheck-cni         M_CONSENT_RECHECK  Spec               INVARIANT CongressNotImpeachable      HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-consentrecheck-convict     M_CONSENT_RECHECK  Spec               INVARIANT ConvictionTwoThirds         HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-consentrecheck-terms       M_CONSENT_RECHECK  Spec               INVARIANT TwoTermLimit                HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-consentrecheck-disq        M_CONSENT_RECHECK  Spec               INVARIANT Disqualification            COUNTEREXAMPLE  Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-consentrecheck-pnotvp      M_CONSENT_RECHECK  Spec               INVARIANT PresidentNotVP              HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-consentrecheck-artv        M_CONSENT_RECHECK  Spec               INVARIANT ArticleV                    HOLDS           Bills={} RevenueBills={} Offices={}
+m-consentrecheck-xxv         M_CONSENT_RECHECK  Spec               INVARIANT XXVBothHouses               HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-consentrecheck-recess      M_CONSENT_RECHECK  Spec               INVARIANT RecessAppointmentsInRecess  HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+# --- M_NO_REMOVAL: must break Disqualification; holds elsewhere
+m-noremoval-bicam            M_NO_REMOVAL       Spec               INVARIANT Bicameralism                HOLDS           Offices={} Amendments={} SuffrageAmendments={}
+m-noremoval-orig             M_NO_REMOVAL       Spec               INVARIANT Origination                 HOLDS           Offices={} Amendments={} SuffrageAmendments={}
+m-noremoval-present          M_NO_REMOVAL       Spec               INVARIANT Presentment                 HOLDS           Offices={} Amendments={} SuffrageAmendments={}
+m-noremoval-tenday           M_NO_REMOVAL       Spec               INVARIANT TenDayRule                  HOLDS           Offices={} Amendments={} SuffrageAmendments={}
+m-noremoval-incompat         M_NO_REMOVAL       Spec               INVARIANT Incompatibility             HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-noremoval-cni              M_NO_REMOVAL       Spec               INVARIANT CongressNotImpeachable      HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-noremoval-convict          M_NO_REMOVAL       Spec               INVARIANT ConvictionTwoThirds         HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-noremoval-terms            M_NO_REMOVAL       Spec               INVARIANT TwoTermLimit                HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-noremoval-disq             M_NO_REMOVAL       Spec               INVARIANT Disqualification            COUNTEREXAMPLE  Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-noremoval-pnotvp           M_NO_REMOVAL       Spec               INVARIANT PresidentNotVP              HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-noremoval-artv             M_NO_REMOVAL       Spec               INVARIANT ArticleV                    HOLDS           Bills={} RevenueBills={} Offices={}
+m-noremoval-xxv              M_NO_REMOVAL       Spec               INVARIANT XXVBothHouses               HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-noremoval-recess           M_NO_REMOVAL       Spec               INVARIANT RecessAppointmentsInRecess  HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+# --- M_ONE_PERSON: must break PresidentNotVP; holds elsewhere
+m-oneperson-bicam            M_ONE_PERSON       Spec               INVARIANT Bicameralism                HOLDS           Offices={} Amendments={} SuffrageAmendments={}
+m-oneperson-orig             M_ONE_PERSON       Spec               INVARIANT Origination                 HOLDS           Offices={} Amendments={} SuffrageAmendments={}
+m-oneperson-present          M_ONE_PERSON       Spec               INVARIANT Presentment                 HOLDS           Offices={} Amendments={} SuffrageAmendments={}
+m-oneperson-tenday           M_ONE_PERSON       Spec               INVARIANT TenDayRule                  HOLDS           Offices={} Amendments={} SuffrageAmendments={}
+m-oneperson-incompat         M_ONE_PERSON       Spec               INVARIANT Incompatibility             HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-oneperson-cni              M_ONE_PERSON       Spec               INVARIANT CongressNotImpeachable      HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-oneperson-convict          M_ONE_PERSON       Spec               INVARIANT ConvictionTwoThirds         HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-oneperson-terms            M_ONE_PERSON       Spec               INVARIANT TwoTermLimit                HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-oneperson-disq             M_ONE_PERSON       Spec               INVARIANT Disqualification            HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-oneperson-pnotvp           M_ONE_PERSON       Spec               INVARIANT PresidentNotVP              COUNTEREXAMPLE  Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-oneperson-artv             M_ONE_PERSON       Spec               INVARIANT ArticleV                    HOLDS           Bills={} RevenueBills={} Offices={}
+m-oneperson-xxv              M_ONE_PERSON       Spec               INVARIANT XXVBothHouses               HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-oneperson-recess           M_ONE_PERSON       Spec               INVARIANT RecessAppointmentsInRecess  HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+# --- M_RATIFY_VOTE: must break ArticleV; holds elsewhere
+m-ratifyvote-bicam           M_RATIFY_VOTE      Spec               INVARIANT Bicameralism                HOLDS           Offices={} Amendments={} SuffrageAmendments={}
+m-ratifyvote-orig            M_RATIFY_VOTE      Spec               INVARIANT Origination                 HOLDS           Offices={} Amendments={} SuffrageAmendments={}
+m-ratifyvote-present         M_RATIFY_VOTE      Spec               INVARIANT Presentment                 HOLDS           Offices={} Amendments={} SuffrageAmendments={}
+m-ratifyvote-tenday          M_RATIFY_VOTE      Spec               INVARIANT TenDayRule                  HOLDS           Offices={} Amendments={} SuffrageAmendments={}
+m-ratifyvote-incompat        M_RATIFY_VOTE      Spec               INVARIANT Incompatibility             HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-ratifyvote-cni             M_RATIFY_VOTE      Spec               INVARIANT CongressNotImpeachable      HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-ratifyvote-convict         M_RATIFY_VOTE      Spec               INVARIANT ConvictionTwoThirds         HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-ratifyvote-terms           M_RATIFY_VOTE      Spec               INVARIANT TwoTermLimit                HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-ratifyvote-disq            M_RATIFY_VOTE      Spec               INVARIANT Disqualification            HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-ratifyvote-pnotvp          M_RATIFY_VOTE      Spec               INVARIANT PresidentNotVP              HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-ratifyvote-artv            M_RATIFY_VOTE      Spec               INVARIANT ArticleV                    COUNTEREXAMPLE  Bills={} RevenueBills={} Offices={} SuffrageAmendments={}
+m-ratifyvote-xxv             M_RATIFY_VOTE      Spec               INVARIANT XXVBothHouses               HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-ratifyvote-recess          M_RATIFY_VOTE      Spec               INVARIANT RecessAppointmentsInRecess  HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+# --- M_SUFFRAGE: must break ArticleV; holds elsewhere
+m-suffrage-bicam             M_SUFFRAGE         Spec               INVARIANT Bicameralism                HOLDS           Offices={} Amendments={} SuffrageAmendments={}
+m-suffrage-orig              M_SUFFRAGE         Spec               INVARIANT Origination                 HOLDS           Offices={} Amendments={} SuffrageAmendments={}
+m-suffrage-present           M_SUFFRAGE         Spec               INVARIANT Presentment                 HOLDS           Offices={} Amendments={} SuffrageAmendments={}
+m-suffrage-tenday            M_SUFFRAGE         Spec               INVARIANT TenDayRule                  HOLDS           Offices={} Amendments={} SuffrageAmendments={}
+m-suffrage-incompat          M_SUFFRAGE         Spec               INVARIANT Incompatibility             HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-suffrage-cni               M_SUFFRAGE         Spec               INVARIANT CongressNotImpeachable      HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-suffrage-convict           M_SUFFRAGE         Spec               INVARIANT ConvictionTwoThirds         HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-suffrage-terms             M_SUFFRAGE         Spec               INVARIANT TwoTermLimit                HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-suffrage-disq              M_SUFFRAGE         Spec               INVARIANT Disqualification            HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-suffrage-pnotvp            M_SUFFRAGE         Spec               INVARIANT PresidentNotVP              HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-suffrage-artv              M_SUFFRAGE         Spec               INVARIANT ArticleV                    COUNTEREXAMPLE  Bills={} RevenueBills={} Offices={}
+m-suffrage-xxv               M_SUFFRAGE         Spec               INVARIANT XXVBothHouses               HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-suffrage-recess            M_SUFFRAGE         Spec               INVARIANT RecessAppointmentsInRecess  HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+# --- M_XXV_SENATE: must break XXVBothHouses; holds elsewhere
+m-xxvsenate-bicam            M_XXV_SENATE       Spec               INVARIANT Bicameralism                HOLDS           Offices={} Amendments={} SuffrageAmendments={}
+m-xxvsenate-orig             M_XXV_SENATE       Spec               INVARIANT Origination                 HOLDS           Offices={} Amendments={} SuffrageAmendments={}
+m-xxvsenate-present          M_XXV_SENATE       Spec               INVARIANT Presentment                 HOLDS           Offices={} Amendments={} SuffrageAmendments={}
+m-xxvsenate-tenday           M_XXV_SENATE       Spec               INVARIANT TenDayRule                  HOLDS           Offices={} Amendments={} SuffrageAmendments={}
+m-xxvsenate-incompat         M_XXV_SENATE       Spec               INVARIANT Incompatibility             HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-xxvsenate-cni              M_XXV_SENATE       Spec               INVARIANT CongressNotImpeachable      HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-xxvsenate-convict          M_XXV_SENATE       Spec               INVARIANT ConvictionTwoThirds         HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-xxvsenate-terms            M_XXV_SENATE       Spec               INVARIANT TwoTermLimit                HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-xxvsenate-disq             M_XXV_SENATE       Spec               INVARIANT Disqualification            HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-xxvsenate-pnotvp           M_XXV_SENATE       Spec               INVARIANT PresidentNotVP              HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-xxvsenate-artv             M_XXV_SENATE       Spec               INVARIANT ArticleV                    HOLDS           Bills={} RevenueBills={} Offices={}
+m-xxvsenate-xxv              M_XXV_SENATE       Spec               INVARIANT XXVBothHouses               COUNTEREXAMPLE  Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-xxvsenate-recess           M_XXV_SENATE       Spec               INVARIANT RecessAppointmentsInRecess  HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+# --- M_PRO_FORMA: must break RecessAppointmentsInRecess; holds elsewhere
+m-proforma-bicam             M_PRO_FORMA        Spec               INVARIANT Bicameralism                HOLDS           Offices={} Amendments={} SuffrageAmendments={}
+m-proforma-orig              M_PRO_FORMA        Spec               INVARIANT Origination                 HOLDS           Offices={} Amendments={} SuffrageAmendments={}
+m-proforma-present           M_PRO_FORMA        Spec               INVARIANT Presentment                 HOLDS           Offices={} Amendments={} SuffrageAmendments={}
+m-proforma-tenday            M_PRO_FORMA        Spec               INVARIANT TenDayRule                  HOLDS           Offices={} Amendments={} SuffrageAmendments={}
+m-proforma-incompat          M_PRO_FORMA        Spec               INVARIANT Incompatibility             HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-proforma-cni               M_PRO_FORMA        Spec               INVARIANT CongressNotImpeachable      HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-proforma-convict           M_PRO_FORMA        Spec               INVARIANT ConvictionTwoThirds         HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-proforma-terms             M_PRO_FORMA        Spec               INVARIANT TwoTermLimit                HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-proforma-disq              M_PRO_FORMA        Spec               INVARIANT Disqualification            HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-proforma-pnotvp            M_PRO_FORMA        Spec               INVARIANT PresidentNotVP              HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-proforma-artv              M_PRO_FORMA        Spec               INVARIANT ArticleV                    HOLDS           Bills={} RevenueBills={} Offices={}
+m-proforma-xxv               M_PRO_FORMA        Spec               INVARIANT XXVBothHouses               HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+m-proforma-recess            M_PRO_FORMA        Spec               INVARIANT RecessAppointmentsInRecess  COUNTEREXAMPLE  Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+# --- TypeOK under every mutation, with the machine the mutation changes
+tm-unicameral-typeok         M_UNICAMERAL       Spec               INVARIANT TypeOK                      HOLDS           Offices={} Amendments={} SuffrageAmendments={}
+tm-origin-typeok             M_ORIGIN           Spec               INVARIANT TypeOK                      HOLDS           Offices={} Amendments={} SuffrageAmendments={}
+tm-ovronehouse-typeok        M_OVR_ONE_HOUSE    Spec               INVARIANT TypeOK                      HOLDS           Offices={} Amendments={} SuffrageAmendments={}
+tm-ovrvote-typeok            M_OVR_VOTE         Spec               INVARIANT TypeOK                      HOLDS           Offices={} Amendments={} SuffrageAmendments={}
+tm-nopocket-typeok           M_NO_POCKET        Spec               INVARIANT TypeOK                      HOLDS           Offices={} Amendments={} SuffrageAmendments={}
+tm-pocketsitting-typeok      M_POCKET_SITTING   Spec               INVARIANT TypeOK                      HOLDS           Offices={} Amendments={} SuffrageAmendments={}
+tm-incompat-typeok           M_INCOMPAT         Spec               INVARIANT TypeOK                      HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+tm-blount-typeok             M_BLOUNT           Spec               INVARIANT TypeOK                      HOLDS           Bills={} RevenueBills={} Offices={} Amendments={} SuffrageAmendments={}
+tm-convictvote-typeok        M_CONVICT_VOTE     Spec               INVARIANT TypeOK                      HOLDS           Bills={} RevenueBills={} Offices={} Amendments={} SuffrageAmendments={}
+tm-xxii-typeok               M_XXII             Spec               INVARIANT TypeOK                      HOLDS           Bills={} RevenueBills={} Offices={} Amendments={} SuffrageAmendments={}
+tm-dq-typeok                 M_DQ               Spec               INVARIANT TypeOK                      HOLDS           Bills={} RevenueBills={} Offices={} Amendments={} SuffrageAmendments={}
+tm-vprecheck-typeok          M_VP_RECHECK       Spec               INVARIANT TypeOK                      HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+tm-consentrecheck-typeok     M_CONSENT_RECHECK  Spec               INVARIANT TypeOK                      HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+tm-noremoval-typeok          M_NO_REMOVAL       Spec               INVARIANT TypeOK                      HOLDS           Bills={} RevenueBills={} Offices={} Amendments={} SuffrageAmendments={}
+tm-oneperson-typeok          M_ONE_PERSON       Spec               INVARIANT TypeOK                      HOLDS           Bills={} RevenueBills={} Offices={} Amendments={} SuffrageAmendments={}
+tm-ratifyvote-typeok         M_RATIFY_VOTE      Spec               INVARIANT TypeOK                      HOLDS           Bills={} RevenueBills={} Offices={}
+tm-suffrage-typeok           M_SUFFRAGE         Spec               INVARIANT TypeOK                      HOLDS           Bills={} RevenueBills={} Offices={}
+tm-xxvsenate-typeok          M_XXV_SENATE       Spec               INVARIANT TypeOK                      HOLDS           Bills={} RevenueBills={} Offices={} Amendments={} SuffrageAmendments={}
+tm-proforma-typeok           M_PRO_FORMA        Spec               INVARIANT TypeOK                      HOLDS           Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+# --- witnesses: each must be violated unmutated
+w-none-signed                none               Spec               INVARIANT NeverLawBySignature         COUNTEREXAMPLE  Offices={} Amendments={} SuffrageAmendments={}
+w-none-lapse                 none               Spec               INVARIANT NeverLawByLapse             COUNTEREXAMPLE  Offices={} Amendments={} SuffrageAmendments={}
+w-none-override              none               Spec               INVARIANT NeverLawByOverride          COUNTEREXAMPLE  Offices={} Amendments={} SuffrageAmendments={}
+w-none-pocket                none               Spec               INVARIANT NeverPocketVeto             COUNTEREXAMPLE  Offices={} Amendments={} SuffrageAmendments={}
+w-none-disqualified          none               Spec               INVARIANT NeverDisqualified           COUNTEREXAMPLE  Bills={} RevenueBills={} Offices={} Amendments={} SuffrageAmendments={}
+w-none-vpnomineedq           none               Spec               INVARIANT NeverVPNomineeDisqualified  COUNTEREXAMPLE  Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+w-none-nomineedq             none               Spec               INVARIANT NeverNomineeDisqualified    COUNTEREXAMPLE  Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+w-none-recessappt            none               Spec               INVARIANT NeverRecessAppointment      COUNTEREXAMPLE  Bills={} RevenueBills={} Amendments={} SuffrageAmendments={}
+w-none-reelected             none               Spec               INVARIANT NeverReelected              COUNTEREXAMPLE  Bills={} RevenueBills={} Offices={} Amendments={} SuffrageAmendments={}
+w-none-succession            none               Spec               PROPERTY  NeverSuccession             COUNTEREXAMPLE  Bills={} RevenueBills={} Offices={} Amendments={} SuffrageAmendments={}
+w-none-xxvconfirm            none               Spec               PROPERTY  NeverXXVConfirmation        COUNTEREXAMPLE  Bills={} RevenueBills={} Offices={} Amendments={} SuffrageAmendments={}
+w-none-ratcongress           none               Spec               INVARIANT NeverRatifiedFromCongress   COUNTEREXAMPLE  Bills={} RevenueBills={} Offices={}
+w-none-ratconvention         none               Spec               INVARIANT NeverRatifiedFromConvention COUNTEREXAMPLE  Bills={} RevenueBills={} Offices={}
+w-none-ratfewer              none               Spec               INVARIANT NeverRatifiedByFewerThanAll COUNTEREXAMPLE  Bills={} RevenueBills={} Offices={} SuffrageAmendments={}
+# --- liveness: the ten-day rule (legislation and the Executive only)
+l-fair-resolve               none               FairSpec           PROPERTY  PresentedBillsResolve       HOLDS           Offices={} Amendments={} SuffrageAmendments={}
+l-fair-resolve-2bills        none               FairSpec           PROPERTY  PresentedBillsResolve       HOLDS           Offices={} Amendments={} SuffrageAmendments={} Bills={b1,b2}
+l-notime-resolve             none               Spec               PROPERTY  PresentedBillsResolve       COUNTEREXAMPLE  Offices={} Amendments={} SuffrageAmendments={}
+l-president-resolve          none               SpecPresidentActs  PROPERTY  PresentedBillsResolve       COUNTEREXAMPLE  Offices={} Amendments={} SuffrageAmendments={}
+l-fair-nobehaviour           none               FairSpec           PROPERTY  NoBehaviour                 COUNTEREXAMPLE  Offices={} Amendments={} SuffrageAmendments={}
+l-fair-nobehaviour-2bills    none               FairSpec           PROPERTY  NoBehaviour                 COUNTEREXAMPLE  Offices={} Amendments={} SuffrageAmendments={} Bills={b1,b2}
