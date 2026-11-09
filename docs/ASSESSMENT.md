@@ -1,10 +1,20 @@
 # Assessment: what the TLA+ specs and proofs are good for
 
 An outside review of the four modules, their TLC result tables and their
-TLAPS proofs, as of commit `e86e3c9` (the `Judiciary.tla` rework). The
-review was done by reading only. Nothing was re-run, so every "HOLDS",
-"COUNTEREXAMPLE" and "proved" below is what the committed results files
-say, not something this review checked again.
+TLAPS proofs, as of commit `e86e3c9`, the commit that added the skill. It
+includes all four reworks. The review was done by reading only. Nothing
+was re-run, so every "HOLDS", "COUNTEREXAMPLE" and "proved" below is what
+the committed results files say, not something this review checked again.
+
+*Revised after a second reading against the code:*
+
+- *corrected the commit label, a line reference, and the claims about
+  what TLC runs and what the flip test showed;*
+- *added the findings the first reading left out;*
+- *confirmed the* Trump v. Slaughter *holding that limit 4 had left
+  unverified;*
+- *qualified "true by construction" and the summary of what the proofs
+  add.*
 
 ## Summary
 
@@ -32,20 +42,37 @@ is the most promising direction for further work.
    that removes it, usually tied to a real historical alternative (the
    Articles of Confederation, Humphrey's Executor, the 2012 pro forma
    recess appointments, Chisholm v. Georgia). TLC runs every (mutation ×
-   property) pair. Each theorem is proved under exactly the mutations that
-   TLC refutes it under.
+   property) pair, and each theorem is proved under exactly the mutations
+   that TLC refutes it under.
+
+   One caveat is in `Constitution.tla`. There, 133 of the rows that check
+   a mutation does *not* break a property switch on only the part of the
+   model the property reads. So the mutation in those rows does nothing,
+   and only the proof covers those cells. The row list says so.
 2. **Checks against vacuous results.** The `Never…` witnesses show each
    behaviour the properties talk about can actually happen. `NoBehaviour`
    shows the fairness assumptions leave some behaviour. `scripts/flip_test.py`
    flips each `Mut # "M_X"` hypothesis and requires the proof to break, so
-   no proof survives without the hypothesis it claims to need. Most
-   production TLA+ work does none of this.
-3. **The proofs cover cases TLC cannot.** The default TLC configurations
-   use one Representative and one Senator (`Constitution.cfg:13-15`), and
-   at that size two-thirds and a majority are the same vote. The TLAPS
-   theorems hold for every size the named ASSUMEs allow, which is exactly
+   no proof survives without the hypothesis it claims to need.
+
+   The recorded flips ran under the script's earlier rule (a failure
+   anywhere outside `SafeAlways`), and in each one the property's own
+   lemma failed. Some `Judiciary.tla` flips also failed in unrelated
+   lemmas, which were timeouts on a loaded machine. The script now requires
+   a failure in a statement that carries the flipped hypothesis, and the
+   flips have not been re-run under that rule. Most production TLA+ work
+   does none of this.
+3. **The proofs cover cases TLC cannot.** The `Constitution.tla` rows use
+   one Representative and one Senator (`House = {h1}`,
+   `Senate = {s1}`, the defaults in `Constitution.cfg` and the row list),
+   and at that size two-thirds and a majority are the same vote. The
+   threshold mutations still show up in the rows, because they drop the
+   threshold altogether and a vote of none then carries. But only the
+   TLAPS theorems hold for every size the named ASSUMEs allow, which is
    what the threshold properties need. (`Judiciary.tla`'s `M_CHASE` rows
-   use five Senators, so TLC tells the two apart there too.)
+   use five Senators, so TLC tells the two apart there too.
+   `Executive.tla` records a vote as the threshold it meets, so the
+   question does not arise there.)
 4. **Provenance.** Each results file records the SHA-256 of the modules
    it covers and the pinned tool versions, plus a "Words:" line saying
    what "proved" or "HOLDS" does and does not mean.
@@ -62,7 +89,19 @@ is the most promising direction for further work.
      President, that never passes through the People or the States;
    - the ten-day rule needs fairness on the clock, not on the President,
      because the Presidency can be vacant (`l-president-resolve` is a
-     COUNTEREXAMPLE).
+     COUNTEREXAMPLE);
+   - the proof, not TLC, found that `Executive.tla`'s `M_SAMEPERSON` (one
+     person as both President and Vice President) also breaks
+     `Disqualification`. Convicting that person passes the presidency to
+     themself. The expected-results line had not listed it, and TLC
+     confirmed it once the proof's failed step pointed there;
+   - `AppealsCourtsAreAppellate`, as first written, failed when a closed
+     case's district court was abolished and its identifier re-used for a
+     court of appeals. This is a modelling artefact rather than law, but
+     another instance of state changing after the fact;
+   - `Government.tla`'s re-check of a bill's applicability at enactment is
+     redundant: `M_RECHECK` reaches exactly the states of `none`, because
+     only one bill is in flight at a time.
 
 ## Limits
 
@@ -75,8 +114,16 @@ is the most promising direction for further work.
    obligations come from boilerplate per-action case splits, and the
    mutation lemmas are one-line `BY DEF` unfoldings
    (`Constitution_proof.tla:1141-1243`). In `Judiciary_proof.tla:123-141`,
-   most invariants are just the property plus type information. The
-   proofs with real content are the inductive strengthenings: `IncompatPW`,
+   most invariants are just the property plus type information.
+
+   This is partly by design. The method makes each property local so that
+   one guard decides it, and the information is in the "Breaks under"
+   matrix (which guard each property rests on), not in the theorem
+   statement. The matrix was corrected at least once by a failed proof
+   step (`M_SAMEPERSON`, above). Still, the matrix records the module's
+   own choices, not facts about the law.
+
+   The proofs with real content are the inductive strengthenings: `IncompatPW`,
    `DisqPW` and `PresidentNotVPInv` in `Constitution_proof.tla`; the
    nominee strengthenings, and `BenchFitsSeats` with its cardinality
    lemmas, in `Judiciary_proof.tla`; and the grant-chain and reachability
@@ -95,8 +142,19 @@ is the most promising direction for further work.
    proves facts about the `Founding` set.
 4. **Recent doctrine is encoded as settled.** `UnitaryExecutive` and the
    `M_HUMPHREY` mutations treat *Trump v. Slaughter* (2026) as having
-   replaced Humphrey's Executor. This review did not verify that holding.
-   If it is wrong, the property is consistent but encodes the wrong law.
+   replaced Humphrey's Executor.
+
+   That holding is now confirmed. The Court decided the case 6–3 on 29
+   June 2026, held the FTC commissioners' for-cause protection
+   unconstitutional, and overruled *Humphrey's Executor*, while treating
+   the Federal Reserve separately
+   ([CRS](https://www.congress.gov/crs-product/LSB11448),
+   [Venable](https://www.venable.com/insights/publications/2026/06/supreme-court-overrules-humphreys-executor)).
+   The model matches: `Executive.tla` abstracts the Federal Reserve away.
+
+   The general point still stands. The encoding fixes one reading of a
+   line of cases that is still being worked out for other agencies, and
+   it will need revisiting as those cases come down.
 5. **The modules are never combined.** Each one models impeachment,
    disqualification and the Presidency in its own way. `Constitution.tla`
    allows several impeachments pending at once, `Executive.tla` one;
@@ -174,11 +232,18 @@ while something else is pending:
 - a nominee convicted or seated elsewhere between nomination and
   confirmation;
 - Congress removing jurisdiction while an appeal is pending (McCardle);
-- a seat reduction taking effect only as seats fall vacant (`M_SHRINK`);
 - a presented bill whose fate turns on whether Congress is sitting when
-  the ten days run out.
+  the ten days run out;
+- a court identifier re-used after the court's case was closed
+  (`AppealsCourtsAreAppellate`, a modelling artefact).
 
-Checks of single-step rules produced nothing comparable.
+Seat reductions taking effect only as seats fall vacant (`M_SHRINK`)
+belong to the same family, but as a rule the model encodes, not a
+finding.
+
+Checks of single-step rules produced little comparable. The exception is
+`M_SAMEPERSON`: a single conviction step, made interesting by a state
+(one person in two offices) that a guard elsewhere is meant to exclude.
 
 ## Usefulness by audience
 
@@ -190,9 +255,13 @@ Checks of single-step rules produced nothing comparable.
   good material.
 - **Analysing the Constitution or doctrine:** **low.** Apart from the
   pending-step findings, the properties restate the text as encoded.
-- **What the proofs add beyond TLC:** real but narrow, mainly the
-  threshold properties that the one-member TLC configurations cannot
-  tell apart.
+- **What the proofs add beyond TLC:** real but narrow:
+  - the threshold properties, which the one-member TLC configurations
+    cannot tell apart;
+  - every constant the named assumptions admit, rather than the row
+    lists' few;
+  - the cells TLC leaves unexercised in `Constitution.tla`;
+  - one correction to the "Breaks under" matrix (`M_SAMEPERSON`).
 
 ## Recommendations
 
