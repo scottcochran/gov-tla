@@ -14,6 +14,16 @@ write each property so that it is **local**, model-check it at small
 constants, prove it, and keep the evidence in files that a script
 regenerates.
 
+The skill is in
+[`.claude/skills/writing-tla-specs-and-proofs/`](.claude/skills/writing-tla-specs-and-proofs/SKILL.md),
+where Claude Code loads it for work in this repository. It is a copy,
+unchanged, of the skill in
+[TOPAK](https://github.com/scottcochran/TOPAK) (`skills/writing-tla-specs-and-proofs`,
+commit `7771a8a`), licensed CC BY 4.0. Where the skill and this README
+differ, the README describes how this repository does it: one generic row
+generator (`scripts/tlc_rows.py`) instead of a run script per module, and
+pin files instead of a tracked jar.
+
 - **Local properties.** One action could break each property, and that
   action's guard decides whether it does. Each property is one of three
   kinds:
