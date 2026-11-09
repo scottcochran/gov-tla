@@ -127,6 +127,10 @@ java -cp tla2tools.jar tlc2.TLC -workers auto -config Executive.cfg Executive.tl
 java -cp tla2tools.jar tlc2.TLC -workers auto -config Government.cfg Government.tla
 ```
 
+With the tools installed by `./install-tla.sh` (see
+[Visualization Tools](#visualization-tools)), `./tlc-workers -config
+Constitution.cfg Constitution.tla` does the same.
+
 The configs describe a tiny republic: three Representatives, two Senators, a
 handful of States, one bill, one office, one amendment, one case. Even so the
 exhaustive state space runs into the millions, so for a quick check use
@@ -148,6 +152,174 @@ Both were the same shape: a check made at nomination but not at confirmation.
   convicted and disqualified while pending, then confirmed anyway.
 - `Judiciary.tla` — a Chief Justice nominee could be confirmed to a district
   court while pending, then confirmed as Chief Justice and sit on two courts.
+
+## Visualization Tools
+
+Three scripts draw what the specs do. A tic-tac-toe board has a few
+thousand states, so its whole state graph can be dumped once and drawn;
+these specs have millions, so each script instead runs TLC on a small
+wrapper module that bounds the run (a depth `CONSTRAINT` for breadth-first
+search, a length `INVARIANT` for simulation) and parses the states TLC
+prints. The modules and their `.cfg` files are used as they are; the
+wrappers live in a temporary directory.
+
+Every state is drawn as **what differs from the initial state**, with
+records and functions flattened to paths such as `bill.b1.status` or
+`agency.ag1.head`, and coloured by who acted to reach it:
+
+| Color | Who acted |
+|-------|-----------|
+| Yellow | Initial state |
+| Light Blue | Congress (either house): bills, overrides, consent, statutes |
+| Orange/Salmon | The President or the executive: signing, vetoes, nominations, removals |
+| Green | The courts: decisions, appeals, judicial review |
+| Red/Coral | Impeachment and trial |
+| Plum | The People and the States: elections, Article V, filing suit |
+| Gray | Time, death, resignation |
+
+### Setup (Required Once)
+
+Install the TLA+ tools (into `tools/`, which is ignored) and the `./tlc`
+and `./tlc-workers` wrappers:
+
+```bash
+./install-tla.sh
+```
+
+You also need Java and the GraphViz system binaries:
+```bash
+# macOS
+brew install graphviz
+
+# Ubuntu/Debian
+sudo apt install graphviz
+
+# Windows
+winget install graphviz
+```
+
+The scripts run under [uv](https://docs.astral.sh/uv/), which installs the
+`graphviz` Python package from `pyproject.toml`. Each takes `--help`.
+
+---
+
+### visualize_states.py
+
+Draws the state graph of one module to a limited depth: every behaviour of
+up to `depth` steps from the initial state.
+
+**Usage:**
+```bash
+uv run python visualize_states.py [module] [depth]
+```
+
+- `module` (optional): `Constitution` (default), `Executive`, `Judiciary` or `Government`
+- `depth` (optional): steps from the initial state (default: 2 for
+  `Constitution`, 1 for the others, whose fan-out is much wider)
+- `--merge N`: at the deepest level, collapse `N` or more sibling states
+  reached by the same action into one dashed node that lists what they
+  share and which variables vary (default 4; `0` draws every state)
+- `--all-edges`: also draw, dotted, edges that do not go one level deeper
+- `--keep-dot`: keep TLC's raw dump as `{module}_states_depth{N}.dot`
+
+**Examples:**
+```bash
+uv run python visualize_states.py                   # Constitution, 2 steps
+uv run python visualize_states.py Government        # the authority graph's first moves
+uv run python visualize_states.py Judiciary         # 127 ways to set exceptions, merged
+uv run python visualize_states.py Executive 2 --merge 0   # all 731 states
+```
+
+**Output:**
+- `{module}_depth{N}.png`, e.g. [`Constitution_depth2.png`](Constitution_depth2.png)
+  and [`Government_depth1.png`](Government_depth1.png)
+- Console output: states by depth, and transitions by action
+
+| Module | Depth 1 | Depth 2 |
+|--------|---------|---------|
+| Constitution | 10 | 68 |
+| Executive | 47 | 731 |
+| Judiciary | 147 | 2,801 |
+| Government | 63 | 1,007 |
+
+(Distinct states within that many steps of the initial state, with the
+configs in this repository.)
+
+---
+
+### simulate_trace.py
+
+Simulates and visualizes one random behaviour. TLC chooses every step
+(`-simulate` with a seed, so a run can be repeated) and stops after
+`--steps` steps, or earlier if no action is enabled.
+
+**Usage:**
+```bash
+uv run python simulate_trace.py [module] [seed] [--steps N]
+```
+
+- `seed` (optional): random seed for a reproducible behaviour; without
+  one a seed is chosen and printed
+- `--steps` (optional): length of the behaviour (default: 20)
+
+**Examples:**
+```bash
+uv run python simulate_trace.py                     # random Constitution run
+uv run python simulate_trace.py Constitution 42     # reproducible run
+uv run python simulate_trace.py Government 3 --steps 40
+```
+
+**Output:**
+- Console output showing each step, who acted, and what it changed
+- `{module}_trace.png` or `{module}_trace_seed{N}.png`, e.g.
+  [`Constitution_trace_seed42.png`](Constitution_trace_seed42.png): one
+  node per state, the lines changed by that step in bold and marked `▸`
+
+**Sample console output** (`Constitution 42`):
+```
+Step 4: Elect  (People and States (elections, Art. V, suits))
+  president: NoOne → F
+  vicePresident: NoOne → G
+  terms.F: 0 → 1
+--------------------
+Step 5: Elect  (People and States (elections, Art. V, suits))
+  president: F → G
+  vicePresident: G → F
+  terms.G: 0 → 1
+--------------------
+Step 6: ProposeByCongress  (Congress (either house))
+  amend.a1.status: None → Proposed
+```
+
+`Government.tla`'s `Sue` and `Exercise` sit under `\E e \in edges`, which
+TLC cannot split into separate actions, so it reports them as `Next`; the
+scripts tell them apart by the edge recorded in `last`.
+
+---
+
+### authority_graph.py
+
+`Government.tla`'s state *is* a graph, so this script draws the `edges`
+variable itself: nodes for the People, the States, the Constitution, the
+branches and the agencies and courts in existence; edges colored by kind
+(Power blue, Select green, Amend purple, Control gray), dashed if put there
+by statute rather than the Constitution.
+
+**Usage:**
+```bash
+uv run python authority_graph.py [seed] [--steps N] [--layer grant|control|all]
+```
+
+- No seed: the graph of 1789, [`Government_authority.png`](Government_authority.png)
+- With a seed: simulate `--steps` steps (default 40) and draw the graph as
+  it ends, marking edges added by amendment (bold), edges repealed (dotted
+  gray), statutory edges under challenge (red, ⚖) and the edge that fired
+  last, e.g. [`Government_authority_seed6.png`](Government_authority_seed6.png)
+  (XVII and XXV ratified, an agency and an inferior court created, and a
+  suit pending over one of the agency's statutory edges)
+- `--layer` draws only the grant layer or only the control layer
+
+---
 
 ## Ideas for next steps
 
