@@ -3,3 +3,13 @@ states/
 *.tlaps/
 metadir/
 *.old
+
+# Locally installed TLA+ tools (see install-tla.sh)
+tools/
+
+# Python (uv)
+.venv/
+__pycache__/
+
+# Raw TLC dumps kept by visualize_states.py --keep-dot
+*_states_depth*.dot
