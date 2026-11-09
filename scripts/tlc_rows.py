@@ -82,6 +82,26 @@ def extends_chain(module, seen=None):
     return seen
 
 
+def run_group(cmd, cwd, env=None):
+    """Run cmd in its own process group and kill the whole group when it ends.
+
+    tlapm starts backend processes (Z3, Zenon, Isabelle) that can outlive a
+    timeout or tlapm itself; killing the group stops them from loading the
+    machine after the run that started them is over.
+    """
+    import signal
+    p = subprocess.Popen(cmd, cwd=cwd, env=env, stdout=subprocess.PIPE,
+                         stderr=subprocess.STDOUT, text=True, start_new_session=True)
+    try:
+        out, _ = p.communicate()
+    finally:
+        try:
+            os.killpg(p.pid, signal.SIGKILL)
+        except (ProcessLookupError, PermissionError):
+            pass
+    return p.returncode, out or ""
+
+
 def parse_rows(path):
     meta = {"const": [], "cfg": [], "expected": [], "title": [], "module": []}
     rows = []

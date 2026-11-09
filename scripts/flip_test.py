@@ -9,23 +9,34 @@ scratch directory, rewrites every `Mut # "M_X"` in the proof module to
 prover must report failed obligations: a proof that survives with the
 hypothesis flipped is proving something the mutation does not break. Each
 failure is attributed to the THEOREM or LEMMA that contains it, and a flip
-passes only if some failure lies outside SafeAlways (whose Mut = "none"
-hypothesis makes its citation steps fail under any flip, so a failure there
-alone shows nothing about the property's own lemmas). Prints one line per
-mutation; the copies are deleted and nothing is written to the tree (a
-mutated proof is not an artefact). Exits non-zero if any flipped proof
-still proves, fails only in SafeAlways, or a mutation's hypothesis does not
+passes only if some failure lies in a statement, other than SafeAlways,
+whose text carried the flipped hypothesis. (SafeAlways's Mut = "none"
+citation steps fail under any flip; a failure elsewhere can be a timeout on
+a loaded machine.) Prints one line per mutation; the copies are deleted,
+the prover's backends are killed with it, and nothing is written to the
+tree (a mutated proof is not an artefact). Exits non-zero if any flipped
+proof still proves, fails nowhere that carries the hypothesis, stops
+without an obligation count (ERROR), or a mutation's hypothesis does not
 occur in the module.
 """
 import os
 import re
 import shutil
-import subprocess
 import sys
 import tempfile
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from tlc_rows import ROOT, extends_chain  # noqa: E402
+from tlc_rows import ROOT, extends_chain, run_group  # noqa: E402
+
+
+def statement_spans(text):
+    """(first line, last line, name) of every THEOREM/LEMMA in text."""
+    ms = list(re.finditer(r"^(?:THEOREM|LEMMA|COROLLARY|PROPOSITION)\s+(\w+)\s*==", text, re.M))
+    spans = []
+    for i, m in enumerate(ms):
+        end = ms[i + 1].start() if i + 1 < len(ms) else len(text)
+        spans.append((m.start(), end, m.group(1)))
+    return spans
 
 
 def failing_statements(text, out, proof):
@@ -74,20 +85,23 @@ def main(argv):
                    "--cache-dir", os.path.join(tmp, "cache")]
             if threads:
                 cmd += ["--threads", threads]
-            p = subprocess.run(cmd + [proof + ".tla"], cwd=tmp, capture_output=True, text=True)
-            out = p.stdout + p.stderr
+            code, out = run_group(cmd + [proof + ".tla"], tmp)
             m = re.search(r"(\d+)/(\d+) obligations? failed", out)
+            carriers = {name for a, b, name in statement_spans(text) if pat.search(text[a:b])}
             if m:
                 where = failing_statements(text, out, proof)
-                outside = [w for w in where if w != "SafeAlways"]
-                verdict = "as required" if outside else "ONLY in SafeAlways - not load-bearing"
-                bad += not outside
+                relevant = [w for w in where if w != "SafeAlways" and w in carriers]
+                verdict = "as required" if relevant else \
+                    "fails nowhere that carries the hypothesis - not load-bearing"
+                bad += not relevant
                 print(f"{module} flip {mut} ({n} hypotheses flipped): {m.group(0)} in "
                       f"{', '.join(where) or '?'} - {verdict}")
-            else:
-                ok = re.search(r"All \d+ obligations? proved", out)
+            elif re.search(r"All \d+ obligations? proved", out):
                 print(f"{module} flip {mut} ({n} hypotheses flipped): "
-                      f"{ok.group(0) if ok else 'no count'} - the hypothesis is NOT load-bearing")
+                      f"{re.search(r'All \d+ obligations? proved', out).group(0)} - the hypothesis is NOT load-bearing")
+                bad += 1
+            else:
+                print(f"{module} flip {mut}: ERROR, no obligation count (tlapm exit {code})")
                 bad += 1
         finally:
             shutil.rmtree(tmp, ignore_errors=True)

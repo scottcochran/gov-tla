@@ -24,12 +24,11 @@ import glob
 import os
 import re
 import shutil
-import subprocess
 import sys
 import tempfile
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from tlc_rows import ROOT, pin, sha256  # noqa: E402
+from tlc_rows import ROOT, pin, run_group, sha256  # noqa: E402
 
 
 def newest(pattern):
@@ -113,12 +112,11 @@ def main(argv):
             try:
                 cmd = [os.path.join(ROOT, "tools", "tlapm"), "--cleanfp", "--strict",
                        "--cache-dir", cache] + (["--threads", threads] if threads else [])
-                p = subprocess.run(cmd + [f"{m}_proof.tla"], cwd=ROOT, capture_output=True, text=True)
+                code, out = run_group(cmd + [f"{m}_proof.tla"], ROOT)
             finally:
                 shutil.rmtree(cache, ignore_errors=True)
-            out = p.stdout + p.stderr
             mm = re.search(r"All \d+ obligations? proved|\d+/\d+ obligations? failed", out)
-            print(f"{'':14}        re-run: {mm.group(0) if mm else 'no count'} (exit {p.returncode})")
+            print(f"{'':14}        re-run: {mm.group(0) if mm else 'no count'} (exit {code})")
     print("sync: " + ("OK" if not bad else f"{bad} problem(s)"))
     return 1 if bad else 0
 
