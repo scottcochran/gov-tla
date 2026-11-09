@@ -83,8 +83,8 @@ What is **not** proved, and why:
   has no fixpoint theory for. Each one's local form is proved.
 - **Witnesses and counterexamples** are existential, and stay with TLC.
 
-For an outside review of what these specs and proofs are, and are not,
-good for, see [`docs/ASSESSMENT.md`](docs/ASSESSMENT.md).
+For a self-assessment by Claude of what these specs and proofs are, and
+are not, good for, see [`docs/ASSESSMENT.md`](docs/ASSESSMENT.md).
 
 ## Modules
 

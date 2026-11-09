@@ -1,10 +1,24 @@
 # Assessment: what the TLA+ specs and proofs are good for
 
-An outside review of the four modules, their TLC result tables and their
-TLAPS proofs, as of commit `e86e3c9`, the commit that added the skill. It
-includes all four reworks. The review was done by reading only. Nothing
-was re-run, so every "HOLDS", "COUNTEREXAMPLE" and "proved" below is what
-the committed results files say, not something this review checked again.
+A self-assessment by Claude of the four modules, their TLC result tables
+and their TLAPS proofs, as of commit `e86e3c9`, the commit that added the
+skill. That commit includes all four reworks.
+
+- **Who wrote what.** Claude wrote the modules and proofs in one Claude
+  Code session. Claude wrote this assessment in a separate session, which
+  had not written them. The prompt was "dont run anything. just read the
+  repo and assess the utility of the tla+ specs and proofs". It was not
+  asked to be adversarial.
+- **The revision.** The session that wrote the specs revised the
+  assessment, as listed below, so the revision is not independent of the
+  work it reviews.
+- **What was checked.** The review was done by reading only. Nothing was
+  re-run, so every "HOLDS", "COUNTEREXAMPLE" and "proved" below is what
+  the committed results files say, not something this review checked
+  again.
+
+Treat it as the model's own reading of its work, not as an outside or
+human review.
 
 *Revised after a second reading against the code:*
 
