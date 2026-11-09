@@ -1,0 +1,520 @@
+# module: Judiciary
+# title: Judiciary.tla - Article III and every federal court
+# expected: Profiles. A judge-side row (OneSupremeCourt, CourtsAreEstablished, BenchFitsSeats, NoJudgeOnTwoCourts, JudgesAreNotInCongress, DisqualifiedDoNotSit, ChiefJusticeSits, CompensationClause, GoodBehaviour; j-) runs at the default constants: two eligible persons and one Senator, the Supreme Court and one court Congress may establish, no cases. A case-side row (OriginalJurisdiction, EleventhAmendment, AppealsCourtsAreAppellate, PublicRightsOnly, JuryAndVenue, TreasonProof, NoDoubleJeopardy, ExceptionsHonoured, ExceptionsBindPending; c-) runs with no persons, one case and the heads Federal and Treason, and a second inferior court identifier where a case must climb two tiers (NoDoubleJeopardy, ExceptionsHonoured, ExceptionsBindPending, TypeOK, Safety). Cases read no judge variable and judges read cases only in AbolishCourt's no-live-case guard, so each profile reaches every state of its own variables (Judiciary.tla header). Each property adds what it needs to be non-vacuous (BenchFitsSeats MaxSeats=2; CompensationClause MaxSalary=1; OriginalJurisdiction StateIsParty; EleventhAmendment AgainstState; JuryAndVenue two States) and on judge-side rows each mutation adds what it needs to act (M_SHRINK MaxSeats=2; M_PAYCUT MaxSalary=1; M_CHASE five Senators). A judge-side mutation is inert on a case-side row and the converse; those rows check the property at its profile, and Judiciary_proof.tla's hypotheses are the general claim. TypeOK is run under none; under each mutation it is proved (ShapeAlways), not run.
+# expected: Mut = none HOLDS on every property, on TypeOK, and on Safety at the judge-side, the case-side and a combined profile; no deadlock at the judge-side and combined profiles. Every mutation HOLDS on TypeOK, CourtsAreEstablished and every property it is not listed against, and is a COUNTEREXAMPLE exactly on: M_ABOLISH_SC OneSupremeCourt, ChiefJusticeSits; M_COURT_OF_UNION OneSupremeCourt; M_REESTABLISH OneSupremeCourt, ChiefJusticeSits, BenchFitsSeats; M_SHRINK, M_VACANCY_RECHECK BenchFitsSeats; M_CONFIRM_RECHECK NoJudgeOnTwoCourts; M_CHIEF_RECHECK NoJudgeOnTwoCourts, BenchFitsSeats; M_INCOMPAT JudgesAreNotInCongress; M_DISQUAL DisqualifiedDoNotSit; M_MARBURY OriginalJurisdiction; M_CHISHOLM EleventhAmendment; M_CIRCUIT AppealsCourtsAreAppellate; M_NORTHERN_PIPELINE PublicRightsOnly; M_NOJURY, M_VENUE JuryAndVenue; M_TREASON TreasonProof; M_KEPNER NoDoubleJeopardy; M_EXCEPTIONS ExceptionsHonoured; M_MCCARDLE ExceptionsBindPending; M_PAYCUT CompensationClause; M_TENURE GoodBehaviour, ChiefJusticeSits; M_NOIMPEACH, M_CHASE GoodBehaviour. Every Never... witness is a COUNTEREXAMPLE under none.
+# const: Persons = {p1, p2, s1}
+# const: House = {h1}
+# const: Senate = {s1}
+# const: States = {S1}
+# const: CourtIds = {SC, c1}
+# const: SupremeCourt = SC
+# const: Cases = {}
+# const: Kinds = {}
+# const: MaxSeats = 1
+# const: MaxSalary = 0
+# const: NoOne = NoOne
+#
+# name                             mut                  spec kind      property                   expected       constants
+
+# Mut = none: every property HOLDS
+j-none-typeok                      none                 Spec INVARIANT TypeOK                     HOLDS          
+j-none-onesc                       none                 Spec INVARIANT OneSupremeCourt            HOLDS          
+j-none-estab                       none                 Spec INVARIANT CourtsAreEstablished       HOLDS          
+j-none-seats                       none                 Spec INVARIANT BenchFitsSeats             HOLDS          MaxSeats=2
+j-none-twocourts                   none                 Spec INVARIANT NoJudgeOnTwoCourts         HOLDS          
+j-none-incompat                    none                 Spec INVARIANT JudgesAreNotInCongress     HOLDS          
+j-none-disqual                     none                 Spec INVARIANT DisqualifiedDoNotSit       HOLDS          
+j-none-chief                       none                 Spec INVARIANT ChiefJusticeSits           HOLDS          
+j-none-pay                         none                 Spec INVARIANT CompensationClause         HOLDS          MaxSalary=1
+j-none-tenure                      none                 Spec INVARIANT GoodBehaviour              HOLDS          
+c-none-typeok                      none                 Spec INVARIANT TypeOK                     HOLDS          Persons={} Cases={x1} CourtIds={SC,c1,c2} Kinds={"Federal","Treason"}
+c-none-original                    none                 Spec INVARIANT OriginalJurisdiction       HOLDS          Persons={} Cases={x1} Kinds={"Federal","StateIsParty"}
+c-none-xi                          none                 Spec INVARIANT EleventhAmendment          HOLDS          Persons={} Cases={x1} Kinds={"Federal","AgainstState"}
+c-none-appellate                   none                 Spec INVARIANT AppealsCourtsAreAppellate  HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"}
+c-none-pubrights                   none                 Spec INVARIANT PublicRightsOnly           HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"}
+c-none-jury                        none                 Spec INVARIANT JuryAndVenue               HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"} States={S1,S2}
+c-none-treason                     none                 Spec INVARIANT TreasonProof               HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"}
+c-none-jeopardy                    none                 Spec INVARIANT NoDoubleJeopardy           HOLDS          Persons={} Cases={x1} CourtIds={SC,c1,c2} Kinds={"Federal","Treason"}
+c-none-except                      none                 Spec INVARIANT ExceptionsHonoured         HOLDS          Persons={} Cases={x1} CourtIds={SC,c1,c2} Kinds={"Federal","Treason"}
+c-none-pending                     none                 Spec INVARIANT ExceptionsBindPending      HOLDS          Persons={} Cases={x1} CourtIds={SC,c1,c2} Kinds={"Federal","Treason"}
+j-none-safety                      none                 Spec INVARIANT Safety                     HOLDS          
+c-none-safety                      none                 Spec INVARIANT Safety                     HOLDS          Persons={} Cases={x1} CourtIds={SC,c1,c2} Kinds={"Federal","Treason"}
+b-none-safety                      none                 Spec INVARIANT Safety                     HOLDS          Persons={p1} Cases={x1} Kinds={"Federal","Treason"} States={S1,S2}
+
+# Deadlock audit: TLC's deadlock check on; Congress can always legislate, so no state is terminal
+d-none-deadlock-j                  none                 Spec DEADLOCK  Safety                     HOLDS          
+d-none-deadlock-b                  none                 Spec DEADLOCK  Safety                     HOLDS          Persons={p1} Cases={x1} Kinds={"Federal","Treason"} States={S1,S2}
+
+# Witnesses: each VIOLATED under none
+w-unseated                         none                 Spec INVARIANT NeverUnseatedByAbolition   COUNTEREXAMPLE 
+w-disqualified                     none                 Spec INVARIANT NeverDisqualified          COUNTEREXAMPLE 
+w-chief                            none                 Spec INVARIANT NeverChiefJustice          COUNTEREXAMPLE 
+w-enlarged                         none                 Spec INVARIANT NeverEnlarged              COUNTEREXAMPLE MaxSeats=2
+w-raise                            none                 Spec INVARIANT NeverSalaryRaised          COUNTEREXAMPLE MaxSalary=1
+w-original                         none                 Spec INVARIANT NeverOriginalAction        COUNTEREXAMPLE Persons={} Cases={x1} CourtIds={SC,c1,c2} Kinds={"StateIsParty"}
+w-articlei                         none                 Spec INVARIANT NeverArticleITrial         COUNTEREXAMPLE Persons={} Cases={x1} CourtIds={SC,c1,c2} Kinds={"Federal","Treason"}
+w-treason                          none                 Spec INVARIANT NeverTreasonConviction     COUNTEREXAMPLE Persons={} Cases={x1} CourtIds={SC,c1,c2} Kinds={"Federal","Treason"}
+w-acquittal                        none                 Spec INVARIANT NeverAcquittal             COUNTEREXAMPLE Persons={} Cases={x1} CourtIds={SC,c1,c2} Kinds={"Federal","Treason"}
+w-reachsc                          none                 Spec INVARIANT NeverReachesSupremeCourt   COUNTEREXAMPLE Persons={} Cases={x1} CourtIds={SC,c1,c2} Kinds={"Federal","Treason"}
+w-stripped                         none                 Spec INVARIANT NeverStrippedWhilePending  COUNTEREXAMPLE Persons={} Cases={x1} CourtIds={SC,c1,c2} Kinds={"Federal","Treason"}
+w-dismissed                        none                 Spec INVARIANT NeverDismissed             COUNTEREXAMPLE Persons={} Cases={x1} CourtIds={SC,c1,c2} Kinds={"Federal","Treason"}
+
+# M_ABOLISH_SC: breaks ChiefJusticeSits, OneSupremeCourt
+j-abolishsc-onesc                  M_ABOLISH_SC         Spec INVARIANT OneSupremeCourt            COUNTEREXAMPLE 
+j-abolishsc-estab                  M_ABOLISH_SC         Spec INVARIANT CourtsAreEstablished       HOLDS          
+j-abolishsc-seats                  M_ABOLISH_SC         Spec INVARIANT BenchFitsSeats             HOLDS          MaxSeats=2
+j-abolishsc-twocourts              M_ABOLISH_SC         Spec INVARIANT NoJudgeOnTwoCourts         HOLDS          
+j-abolishsc-incompat               M_ABOLISH_SC         Spec INVARIANT JudgesAreNotInCongress     HOLDS          
+j-abolishsc-disqual                M_ABOLISH_SC         Spec INVARIANT DisqualifiedDoNotSit       HOLDS          
+j-abolishsc-chief                  M_ABOLISH_SC         Spec INVARIANT ChiefJusticeSits           COUNTEREXAMPLE 
+j-abolishsc-pay                    M_ABOLISH_SC         Spec INVARIANT CompensationClause         HOLDS          MaxSalary=1
+j-abolishsc-tenure                 M_ABOLISH_SC         Spec INVARIANT GoodBehaviour              HOLDS          
+c-abolishsc-original               M_ABOLISH_SC         Spec INVARIANT OriginalJurisdiction       HOLDS          Persons={} Cases={x1} Kinds={"Federal","StateIsParty"}
+c-abolishsc-xi                     M_ABOLISH_SC         Spec INVARIANT EleventhAmendment          HOLDS          Persons={} Cases={x1} Kinds={"Federal","AgainstState"}
+c-abolishsc-appellate              M_ABOLISH_SC         Spec INVARIANT AppealsCourtsAreAppellate  HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"}
+c-abolishsc-pubrights              M_ABOLISH_SC         Spec INVARIANT PublicRightsOnly           HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"}
+c-abolishsc-jury                   M_ABOLISH_SC         Spec INVARIANT JuryAndVenue               HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"} States={S1,S2}
+c-abolishsc-treason                M_ABOLISH_SC         Spec INVARIANT TreasonProof               HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"}
+c-abolishsc-jeopardy               M_ABOLISH_SC         Spec INVARIANT NoDoubleJeopardy           HOLDS          Persons={} Cases={x1} CourtIds={SC,c1,c2} Kinds={"Federal","Treason"}
+c-abolishsc-except                 M_ABOLISH_SC         Spec INVARIANT ExceptionsHonoured         HOLDS          Persons={} Cases={x1} CourtIds={SC,c1,c2} Kinds={"Federal","Treason"}
+c-abolishsc-pending                M_ABOLISH_SC         Spec INVARIANT ExceptionsBindPending      HOLDS          Persons={} Cases={x1} CourtIds={SC,c1,c2} Kinds={"Federal","Treason"}
+
+# M_COURT_OF_UNION: breaks OneSupremeCourt
+j-courtofunion-onesc               M_COURT_OF_UNION     Spec INVARIANT OneSupremeCourt            COUNTEREXAMPLE 
+j-courtofunion-estab               M_COURT_OF_UNION     Spec INVARIANT CourtsAreEstablished       HOLDS          
+j-courtofunion-seats               M_COURT_OF_UNION     Spec INVARIANT BenchFitsSeats             HOLDS          MaxSeats=2
+j-courtofunion-twocourts           M_COURT_OF_UNION     Spec INVARIANT NoJudgeOnTwoCourts         HOLDS          
+j-courtofunion-incompat            M_COURT_OF_UNION     Spec INVARIANT JudgesAreNotInCongress     HOLDS          
+j-courtofunion-disqual             M_COURT_OF_UNION     Spec INVARIANT DisqualifiedDoNotSit       HOLDS          
+j-courtofunion-chief               M_COURT_OF_UNION     Spec INVARIANT ChiefJusticeSits           HOLDS          
+j-courtofunion-pay                 M_COURT_OF_UNION     Spec INVARIANT CompensationClause         HOLDS          MaxSalary=1
+j-courtofunion-tenure              M_COURT_OF_UNION     Spec INVARIANT GoodBehaviour              HOLDS          
+c-courtofunion-original            M_COURT_OF_UNION     Spec INVARIANT OriginalJurisdiction       HOLDS          Persons={} Cases={x1} Kinds={"Federal","StateIsParty"}
+c-courtofunion-xi                  M_COURT_OF_UNION     Spec INVARIANT EleventhAmendment          HOLDS          Persons={} Cases={x1} Kinds={"Federal","AgainstState"}
+c-courtofunion-appellate           M_COURT_OF_UNION     Spec INVARIANT AppealsCourtsAreAppellate  HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"}
+c-courtofunion-pubrights           M_COURT_OF_UNION     Spec INVARIANT PublicRightsOnly           HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"}
+c-courtofunion-jury                M_COURT_OF_UNION     Spec INVARIANT JuryAndVenue               HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"} States={S1,S2}
+c-courtofunion-treason             M_COURT_OF_UNION     Spec INVARIANT TreasonProof               HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"}
+c-courtofunion-jeopardy            M_COURT_OF_UNION     Spec INVARIANT NoDoubleJeopardy           HOLDS          Persons={} Cases={x1} CourtIds={SC,c1,c2} Kinds={"Federal","Treason"}
+c-courtofunion-except              M_COURT_OF_UNION     Spec INVARIANT ExceptionsHonoured         HOLDS          Persons={} Cases={x1} CourtIds={SC,c1,c2} Kinds={"Federal","Treason"}
+c-courtofunion-pending             M_COURT_OF_UNION     Spec INVARIANT ExceptionsBindPending      HOLDS          Persons={} Cases={x1} CourtIds={SC,c1,c2} Kinds={"Federal","Treason"}
+
+# M_REESTABLISH: breaks BenchFitsSeats, ChiefJusticeSits, OneSupremeCourt
+j-reestablish-onesc                M_REESTABLISH        Spec INVARIANT OneSupremeCourt            COUNTEREXAMPLE 
+j-reestablish-estab                M_REESTABLISH        Spec INVARIANT CourtsAreEstablished       HOLDS          
+j-reestablish-seats                M_REESTABLISH        Spec INVARIANT BenchFitsSeats             COUNTEREXAMPLE MaxSeats=2
+j-reestablish-twocourts            M_REESTABLISH        Spec INVARIANT NoJudgeOnTwoCourts         HOLDS          
+j-reestablish-incompat             M_REESTABLISH        Spec INVARIANT JudgesAreNotInCongress     HOLDS          
+j-reestablish-disqual              M_REESTABLISH        Spec INVARIANT DisqualifiedDoNotSit       HOLDS          
+j-reestablish-chief                M_REESTABLISH        Spec INVARIANT ChiefJusticeSits           COUNTEREXAMPLE 
+j-reestablish-pay                  M_REESTABLISH        Spec INVARIANT CompensationClause         HOLDS          MaxSalary=1
+j-reestablish-tenure               M_REESTABLISH        Spec INVARIANT GoodBehaviour              HOLDS          
+c-reestablish-original             M_REESTABLISH        Spec INVARIANT OriginalJurisdiction       HOLDS          Persons={} Cases={x1} Kinds={"Federal","StateIsParty"}
+c-reestablish-xi                   M_REESTABLISH        Spec INVARIANT EleventhAmendment          HOLDS          Persons={} Cases={x1} Kinds={"Federal","AgainstState"}
+c-reestablish-appellate            M_REESTABLISH        Spec INVARIANT AppealsCourtsAreAppellate  HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"}
+c-reestablish-pubrights            M_REESTABLISH        Spec INVARIANT PublicRightsOnly           HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"}
+c-reestablish-jury                 M_REESTABLISH        Spec INVARIANT JuryAndVenue               HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"} States={S1,S2}
+c-reestablish-treason              M_REESTABLISH        Spec INVARIANT TreasonProof               HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"}
+c-reestablish-jeopardy             M_REESTABLISH        Spec INVARIANT NoDoubleJeopardy           HOLDS          Persons={} Cases={x1} CourtIds={SC,c1,c2} Kinds={"Federal","Treason"}
+c-reestablish-except               M_REESTABLISH        Spec INVARIANT ExceptionsHonoured         HOLDS          Persons={} Cases={x1} CourtIds={SC,c1,c2} Kinds={"Federal","Treason"}
+c-reestablish-pending              M_REESTABLISH        Spec INVARIANT ExceptionsBindPending      HOLDS          Persons={} Cases={x1} CourtIds={SC,c1,c2} Kinds={"Federal","Treason"}
+
+# M_SHRINK: breaks BenchFitsSeats
+j-shrink-onesc                     M_SHRINK             Spec INVARIANT OneSupremeCourt            HOLDS          MaxSeats=2
+j-shrink-estab                     M_SHRINK             Spec INVARIANT CourtsAreEstablished       HOLDS          MaxSeats=2
+j-shrink-seats                     M_SHRINK             Spec INVARIANT BenchFitsSeats             COUNTEREXAMPLE MaxSeats=2
+j-shrink-twocourts                 M_SHRINK             Spec INVARIANT NoJudgeOnTwoCourts         HOLDS          MaxSeats=2
+j-shrink-incompat                  M_SHRINK             Spec INVARIANT JudgesAreNotInCongress     HOLDS          MaxSeats=2
+j-shrink-disqual                   M_SHRINK             Spec INVARIANT DisqualifiedDoNotSit       HOLDS          MaxSeats=2
+j-shrink-chief                     M_SHRINK             Spec INVARIANT ChiefJusticeSits           HOLDS          MaxSeats=2
+j-shrink-pay                       M_SHRINK             Spec INVARIANT CompensationClause         HOLDS          MaxSalary=1 MaxSeats=2
+j-shrink-tenure                    M_SHRINK             Spec INVARIANT GoodBehaviour              HOLDS          MaxSeats=2
+c-shrink-original                  M_SHRINK             Spec INVARIANT OriginalJurisdiction       HOLDS          Persons={} Cases={x1} Kinds={"Federal","StateIsParty"}
+c-shrink-xi                        M_SHRINK             Spec INVARIANT EleventhAmendment          HOLDS          Persons={} Cases={x1} Kinds={"Federal","AgainstState"}
+c-shrink-appellate                 M_SHRINK             Spec INVARIANT AppealsCourtsAreAppellate  HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"}
+c-shrink-pubrights                 M_SHRINK             Spec INVARIANT PublicRightsOnly           HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"}
+c-shrink-jury                      M_SHRINK             Spec INVARIANT JuryAndVenue               HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"} States={S1,S2}
+c-shrink-treason                   M_SHRINK             Spec INVARIANT TreasonProof               HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"}
+c-shrink-jeopardy                  M_SHRINK             Spec INVARIANT NoDoubleJeopardy           HOLDS          Persons={} Cases={x1} CourtIds={SC,c1,c2} Kinds={"Federal","Treason"}
+c-shrink-except                    M_SHRINK             Spec INVARIANT ExceptionsHonoured         HOLDS          Persons={} Cases={x1} CourtIds={SC,c1,c2} Kinds={"Federal","Treason"}
+c-shrink-pending                   M_SHRINK             Spec INVARIANT ExceptionsBindPending      HOLDS          Persons={} Cases={x1} CourtIds={SC,c1,c2} Kinds={"Federal","Treason"}
+
+# M_VACANCY_RECHECK: breaks BenchFitsSeats
+j-vacancyrecheck-onesc             M_VACANCY_RECHECK    Spec INVARIANT OneSupremeCourt            HOLDS          
+j-vacancyrecheck-estab             M_VACANCY_RECHECK    Spec INVARIANT CourtsAreEstablished       HOLDS          
+j-vacancyrecheck-seats             M_VACANCY_RECHECK    Spec INVARIANT BenchFitsSeats             COUNTEREXAMPLE MaxSeats=2
+j-vacancyrecheck-twocourts         M_VACANCY_RECHECK    Spec INVARIANT NoJudgeOnTwoCourts         HOLDS          
+j-vacancyrecheck-incompat          M_VACANCY_RECHECK    Spec INVARIANT JudgesAreNotInCongress     HOLDS          
+j-vacancyrecheck-disqual           M_VACANCY_RECHECK    Spec INVARIANT DisqualifiedDoNotSit       HOLDS          
+j-vacancyrecheck-chief             M_VACANCY_RECHECK    Spec INVARIANT ChiefJusticeSits           HOLDS          
+j-vacancyrecheck-pay               M_VACANCY_RECHECK    Spec INVARIANT CompensationClause         HOLDS          MaxSalary=1
+j-vacancyrecheck-tenure            M_VACANCY_RECHECK    Spec INVARIANT GoodBehaviour              HOLDS          
+c-vacancyrecheck-original          M_VACANCY_RECHECK    Spec INVARIANT OriginalJurisdiction       HOLDS          Persons={} Cases={x1} Kinds={"Federal","StateIsParty"}
+c-vacancyrecheck-xi                M_VACANCY_RECHECK    Spec INVARIANT EleventhAmendment          HOLDS          Persons={} Cases={x1} Kinds={"Federal","AgainstState"}
+c-vacancyrecheck-appellate         M_VACANCY_RECHECK    Spec INVARIANT AppealsCourtsAreAppellate  HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"}
+c-vacancyrecheck-pubrights         M_VACANCY_RECHECK    Spec INVARIANT PublicRightsOnly           HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"}
+c-vacancyrecheck-jury              M_VACANCY_RECHECK    Spec INVARIANT JuryAndVenue               HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"} States={S1,S2}
+c-vacancyrecheck-treason           M_VACANCY_RECHECK    Spec INVARIANT TreasonProof               HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"}
+c-vacancyrecheck-jeopardy          M_VACANCY_RECHECK    Spec INVARIANT NoDoubleJeopardy           HOLDS          Persons={} Cases={x1} CourtIds={SC,c1,c2} Kinds={"Federal","Treason"}
+c-vacancyrecheck-except            M_VACANCY_RECHECK    Spec INVARIANT ExceptionsHonoured         HOLDS          Persons={} Cases={x1} CourtIds={SC,c1,c2} Kinds={"Federal","Treason"}
+c-vacancyrecheck-pending           M_VACANCY_RECHECK    Spec INVARIANT ExceptionsBindPending      HOLDS          Persons={} Cases={x1} CourtIds={SC,c1,c2} Kinds={"Federal","Treason"}
+
+# M_CONFIRM_RECHECK: breaks NoJudgeOnTwoCourts
+j-confirmrecheck-onesc             M_CONFIRM_RECHECK    Spec INVARIANT OneSupremeCourt            HOLDS          
+j-confirmrecheck-estab             M_CONFIRM_RECHECK    Spec INVARIANT CourtsAreEstablished       HOLDS          
+j-confirmrecheck-seats             M_CONFIRM_RECHECK    Spec INVARIANT BenchFitsSeats             HOLDS          MaxSeats=2
+j-confirmrecheck-twocourts         M_CONFIRM_RECHECK    Spec INVARIANT NoJudgeOnTwoCourts         COUNTEREXAMPLE 
+j-confirmrecheck-incompat          M_CONFIRM_RECHECK    Spec INVARIANT JudgesAreNotInCongress     HOLDS          
+j-confirmrecheck-disqual           M_CONFIRM_RECHECK    Spec INVARIANT DisqualifiedDoNotSit       HOLDS          
+j-confirmrecheck-chief             M_CONFIRM_RECHECK    Spec INVARIANT ChiefJusticeSits           HOLDS          
+j-confirmrecheck-pay               M_CONFIRM_RECHECK    Spec INVARIANT CompensationClause         HOLDS          MaxSalary=1
+j-confirmrecheck-tenure            M_CONFIRM_RECHECK    Spec INVARIANT GoodBehaviour              HOLDS          
+c-confirmrecheck-original          M_CONFIRM_RECHECK    Spec INVARIANT OriginalJurisdiction       HOLDS          Persons={} Cases={x1} Kinds={"Federal","StateIsParty"}
+c-confirmrecheck-xi                M_CONFIRM_RECHECK    Spec INVARIANT EleventhAmendment          HOLDS          Persons={} Cases={x1} Kinds={"Federal","AgainstState"}
+c-confirmrecheck-appellate         M_CONFIRM_RECHECK    Spec INVARIANT AppealsCourtsAreAppellate  HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"}
+c-confirmrecheck-pubrights         M_CONFIRM_RECHECK    Spec INVARIANT PublicRightsOnly           HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"}
+c-confirmrecheck-jury              M_CONFIRM_RECHECK    Spec INVARIANT JuryAndVenue               HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"} States={S1,S2}
+c-confirmrecheck-treason           M_CONFIRM_RECHECK    Spec INVARIANT TreasonProof               HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"}
+c-confirmrecheck-jeopardy          M_CONFIRM_RECHECK    Spec INVARIANT NoDoubleJeopardy           HOLDS          Persons={} Cases={x1} CourtIds={SC,c1,c2} Kinds={"Federal","Treason"}
+c-confirmrecheck-except            M_CONFIRM_RECHECK    Spec INVARIANT ExceptionsHonoured         HOLDS          Persons={} Cases={x1} CourtIds={SC,c1,c2} Kinds={"Federal","Treason"}
+c-confirmrecheck-pending           M_CONFIRM_RECHECK    Spec INVARIANT ExceptionsBindPending      HOLDS          Persons={} Cases={x1} CourtIds={SC,c1,c2} Kinds={"Federal","Treason"}
+
+# M_CHIEF_RECHECK: breaks BenchFitsSeats, NoJudgeOnTwoCourts
+j-chiefrecheck-onesc               M_CHIEF_RECHECK      Spec INVARIANT OneSupremeCourt            HOLDS          
+j-chiefrecheck-estab               M_CHIEF_RECHECK      Spec INVARIANT CourtsAreEstablished       HOLDS          
+j-chiefrecheck-seats               M_CHIEF_RECHECK      Spec INVARIANT BenchFitsSeats             COUNTEREXAMPLE MaxSeats=2
+j-chiefrecheck-twocourts           M_CHIEF_RECHECK      Spec INVARIANT NoJudgeOnTwoCourts         COUNTEREXAMPLE 
+j-chiefrecheck-incompat            M_CHIEF_RECHECK      Spec INVARIANT JudgesAreNotInCongress     HOLDS          
+j-chiefrecheck-disqual             M_CHIEF_RECHECK      Spec INVARIANT DisqualifiedDoNotSit       HOLDS          
+j-chiefrecheck-chief               M_CHIEF_RECHECK      Spec INVARIANT ChiefJusticeSits           HOLDS          
+j-chiefrecheck-pay                 M_CHIEF_RECHECK      Spec INVARIANT CompensationClause         HOLDS          MaxSalary=1
+j-chiefrecheck-tenure              M_CHIEF_RECHECK      Spec INVARIANT GoodBehaviour              HOLDS          
+c-chiefrecheck-original            M_CHIEF_RECHECK      Spec INVARIANT OriginalJurisdiction       HOLDS          Persons={} Cases={x1} Kinds={"Federal","StateIsParty"}
+c-chiefrecheck-xi                  M_CHIEF_RECHECK      Spec INVARIANT EleventhAmendment          HOLDS          Persons={} Cases={x1} Kinds={"Federal","AgainstState"}
+c-chiefrecheck-appellate           M_CHIEF_RECHECK      Spec INVARIANT AppealsCourtsAreAppellate  HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"}
+c-chiefrecheck-pubrights           M_CHIEF_RECHECK      Spec INVARIANT PublicRightsOnly           HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"}
+c-chiefrecheck-jury                M_CHIEF_RECHECK      Spec INVARIANT JuryAndVenue               HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"} States={S1,S2}
+c-chiefrecheck-treason             M_CHIEF_RECHECK      Spec INVARIANT TreasonProof               HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"}
+c-chiefrecheck-jeopardy            M_CHIEF_RECHECK      Spec INVARIANT NoDoubleJeopardy           HOLDS          Persons={} Cases={x1} CourtIds={SC,c1,c2} Kinds={"Federal","Treason"}
+c-chiefrecheck-except              M_CHIEF_RECHECK      Spec INVARIANT ExceptionsHonoured         HOLDS          Persons={} Cases={x1} CourtIds={SC,c1,c2} Kinds={"Federal","Treason"}
+c-chiefrecheck-pending             M_CHIEF_RECHECK      Spec INVARIANT ExceptionsBindPending      HOLDS          Persons={} Cases={x1} CourtIds={SC,c1,c2} Kinds={"Federal","Treason"}
+
+# M_INCOMPAT: breaks JudgesAreNotInCongress
+j-incompat-onesc                   M_INCOMPAT           Spec INVARIANT OneSupremeCourt            HOLDS          
+j-incompat-estab                   M_INCOMPAT           Spec INVARIANT CourtsAreEstablished       HOLDS          
+j-incompat-seats                   M_INCOMPAT           Spec INVARIANT BenchFitsSeats             HOLDS          MaxSeats=2
+j-incompat-twocourts               M_INCOMPAT           Spec INVARIANT NoJudgeOnTwoCourts         HOLDS          
+j-incompat-incompat                M_INCOMPAT           Spec INVARIANT JudgesAreNotInCongress     COUNTEREXAMPLE 
+j-incompat-disqual                 M_INCOMPAT           Spec INVARIANT DisqualifiedDoNotSit       HOLDS          
+j-incompat-chief                   M_INCOMPAT           Spec INVARIANT ChiefJusticeSits           HOLDS          
+j-incompat-pay                     M_INCOMPAT           Spec INVARIANT CompensationClause         HOLDS          MaxSalary=1
+j-incompat-tenure                  M_INCOMPAT           Spec INVARIANT GoodBehaviour              HOLDS          
+c-incompat-original                M_INCOMPAT           Spec INVARIANT OriginalJurisdiction       HOLDS          Persons={} Cases={x1} Kinds={"Federal","StateIsParty"}
+c-incompat-xi                      M_INCOMPAT           Spec INVARIANT EleventhAmendment          HOLDS          Persons={} Cases={x1} Kinds={"Federal","AgainstState"}
+c-incompat-appellate               M_INCOMPAT           Spec INVARIANT AppealsCourtsAreAppellate  HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"}
+c-incompat-pubrights               M_INCOMPAT           Spec INVARIANT PublicRightsOnly           HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"}
+c-incompat-jury                    M_INCOMPAT           Spec INVARIANT JuryAndVenue               HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"} States={S1,S2}
+c-incompat-treason                 M_INCOMPAT           Spec INVARIANT TreasonProof               HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"}
+c-incompat-jeopardy                M_INCOMPAT           Spec INVARIANT NoDoubleJeopardy           HOLDS          Persons={} Cases={x1} CourtIds={SC,c1,c2} Kinds={"Federal","Treason"}
+c-incompat-except                  M_INCOMPAT           Spec INVARIANT ExceptionsHonoured         HOLDS          Persons={} Cases={x1} CourtIds={SC,c1,c2} Kinds={"Federal","Treason"}
+c-incompat-pending                 M_INCOMPAT           Spec INVARIANT ExceptionsBindPending      HOLDS          Persons={} Cases={x1} CourtIds={SC,c1,c2} Kinds={"Federal","Treason"}
+
+# M_DISQUAL: breaks DisqualifiedDoNotSit
+j-disqual-onesc                    M_DISQUAL            Spec INVARIANT OneSupremeCourt            HOLDS          
+j-disqual-estab                    M_DISQUAL            Spec INVARIANT CourtsAreEstablished       HOLDS          
+j-disqual-seats                    M_DISQUAL            Spec INVARIANT BenchFitsSeats             HOLDS          MaxSeats=2
+j-disqual-twocourts                M_DISQUAL            Spec INVARIANT NoJudgeOnTwoCourts         HOLDS          
+j-disqual-incompat                 M_DISQUAL            Spec INVARIANT JudgesAreNotInCongress     HOLDS          
+j-disqual-disqual                  M_DISQUAL            Spec INVARIANT DisqualifiedDoNotSit       COUNTEREXAMPLE 
+j-disqual-chief                    M_DISQUAL            Spec INVARIANT ChiefJusticeSits           HOLDS          
+j-disqual-pay                      M_DISQUAL            Spec INVARIANT CompensationClause         HOLDS          MaxSalary=1
+j-disqual-tenure                   M_DISQUAL            Spec INVARIANT GoodBehaviour              HOLDS          
+c-disqual-original                 M_DISQUAL            Spec INVARIANT OriginalJurisdiction       HOLDS          Persons={} Cases={x1} Kinds={"Federal","StateIsParty"}
+c-disqual-xi                       M_DISQUAL            Spec INVARIANT EleventhAmendment          HOLDS          Persons={} Cases={x1} Kinds={"Federal","AgainstState"}
+c-disqual-appellate                M_DISQUAL            Spec INVARIANT AppealsCourtsAreAppellate  HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"}
+c-disqual-pubrights                M_DISQUAL            Spec INVARIANT PublicRightsOnly           HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"}
+c-disqual-jury                     M_DISQUAL            Spec INVARIANT JuryAndVenue               HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"} States={S1,S2}
+c-disqual-treason                  M_DISQUAL            Spec INVARIANT TreasonProof               HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"}
+c-disqual-jeopardy                 M_DISQUAL            Spec INVARIANT NoDoubleJeopardy           HOLDS          Persons={} Cases={x1} CourtIds={SC,c1,c2} Kinds={"Federal","Treason"}
+c-disqual-except                   M_DISQUAL            Spec INVARIANT ExceptionsHonoured         HOLDS          Persons={} Cases={x1} CourtIds={SC,c1,c2} Kinds={"Federal","Treason"}
+c-disqual-pending                  M_DISQUAL            Spec INVARIANT ExceptionsBindPending      HOLDS          Persons={} Cases={x1} CourtIds={SC,c1,c2} Kinds={"Federal","Treason"}
+
+# M_MARBURY: breaks OriginalJurisdiction
+j-marbury-onesc                    M_MARBURY            Spec INVARIANT OneSupremeCourt            HOLDS          
+j-marbury-estab                    M_MARBURY            Spec INVARIANT CourtsAreEstablished       HOLDS          
+j-marbury-seats                    M_MARBURY            Spec INVARIANT BenchFitsSeats             HOLDS          MaxSeats=2
+j-marbury-twocourts                M_MARBURY            Spec INVARIANT NoJudgeOnTwoCourts         HOLDS          
+j-marbury-incompat                 M_MARBURY            Spec INVARIANT JudgesAreNotInCongress     HOLDS          
+j-marbury-disqual                  M_MARBURY            Spec INVARIANT DisqualifiedDoNotSit       HOLDS          
+j-marbury-chief                    M_MARBURY            Spec INVARIANT ChiefJusticeSits           HOLDS          
+j-marbury-pay                      M_MARBURY            Spec INVARIANT CompensationClause         HOLDS          MaxSalary=1
+j-marbury-tenure                   M_MARBURY            Spec INVARIANT GoodBehaviour              HOLDS          
+c-marbury-original                 M_MARBURY            Spec INVARIANT OriginalJurisdiction       COUNTEREXAMPLE Persons={} Cases={x1} Kinds={"Federal","StateIsParty"}
+c-marbury-xi                       M_MARBURY            Spec INVARIANT EleventhAmendment          HOLDS          Persons={} Cases={x1} Kinds={"Federal","AgainstState"}
+c-marbury-appellate                M_MARBURY            Spec INVARIANT AppealsCourtsAreAppellate  HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"}
+c-marbury-pubrights                M_MARBURY            Spec INVARIANT PublicRightsOnly           HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"}
+c-marbury-jury                     M_MARBURY            Spec INVARIANT JuryAndVenue               HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"} States={S1,S2}
+c-marbury-treason                  M_MARBURY            Spec INVARIANT TreasonProof               HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"}
+c-marbury-jeopardy                 M_MARBURY            Spec INVARIANT NoDoubleJeopardy           HOLDS          Persons={} Cases={x1} CourtIds={SC,c1,c2} Kinds={"Federal","Treason"}
+c-marbury-except                   M_MARBURY            Spec INVARIANT ExceptionsHonoured         HOLDS          Persons={} Cases={x1} CourtIds={SC,c1,c2} Kinds={"Federal","Treason"}
+c-marbury-pending                  M_MARBURY            Spec INVARIANT ExceptionsBindPending      HOLDS          Persons={} Cases={x1} CourtIds={SC,c1,c2} Kinds={"Federal","Treason"}
+
+# M_CHISHOLM: breaks EleventhAmendment
+j-chisholm-onesc                   M_CHISHOLM           Spec INVARIANT OneSupremeCourt            HOLDS          
+j-chisholm-estab                   M_CHISHOLM           Spec INVARIANT CourtsAreEstablished       HOLDS          
+j-chisholm-seats                   M_CHISHOLM           Spec INVARIANT BenchFitsSeats             HOLDS          MaxSeats=2
+j-chisholm-twocourts               M_CHISHOLM           Spec INVARIANT NoJudgeOnTwoCourts         HOLDS          
+j-chisholm-incompat                M_CHISHOLM           Spec INVARIANT JudgesAreNotInCongress     HOLDS          
+j-chisholm-disqual                 M_CHISHOLM           Spec INVARIANT DisqualifiedDoNotSit       HOLDS          
+j-chisholm-chief                   M_CHISHOLM           Spec INVARIANT ChiefJusticeSits           HOLDS          
+j-chisholm-pay                     M_CHISHOLM           Spec INVARIANT CompensationClause         HOLDS          MaxSalary=1
+j-chisholm-tenure                  M_CHISHOLM           Spec INVARIANT GoodBehaviour              HOLDS          
+c-chisholm-original                M_CHISHOLM           Spec INVARIANT OriginalJurisdiction       HOLDS          Persons={} Cases={x1} Kinds={"Federal","StateIsParty"}
+c-chisholm-xi                      M_CHISHOLM           Spec INVARIANT EleventhAmendment          COUNTEREXAMPLE Persons={} Cases={x1} Kinds={"Federal","AgainstState"}
+c-chisholm-appellate               M_CHISHOLM           Spec INVARIANT AppealsCourtsAreAppellate  HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"}
+c-chisholm-pubrights               M_CHISHOLM           Spec INVARIANT PublicRightsOnly           HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"}
+c-chisholm-jury                    M_CHISHOLM           Spec INVARIANT JuryAndVenue               HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"} States={S1,S2}
+c-chisholm-treason                 M_CHISHOLM           Spec INVARIANT TreasonProof               HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"}
+c-chisholm-jeopardy                M_CHISHOLM           Spec INVARIANT NoDoubleJeopardy           HOLDS          Persons={} Cases={x1} CourtIds={SC,c1,c2} Kinds={"Federal","Treason"}
+c-chisholm-except                  M_CHISHOLM           Spec INVARIANT ExceptionsHonoured         HOLDS          Persons={} Cases={x1} CourtIds={SC,c1,c2} Kinds={"Federal","Treason"}
+c-chisholm-pending                 M_CHISHOLM           Spec INVARIANT ExceptionsBindPending      HOLDS          Persons={} Cases={x1} CourtIds={SC,c1,c2} Kinds={"Federal","Treason"}
+
+# M_CIRCUIT: breaks AppealsCourtsAreAppellate
+j-circuit-onesc                    M_CIRCUIT            Spec INVARIANT OneSupremeCourt            HOLDS          
+j-circuit-estab                    M_CIRCUIT            Spec INVARIANT CourtsAreEstablished       HOLDS          
+j-circuit-seats                    M_CIRCUIT            Spec INVARIANT BenchFitsSeats             HOLDS          MaxSeats=2
+j-circuit-twocourts                M_CIRCUIT            Spec INVARIANT NoJudgeOnTwoCourts         HOLDS          
+j-circuit-incompat                 M_CIRCUIT            Spec INVARIANT JudgesAreNotInCongress     HOLDS          
+j-circuit-disqual                  M_CIRCUIT            Spec INVARIANT DisqualifiedDoNotSit       HOLDS          
+j-circuit-chief                    M_CIRCUIT            Spec INVARIANT ChiefJusticeSits           HOLDS          
+j-circuit-pay                      M_CIRCUIT            Spec INVARIANT CompensationClause         HOLDS          MaxSalary=1
+j-circuit-tenure                   M_CIRCUIT            Spec INVARIANT GoodBehaviour              HOLDS          
+c-circuit-original                 M_CIRCUIT            Spec INVARIANT OriginalJurisdiction       HOLDS          Persons={} Cases={x1} Kinds={"Federal","StateIsParty"}
+c-circuit-xi                       M_CIRCUIT            Spec INVARIANT EleventhAmendment          HOLDS          Persons={} Cases={x1} Kinds={"Federal","AgainstState"}
+c-circuit-appellate                M_CIRCUIT            Spec INVARIANT AppealsCourtsAreAppellate  COUNTEREXAMPLE Persons={} Cases={x1} Kinds={"Federal","Treason"}
+c-circuit-pubrights                M_CIRCUIT            Spec INVARIANT PublicRightsOnly           HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"}
+c-circuit-jury                     M_CIRCUIT            Spec INVARIANT JuryAndVenue               HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"} States={S1,S2}
+c-circuit-treason                  M_CIRCUIT            Spec INVARIANT TreasonProof               HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"}
+c-circuit-jeopardy                 M_CIRCUIT            Spec INVARIANT NoDoubleJeopardy           HOLDS          Persons={} Cases={x1} CourtIds={SC,c1,c2} Kinds={"Federal","Treason"}
+c-circuit-except                   M_CIRCUIT            Spec INVARIANT ExceptionsHonoured         HOLDS          Persons={} Cases={x1} CourtIds={SC,c1,c2} Kinds={"Federal","Treason"}
+c-circuit-pending                  M_CIRCUIT            Spec INVARIANT ExceptionsBindPending      HOLDS          Persons={} Cases={x1} CourtIds={SC,c1,c2} Kinds={"Federal","Treason"}
+
+# M_NORTHERN_PIPELINE: breaks PublicRightsOnly
+j-northernpipeline-onesc           M_NORTHERN_PIPELINE  Spec INVARIANT OneSupremeCourt            HOLDS          
+j-northernpipeline-estab           M_NORTHERN_PIPELINE  Spec INVARIANT CourtsAreEstablished       HOLDS          
+j-northernpipeline-seats           M_NORTHERN_PIPELINE  Spec INVARIANT BenchFitsSeats             HOLDS          MaxSeats=2
+j-northernpipeline-twocourts       M_NORTHERN_PIPELINE  Spec INVARIANT NoJudgeOnTwoCourts         HOLDS          
+j-northernpipeline-incompat        M_NORTHERN_PIPELINE  Spec INVARIANT JudgesAreNotInCongress     HOLDS          
+j-northernpipeline-disqual         M_NORTHERN_PIPELINE  Spec INVARIANT DisqualifiedDoNotSit       HOLDS          
+j-northernpipeline-chief           M_NORTHERN_PIPELINE  Spec INVARIANT ChiefJusticeSits           HOLDS          
+j-northernpipeline-pay             M_NORTHERN_PIPELINE  Spec INVARIANT CompensationClause         HOLDS          MaxSalary=1
+j-northernpipeline-tenure          M_NORTHERN_PIPELINE  Spec INVARIANT GoodBehaviour              HOLDS          
+c-northernpipeline-original        M_NORTHERN_PIPELINE  Spec INVARIANT OriginalJurisdiction       HOLDS          Persons={} Cases={x1} Kinds={"Federal","StateIsParty"}
+c-northernpipeline-xi              M_NORTHERN_PIPELINE  Spec INVARIANT EleventhAmendment          HOLDS          Persons={} Cases={x1} Kinds={"Federal","AgainstState"}
+c-northernpipeline-appellate       M_NORTHERN_PIPELINE  Spec INVARIANT AppealsCourtsAreAppellate  HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"}
+c-northernpipeline-pubrights       M_NORTHERN_PIPELINE  Spec INVARIANT PublicRightsOnly           COUNTEREXAMPLE Persons={} Cases={x1} Kinds={"Federal","Treason"}
+c-northernpipeline-jury            M_NORTHERN_PIPELINE  Spec INVARIANT JuryAndVenue               HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"} States={S1,S2}
+c-northernpipeline-treason         M_NORTHERN_PIPELINE  Spec INVARIANT TreasonProof               HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"}
+c-northernpipeline-jeopardy        M_NORTHERN_PIPELINE  Spec INVARIANT NoDoubleJeopardy           HOLDS          Persons={} Cases={x1} CourtIds={SC,c1,c2} Kinds={"Federal","Treason"}
+c-northernpipeline-except          M_NORTHERN_PIPELINE  Spec INVARIANT ExceptionsHonoured         HOLDS          Persons={} Cases={x1} CourtIds={SC,c1,c2} Kinds={"Federal","Treason"}
+c-northernpipeline-pending         M_NORTHERN_PIPELINE  Spec INVARIANT ExceptionsBindPending      HOLDS          Persons={} Cases={x1} CourtIds={SC,c1,c2} Kinds={"Federal","Treason"}
+
+# M_NOJURY: breaks JuryAndVenue
+j-nojury-onesc                     M_NOJURY             Spec INVARIANT OneSupremeCourt            HOLDS          
+j-nojury-estab                     M_NOJURY             Spec INVARIANT CourtsAreEstablished       HOLDS          
+j-nojury-seats                     M_NOJURY             Spec INVARIANT BenchFitsSeats             HOLDS          MaxSeats=2
+j-nojury-twocourts                 M_NOJURY             Spec INVARIANT NoJudgeOnTwoCourts         HOLDS          
+j-nojury-incompat                  M_NOJURY             Spec INVARIANT JudgesAreNotInCongress     HOLDS          
+j-nojury-disqual                   M_NOJURY             Spec INVARIANT DisqualifiedDoNotSit       HOLDS          
+j-nojury-chief                     M_NOJURY             Spec INVARIANT ChiefJusticeSits           HOLDS          
+j-nojury-pay                       M_NOJURY             Spec INVARIANT CompensationClause         HOLDS          MaxSalary=1
+j-nojury-tenure                    M_NOJURY             Spec INVARIANT GoodBehaviour              HOLDS          
+c-nojury-original                  M_NOJURY             Spec INVARIANT OriginalJurisdiction       HOLDS          Persons={} Cases={x1} Kinds={"Federal","StateIsParty"}
+c-nojury-xi                        M_NOJURY             Spec INVARIANT EleventhAmendment          HOLDS          Persons={} Cases={x1} Kinds={"Federal","AgainstState"}
+c-nojury-appellate                 M_NOJURY             Spec INVARIANT AppealsCourtsAreAppellate  HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"}
+c-nojury-pubrights                 M_NOJURY             Spec INVARIANT PublicRightsOnly           HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"}
+c-nojury-jury                      M_NOJURY             Spec INVARIANT JuryAndVenue               COUNTEREXAMPLE Persons={} Cases={x1} Kinds={"Federal","Treason"} States={S1,S2}
+c-nojury-treason                   M_NOJURY             Spec INVARIANT TreasonProof               HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"}
+c-nojury-jeopardy                  M_NOJURY             Spec INVARIANT NoDoubleJeopardy           HOLDS          Persons={} Cases={x1} CourtIds={SC,c1,c2} Kinds={"Federal","Treason"}
+c-nojury-except                    M_NOJURY             Spec INVARIANT ExceptionsHonoured         HOLDS          Persons={} Cases={x1} CourtIds={SC,c1,c2} Kinds={"Federal","Treason"}
+c-nojury-pending                   M_NOJURY             Spec INVARIANT ExceptionsBindPending      HOLDS          Persons={} Cases={x1} CourtIds={SC,c1,c2} Kinds={"Federal","Treason"}
+
+# M_VENUE: breaks JuryAndVenue
+j-venue-onesc                      M_VENUE              Spec INVARIANT OneSupremeCourt            HOLDS          
+j-venue-estab                      M_VENUE              Spec INVARIANT CourtsAreEstablished       HOLDS          
+j-venue-seats                      M_VENUE              Spec INVARIANT BenchFitsSeats             HOLDS          MaxSeats=2
+j-venue-twocourts                  M_VENUE              Spec INVARIANT NoJudgeOnTwoCourts         HOLDS          
+j-venue-incompat                   M_VENUE              Spec INVARIANT JudgesAreNotInCongress     HOLDS          
+j-venue-disqual                    M_VENUE              Spec INVARIANT DisqualifiedDoNotSit       HOLDS          
+j-venue-chief                      M_VENUE              Spec INVARIANT ChiefJusticeSits           HOLDS          
+j-venue-pay                        M_VENUE              Spec INVARIANT CompensationClause         HOLDS          MaxSalary=1
+j-venue-tenure                     M_VENUE              Spec INVARIANT GoodBehaviour              HOLDS          
+c-venue-original                   M_VENUE              Spec INVARIANT OriginalJurisdiction       HOLDS          Persons={} Cases={x1} Kinds={"Federal","StateIsParty"}
+c-venue-xi                         M_VENUE              Spec INVARIANT EleventhAmendment          HOLDS          Persons={} Cases={x1} Kinds={"Federal","AgainstState"}
+c-venue-appellate                  M_VENUE              Spec INVARIANT AppealsCourtsAreAppellate  HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"}
+c-venue-pubrights                  M_VENUE              Spec INVARIANT PublicRightsOnly           HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"}
+c-venue-jury                       M_VENUE              Spec INVARIANT JuryAndVenue               COUNTEREXAMPLE Persons={} Cases={x1} Kinds={"Federal","Treason"} States={S1,S2}
+c-venue-treason                    M_VENUE              Spec INVARIANT TreasonProof               HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"}
+c-venue-jeopardy                   M_VENUE              Spec INVARIANT NoDoubleJeopardy           HOLDS          Persons={} Cases={x1} CourtIds={SC,c1,c2} Kinds={"Federal","Treason"}
+c-venue-except                     M_VENUE              Spec INVARIANT ExceptionsHonoured         HOLDS          Persons={} Cases={x1} CourtIds={SC,c1,c2} Kinds={"Federal","Treason"}
+c-venue-pending                    M_VENUE              Spec INVARIANT ExceptionsBindPending      HOLDS          Persons={} Cases={x1} CourtIds={SC,c1,c2} Kinds={"Federal","Treason"}
+
+# M_TREASON: breaks TreasonProof
+j-treason-onesc                    M_TREASON            Spec INVARIANT OneSupremeCourt            HOLDS          
+j-treason-estab                    M_TREASON            Spec INVARIANT CourtsAreEstablished       HOLDS          
+j-treason-seats                    M_TREASON            Spec INVARIANT BenchFitsSeats             HOLDS          MaxSeats=2
+j-treason-twocourts                M_TREASON            Spec INVARIANT NoJudgeOnTwoCourts         HOLDS          
+j-treason-incompat                 M_TREASON            Spec INVARIANT JudgesAreNotInCongress     HOLDS          
+j-treason-disqual                  M_TREASON            Spec INVARIANT DisqualifiedDoNotSit       HOLDS          
+j-treason-chief                    M_TREASON            Spec INVARIANT ChiefJusticeSits           HOLDS          
+j-treason-pay                      M_TREASON            Spec INVARIANT CompensationClause         HOLDS          MaxSalary=1
+j-treason-tenure                   M_TREASON            Spec INVARIANT GoodBehaviour              HOLDS          
+c-treason-original                 M_TREASON            Spec INVARIANT OriginalJurisdiction       HOLDS          Persons={} Cases={x1} Kinds={"Federal","StateIsParty"}
+c-treason-xi                       M_TREASON            Spec INVARIANT EleventhAmendment          HOLDS          Persons={} Cases={x1} Kinds={"Federal","AgainstState"}
+c-treason-appellate                M_TREASON            Spec INVARIANT AppealsCourtsAreAppellate  HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"}
+c-treason-pubrights                M_TREASON            Spec INVARIANT PublicRightsOnly           HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"}
+c-treason-jury                     M_TREASON            Spec INVARIANT JuryAndVenue               HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"} States={S1,S2}
+c-treason-treason                  M_TREASON            Spec INVARIANT TreasonProof               COUNTEREXAMPLE Persons={} Cases={x1} Kinds={"Federal","Treason"}
+c-treason-jeopardy                 M_TREASON            Spec INVARIANT NoDoubleJeopardy           HOLDS          Persons={} Cases={x1} CourtIds={SC,c1,c2} Kinds={"Federal","Treason"}
+c-treason-except                   M_TREASON            Spec INVARIANT ExceptionsHonoured         HOLDS          Persons={} Cases={x1} CourtIds={SC,c1,c2} Kinds={"Federal","Treason"}
+c-treason-pending                  M_TREASON            Spec INVARIANT ExceptionsBindPending      HOLDS          Persons={} Cases={x1} CourtIds={SC,c1,c2} Kinds={"Federal","Treason"}
+
+# M_KEPNER: breaks NoDoubleJeopardy
+j-kepner-onesc                     M_KEPNER             Spec INVARIANT OneSupremeCourt            HOLDS          
+j-kepner-estab                     M_KEPNER             Spec INVARIANT CourtsAreEstablished       HOLDS          
+j-kepner-seats                     M_KEPNER             Spec INVARIANT BenchFitsSeats             HOLDS          MaxSeats=2
+j-kepner-twocourts                 M_KEPNER             Spec INVARIANT NoJudgeOnTwoCourts         HOLDS          
+j-kepner-incompat                  M_KEPNER             Spec INVARIANT JudgesAreNotInCongress     HOLDS          
+j-kepner-disqual                   M_KEPNER             Spec INVARIANT DisqualifiedDoNotSit       HOLDS          
+j-kepner-chief                     M_KEPNER             Spec INVARIANT ChiefJusticeSits           HOLDS          
+j-kepner-pay                       M_KEPNER             Spec INVARIANT CompensationClause         HOLDS          MaxSalary=1
+j-kepner-tenure                    M_KEPNER             Spec INVARIANT GoodBehaviour              HOLDS          
+c-kepner-original                  M_KEPNER             Spec INVARIANT OriginalJurisdiction       HOLDS          Persons={} Cases={x1} Kinds={"Federal","StateIsParty"}
+c-kepner-xi                        M_KEPNER             Spec INVARIANT EleventhAmendment          HOLDS          Persons={} Cases={x1} Kinds={"Federal","AgainstState"}
+c-kepner-appellate                 M_KEPNER             Spec INVARIANT AppealsCourtsAreAppellate  HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"}
+c-kepner-pubrights                 M_KEPNER             Spec INVARIANT PublicRightsOnly           HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"}
+c-kepner-jury                      M_KEPNER             Spec INVARIANT JuryAndVenue               HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"} States={S1,S2}
+c-kepner-treason                   M_KEPNER             Spec INVARIANT TreasonProof               HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"}
+c-kepner-jeopardy                  M_KEPNER             Spec INVARIANT NoDoubleJeopardy           COUNTEREXAMPLE Persons={} Cases={x1} CourtIds={SC,c1,c2} Kinds={"Federal","Treason"}
+c-kepner-except                    M_KEPNER             Spec INVARIANT ExceptionsHonoured         HOLDS          Persons={} Cases={x1} CourtIds={SC,c1,c2} Kinds={"Federal","Treason"}
+c-kepner-pending                   M_KEPNER             Spec INVARIANT ExceptionsBindPending      HOLDS          Persons={} Cases={x1} CourtIds={SC,c1,c2} Kinds={"Federal","Treason"}
+
+# M_EXCEPTIONS: breaks ExceptionsHonoured
+j-exceptions-onesc                 M_EXCEPTIONS         Spec INVARIANT OneSupremeCourt            HOLDS          
+j-exceptions-estab                 M_EXCEPTIONS         Spec INVARIANT CourtsAreEstablished       HOLDS          
+j-exceptions-seats                 M_EXCEPTIONS         Spec INVARIANT BenchFitsSeats             HOLDS          MaxSeats=2
+j-exceptions-twocourts             M_EXCEPTIONS         Spec INVARIANT NoJudgeOnTwoCourts         HOLDS          
+j-exceptions-incompat              M_EXCEPTIONS         Spec INVARIANT JudgesAreNotInCongress     HOLDS          
+j-exceptions-disqual               M_EXCEPTIONS         Spec INVARIANT DisqualifiedDoNotSit       HOLDS          
+j-exceptions-chief                 M_EXCEPTIONS         Spec INVARIANT ChiefJusticeSits           HOLDS          
+j-exceptions-pay                   M_EXCEPTIONS         Spec INVARIANT CompensationClause         HOLDS          MaxSalary=1
+j-exceptions-tenure                M_EXCEPTIONS         Spec INVARIANT GoodBehaviour              HOLDS          
+c-exceptions-original              M_EXCEPTIONS         Spec INVARIANT OriginalJurisdiction       HOLDS          Persons={} Cases={x1} Kinds={"Federal","StateIsParty"}
+c-exceptions-xi                    M_EXCEPTIONS         Spec INVARIANT EleventhAmendment          HOLDS          Persons={} Cases={x1} Kinds={"Federal","AgainstState"}
+c-exceptions-appellate             M_EXCEPTIONS         Spec INVARIANT AppealsCourtsAreAppellate  HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"}
+c-exceptions-pubrights             M_EXCEPTIONS         Spec INVARIANT PublicRightsOnly           HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"}
+c-exceptions-jury                  M_EXCEPTIONS         Spec INVARIANT JuryAndVenue               HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"} States={S1,S2}
+c-exceptions-treason               M_EXCEPTIONS         Spec INVARIANT TreasonProof               HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"}
+c-exceptions-jeopardy              M_EXCEPTIONS         Spec INVARIANT NoDoubleJeopardy           HOLDS          Persons={} Cases={x1} CourtIds={SC,c1,c2} Kinds={"Federal","Treason"}
+c-exceptions-except                M_EXCEPTIONS         Spec INVARIANT ExceptionsHonoured         COUNTEREXAMPLE Persons={} Cases={x1} CourtIds={SC,c1,c2} Kinds={"Federal","Treason"}
+c-exceptions-pending               M_EXCEPTIONS         Spec INVARIANT ExceptionsBindPending      HOLDS          Persons={} Cases={x1} CourtIds={SC,c1,c2} Kinds={"Federal","Treason"}
+
+# M_MCCARDLE: breaks ExceptionsBindPending
+j-mccardle-onesc                   M_MCCARDLE           Spec INVARIANT OneSupremeCourt            HOLDS          
+j-mccardle-estab                   M_MCCARDLE           Spec INVARIANT CourtsAreEstablished       HOLDS          
+j-mccardle-seats                   M_MCCARDLE           Spec INVARIANT BenchFitsSeats             HOLDS          MaxSeats=2
+j-mccardle-twocourts               M_MCCARDLE           Spec INVARIANT NoJudgeOnTwoCourts         HOLDS          
+j-mccardle-incompat                M_MCCARDLE           Spec INVARIANT JudgesAreNotInCongress     HOLDS          
+j-mccardle-disqual                 M_MCCARDLE           Spec INVARIANT DisqualifiedDoNotSit       HOLDS          
+j-mccardle-chief                   M_MCCARDLE           Spec INVARIANT ChiefJusticeSits           HOLDS          
+j-mccardle-pay                     M_MCCARDLE           Spec INVARIANT CompensationClause         HOLDS          MaxSalary=1
+j-mccardle-tenure                  M_MCCARDLE           Spec INVARIANT GoodBehaviour              HOLDS          
+c-mccardle-original                M_MCCARDLE           Spec INVARIANT OriginalJurisdiction       HOLDS          Persons={} Cases={x1} Kinds={"Federal","StateIsParty"}
+c-mccardle-xi                      M_MCCARDLE           Spec INVARIANT EleventhAmendment          HOLDS          Persons={} Cases={x1} Kinds={"Federal","AgainstState"}
+c-mccardle-appellate               M_MCCARDLE           Spec INVARIANT AppealsCourtsAreAppellate  HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"}
+c-mccardle-pubrights               M_MCCARDLE           Spec INVARIANT PublicRightsOnly           HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"}
+c-mccardle-jury                    M_MCCARDLE           Spec INVARIANT JuryAndVenue               HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"} States={S1,S2}
+c-mccardle-treason                 M_MCCARDLE           Spec INVARIANT TreasonProof               HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"}
+c-mccardle-jeopardy                M_MCCARDLE           Spec INVARIANT NoDoubleJeopardy           HOLDS          Persons={} Cases={x1} CourtIds={SC,c1,c2} Kinds={"Federal","Treason"}
+c-mccardle-except                  M_MCCARDLE           Spec INVARIANT ExceptionsHonoured         HOLDS          Persons={} Cases={x1} CourtIds={SC,c1,c2} Kinds={"Federal","Treason"}
+c-mccardle-pending                 M_MCCARDLE           Spec INVARIANT ExceptionsBindPending      COUNTEREXAMPLE Persons={} Cases={x1} CourtIds={SC,c1,c2} Kinds={"Federal","Treason"}
+
+# M_PAYCUT: breaks CompensationClause
+j-paycut-onesc                     M_PAYCUT             Spec INVARIANT OneSupremeCourt            HOLDS          MaxSalary=1
+j-paycut-estab                     M_PAYCUT             Spec INVARIANT CourtsAreEstablished       HOLDS          MaxSalary=1
+j-paycut-seats                     M_PAYCUT             Spec INVARIANT BenchFitsSeats             HOLDS          MaxSeats=2 MaxSalary=1
+j-paycut-twocourts                 M_PAYCUT             Spec INVARIANT NoJudgeOnTwoCourts         HOLDS          MaxSalary=1
+j-paycut-incompat                  M_PAYCUT             Spec INVARIANT JudgesAreNotInCongress     HOLDS          MaxSalary=1
+j-paycut-disqual                   M_PAYCUT             Spec INVARIANT DisqualifiedDoNotSit       HOLDS          MaxSalary=1
+j-paycut-chief                     M_PAYCUT             Spec INVARIANT ChiefJusticeSits           HOLDS          MaxSalary=1
+j-paycut-pay                       M_PAYCUT             Spec INVARIANT CompensationClause         COUNTEREXAMPLE MaxSalary=1
+j-paycut-tenure                    M_PAYCUT             Spec INVARIANT GoodBehaviour              HOLDS          MaxSalary=1
+c-paycut-original                  M_PAYCUT             Spec INVARIANT OriginalJurisdiction       HOLDS          Persons={} Cases={x1} Kinds={"Federal","StateIsParty"}
+c-paycut-xi                        M_PAYCUT             Spec INVARIANT EleventhAmendment          HOLDS          Persons={} Cases={x1} Kinds={"Federal","AgainstState"}
+c-paycut-appellate                 M_PAYCUT             Spec INVARIANT AppealsCourtsAreAppellate  HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"}
+c-paycut-pubrights                 M_PAYCUT             Spec INVARIANT PublicRightsOnly           HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"}
+c-paycut-jury                      M_PAYCUT             Spec INVARIANT JuryAndVenue               HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"} States={S1,S2}
+c-paycut-treason                   M_PAYCUT             Spec INVARIANT TreasonProof               HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"}
+c-paycut-jeopardy                  M_PAYCUT             Spec INVARIANT NoDoubleJeopardy           HOLDS          Persons={} Cases={x1} CourtIds={SC,c1,c2} Kinds={"Federal","Treason"}
+c-paycut-except                    M_PAYCUT             Spec INVARIANT ExceptionsHonoured         HOLDS          Persons={} Cases={x1} CourtIds={SC,c1,c2} Kinds={"Federal","Treason"}
+c-paycut-pending                   M_PAYCUT             Spec INVARIANT ExceptionsBindPending      HOLDS          Persons={} Cases={x1} CourtIds={SC,c1,c2} Kinds={"Federal","Treason"}
+
+# M_TENURE: breaks ChiefJusticeSits, GoodBehaviour
+j-tenure-onesc                     M_TENURE             Spec INVARIANT OneSupremeCourt            HOLDS          
+j-tenure-estab                     M_TENURE             Spec INVARIANT CourtsAreEstablished       HOLDS          
+j-tenure-seats                     M_TENURE             Spec INVARIANT BenchFitsSeats             HOLDS          MaxSeats=2
+j-tenure-twocourts                 M_TENURE             Spec INVARIANT NoJudgeOnTwoCourts         HOLDS          
+j-tenure-incompat                  M_TENURE             Spec INVARIANT JudgesAreNotInCongress     HOLDS          
+j-tenure-disqual                   M_TENURE             Spec INVARIANT DisqualifiedDoNotSit       HOLDS          
+j-tenure-chief                     M_TENURE             Spec INVARIANT ChiefJusticeSits           COUNTEREXAMPLE 
+j-tenure-pay                       M_TENURE             Spec INVARIANT CompensationClause         HOLDS          MaxSalary=1
+j-tenure-tenure                    M_TENURE             Spec INVARIANT GoodBehaviour              COUNTEREXAMPLE 
+c-tenure-original                  M_TENURE             Spec INVARIANT OriginalJurisdiction       HOLDS          Persons={} Cases={x1} Kinds={"Federal","StateIsParty"}
+c-tenure-xi                        M_TENURE             Spec INVARIANT EleventhAmendment          HOLDS          Persons={} Cases={x1} Kinds={"Federal","AgainstState"}
+c-tenure-appellate                 M_TENURE             Spec INVARIANT AppealsCourtsAreAppellate  HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"}
+c-tenure-pubrights                 M_TENURE             Spec INVARIANT PublicRightsOnly           HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"}
+c-tenure-jury                      M_TENURE             Spec INVARIANT JuryAndVenue               HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"} States={S1,S2}
+c-tenure-treason                   M_TENURE             Spec INVARIANT TreasonProof               HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"}
+c-tenure-jeopardy                  M_TENURE             Spec INVARIANT NoDoubleJeopardy           HOLDS          Persons={} Cases={x1} CourtIds={SC,c1,c2} Kinds={"Federal","Treason"}
+c-tenure-except                    M_TENURE             Spec INVARIANT ExceptionsHonoured         HOLDS          Persons={} Cases={x1} CourtIds={SC,c1,c2} Kinds={"Federal","Treason"}
+c-tenure-pending                   M_TENURE             Spec INVARIANT ExceptionsBindPending      HOLDS          Persons={} Cases={x1} CourtIds={SC,c1,c2} Kinds={"Federal","Treason"}
+
+# M_NOIMPEACH: breaks GoodBehaviour
+j-noimpeach-onesc                  M_NOIMPEACH          Spec INVARIANT OneSupremeCourt            HOLDS          
+j-noimpeach-estab                  M_NOIMPEACH          Spec INVARIANT CourtsAreEstablished       HOLDS          
+j-noimpeach-seats                  M_NOIMPEACH          Spec INVARIANT BenchFitsSeats             HOLDS          MaxSeats=2
+j-noimpeach-twocourts              M_NOIMPEACH          Spec INVARIANT NoJudgeOnTwoCourts         HOLDS          
+j-noimpeach-incompat               M_NOIMPEACH          Spec INVARIANT JudgesAreNotInCongress     HOLDS          
+j-noimpeach-disqual                M_NOIMPEACH          Spec INVARIANT DisqualifiedDoNotSit       HOLDS          
+j-noimpeach-chief                  M_NOIMPEACH          Spec INVARIANT ChiefJusticeSits           HOLDS          
+j-noimpeach-pay                    M_NOIMPEACH          Spec INVARIANT CompensationClause         HOLDS          MaxSalary=1
+j-noimpeach-tenure                 M_NOIMPEACH          Spec INVARIANT GoodBehaviour              COUNTEREXAMPLE 
+c-noimpeach-original               M_NOIMPEACH          Spec INVARIANT OriginalJurisdiction       HOLDS          Persons={} Cases={x1} Kinds={"Federal","StateIsParty"}
+c-noimpeach-xi                     M_NOIMPEACH          Spec INVARIANT EleventhAmendment          HOLDS          Persons={} Cases={x1} Kinds={"Federal","AgainstState"}
+c-noimpeach-appellate              M_NOIMPEACH          Spec INVARIANT AppealsCourtsAreAppellate  HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"}
+c-noimpeach-pubrights              M_NOIMPEACH          Spec INVARIANT PublicRightsOnly           HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"}
+c-noimpeach-jury                   M_NOIMPEACH          Spec INVARIANT JuryAndVenue               HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"} States={S1,S2}
+c-noimpeach-treason                M_NOIMPEACH          Spec INVARIANT TreasonProof               HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"}
+c-noimpeach-jeopardy               M_NOIMPEACH          Spec INVARIANT NoDoubleJeopardy           HOLDS          Persons={} Cases={x1} CourtIds={SC,c1,c2} Kinds={"Federal","Treason"}
+c-noimpeach-except                 M_NOIMPEACH          Spec INVARIANT ExceptionsHonoured         HOLDS          Persons={} Cases={x1} CourtIds={SC,c1,c2} Kinds={"Federal","Treason"}
+c-noimpeach-pending                M_NOIMPEACH          Spec INVARIANT ExceptionsBindPending      HOLDS          Persons={} Cases={x1} CourtIds={SC,c1,c2} Kinds={"Federal","Treason"}
+
+# M_CHASE: breaks GoodBehaviour
+j-chase-onesc                      M_CHASE              Spec INVARIANT OneSupremeCourt            HOLDS          Senate={s1,s2,s3,s4,s5}
+j-chase-estab                      M_CHASE              Spec INVARIANT CourtsAreEstablished       HOLDS          Senate={s1,s2,s3,s4,s5}
+j-chase-seats                      M_CHASE              Spec INVARIANT BenchFitsSeats             HOLDS          MaxSeats=2 Senate={s1,s2,s3,s4,s5}
+j-chase-twocourts                  M_CHASE              Spec INVARIANT NoJudgeOnTwoCourts         HOLDS          Senate={s1,s2,s3,s4,s5}
+j-chase-incompat                   M_CHASE              Spec INVARIANT JudgesAreNotInCongress     HOLDS          Senate={s1,s2,s3,s4,s5}
+j-chase-disqual                    M_CHASE              Spec INVARIANT DisqualifiedDoNotSit       HOLDS          Senate={s1,s2,s3,s4,s5}
+j-chase-chief                      M_CHASE              Spec INVARIANT ChiefJusticeSits           HOLDS          Senate={s1,s2,s3,s4,s5}
+j-chase-pay                        M_CHASE              Spec INVARIANT CompensationClause         HOLDS          MaxSalary=1 Senate={s1,s2,s3,s4,s5}
+j-chase-tenure                     M_CHASE              Spec INVARIANT GoodBehaviour              COUNTEREXAMPLE Senate={s1,s2,s3,s4,s5}
+c-chase-original                   M_CHASE              Spec INVARIANT OriginalJurisdiction       HOLDS          Persons={} Cases={x1} Kinds={"Federal","StateIsParty"}
+c-chase-xi                         M_CHASE              Spec INVARIANT EleventhAmendment          HOLDS          Persons={} Cases={x1} Kinds={"Federal","AgainstState"}
+c-chase-appellate                  M_CHASE              Spec INVARIANT AppealsCourtsAreAppellate  HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"}
+c-chase-pubrights                  M_CHASE              Spec INVARIANT PublicRightsOnly           HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"}
+c-chase-jury                       M_CHASE              Spec INVARIANT JuryAndVenue               HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"} States={S1,S2}
+c-chase-treason                    M_CHASE              Spec INVARIANT TreasonProof               HOLDS          Persons={} Cases={x1} Kinds={"Federal","Treason"}
+c-chase-jeopardy                   M_CHASE              Spec INVARIANT NoDoubleJeopardy           HOLDS          Persons={} Cases={x1} CourtIds={SC,c1,c2} Kinds={"Federal","Treason"}
+c-chase-except                     M_CHASE              Spec INVARIANT ExceptionsHonoured         HOLDS          Persons={} Cases={x1} CourtIds={SC,c1,c2} Kinds={"Federal","Treason"}
+c-chase-pending                    M_CHASE              Spec INVARIANT ExceptionsBindPending      HOLDS          Persons={} Cases={x1} CourtIds={SC,c1,c2} Kinds={"Federal","Treason"}

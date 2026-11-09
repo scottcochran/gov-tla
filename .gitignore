@@ -4,8 +4,17 @@ states/
 metadir/
 *.old
 
-# Locally installed TLA+ tools (see install-tla.sh)
-tools/
+# Locally installed TLA+ tools (install-tla.sh, tools/install-tlaps.sh). The pins
+# and wrappers in tools/ are tracked; the binaries are not.
+tools/tla2tools.jar
+tools/tlaps-*/
+
+# Trace files TLC writes beside a module after a counterexample
+*_TTrace_*.tla
+*_TTrace_*.bin
+
+# Prover cache
+.tlacache/
 
 # Python (uv)
 .venv/

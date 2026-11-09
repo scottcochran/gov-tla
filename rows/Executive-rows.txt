@@ -1,0 +1,266 @@
+# Rows for scripts/tlc_rows.py: name mut spec kind property expected [KEY=value ...]
+# module: Executive
+# title: Executive.tla - Article II and the administrative state
+# expected: Mut = "none" HOLDS on every safety property, on Safety and on TypeOK, and reaches no deadlock.
+# expected: Each mutation is COUNTEREXAMPLE on exactly the properties the module header says it breaks and HOLDS on every other:
+# expected: M_SAMEPERSON breaks OneExecutive and Disqualification; M_NOVP OneExecutive; M_PLACEMEN Incompatibility;
+# expected: M_DISQUAL Disqualification; M_ACTWHILEFILLED ActingIsNotHead; M_PREFVRA ActingIsTemporary;
+# expected: M_FECA NoCongressionalAppointment; M_GRH ExecutionIsExecutive and CongressDoesNotRemoveExecutors;
+# expected: M_JOINTRES CongressDoesNotRemoveExecutors; M_HUMPHREY UnitaryExecutive; M_DANBY and M_STATECRIME PardonScope;
+# expected: M_PREROGATIVE WarIsCongressional; M_AUG6 TreatiesByTwoThirds.
+# expected: Every Never... witness is COUNTEREXAMPLE under none (state witnesses as INVARIANT rows, step witnesses as PROPERTY rows).
+# expected: ActingEventuallyEnds HOLDS under SpecLive at ActingLimit = 1 and 2 and is COUNTEREXAMPLE under SpecNoClock and SpecNoLimit;
+# expected: NoBehaviour is COUNTEREXAMPLE under SpecLive at both, so the fair spec has behaviours.
+# expected: Rows whose mutation or property concerns treaties (M_AUG6, TreatiesByTwoThirds, NeverTreaty, Safety, TypeOK) run with Treaties = {t1};
+# expected: M_PREFVRA rows run under constraint DaysBound (acting days <= ActingLimit + 1), its day count being otherwise unbounded.
+# const: Persons = {sen, f, g, o}
+# const: House = {}
+# const: Senate = {sen}
+# const: Eligible = {f, g}
+# const: Agencies = {a1}
+# const: Treaties = {}
+# const: ActingLimit = 1
+# const: NoOne = NoOne
+# cfg: CONSTANT Charters <- KnownCharters
+
+# Mut = none: every property, Safety, TypeOK, deadlock audit
+x-none-oneexec none Spec INVARIANT OneExecutive HOLDS
+x-none-incompat none Spec INVARIANT Incompatibility HOLDS
+x-none-disqual none Spec INVARIANT Disqualification HOLDS
+x-none-actnothead none Spec INVARIANT ActingIsNotHead HOLDS
+x-none-acttemp none Spec INVARIANT ActingIsTemporary HOLDS
+x-none-noappoint none Spec INVARIANT NoCongressionalAppointment HOLDS
+x-none-execexec none Spec INVARIANT ExecutionIsExecutive HOLDS
+x-none-unitary none Spec INVARIANT UnitaryExecutive HOLDS
+x-none-pardon none Spec INVARIANT PardonScope HOLDS
+x-none-war none Spec INVARIANT WarIsCongressional HOLDS
+x-none-noremove none Spec INVARIANT CongressDoesNotRemoveExecutors HOLDS
+x-none-treaty none Spec INVARIANT TreatiesByTwoThirds HOLDS Treaties={t1}
+x-none-safety none Spec INVARIANT Safety HOLDS Treaties={t1}
+x-none-typeok none Spec INVARIANT TypeOK HOLDS Treaties={t1}
+x-none-deadlock none Spec DEADLOCK Safety HOLDS Treaties={t1}
+
+# M_SAMEPERSON: breaks OneExecutive, Disqualification; holds on the rest
+x-sameperson-oneexec M_SAMEPERSON Spec INVARIANT OneExecutive COUNTEREXAMPLE
+x-sameperson-incompat M_SAMEPERSON Spec INVARIANT Incompatibility HOLDS
+x-sameperson-disqual M_SAMEPERSON Spec INVARIANT Disqualification COUNTEREXAMPLE
+x-sameperson-actnothead M_SAMEPERSON Spec INVARIANT ActingIsNotHead HOLDS
+x-sameperson-acttemp M_SAMEPERSON Spec INVARIANT ActingIsTemporary HOLDS
+x-sameperson-noappoint M_SAMEPERSON Spec INVARIANT NoCongressionalAppointment HOLDS
+x-sameperson-execexec M_SAMEPERSON Spec INVARIANT ExecutionIsExecutive HOLDS
+x-sameperson-unitary M_SAMEPERSON Spec INVARIANT UnitaryExecutive HOLDS
+x-sameperson-pardon M_SAMEPERSON Spec INVARIANT PardonScope HOLDS
+x-sameperson-war M_SAMEPERSON Spec INVARIANT WarIsCongressional HOLDS
+x-sameperson-noremove M_SAMEPERSON Spec INVARIANT CongressDoesNotRemoveExecutors HOLDS
+x-sameperson-treaty M_SAMEPERSON Spec INVARIANT TreatiesByTwoThirds HOLDS Treaties={t1}
+
+# M_NOVP: breaks OneExecutive; holds on the rest
+x-novp-oneexec M_NOVP Spec INVARIANT OneExecutive COUNTEREXAMPLE
+x-novp-incompat M_NOVP Spec INVARIANT Incompatibility HOLDS
+x-novp-disqual M_NOVP Spec INVARIANT Disqualification HOLDS
+x-novp-actnothead M_NOVP Spec INVARIANT ActingIsNotHead HOLDS
+x-novp-acttemp M_NOVP Spec INVARIANT ActingIsTemporary HOLDS
+x-novp-noappoint M_NOVP Spec INVARIANT NoCongressionalAppointment HOLDS
+x-novp-execexec M_NOVP Spec INVARIANT ExecutionIsExecutive HOLDS
+x-novp-unitary M_NOVP Spec INVARIANT UnitaryExecutive HOLDS
+x-novp-pardon M_NOVP Spec INVARIANT PardonScope HOLDS
+x-novp-war M_NOVP Spec INVARIANT WarIsCongressional HOLDS
+x-novp-noremove M_NOVP Spec INVARIANT CongressDoesNotRemoveExecutors HOLDS
+x-novp-treaty M_NOVP Spec INVARIANT TreatiesByTwoThirds HOLDS Treaties={t1}
+
+# M_PLACEMEN: breaks Incompatibility; holds on the rest
+x-placemen-oneexec M_PLACEMEN Spec INVARIANT OneExecutive HOLDS
+x-placemen-incompat M_PLACEMEN Spec INVARIANT Incompatibility COUNTEREXAMPLE
+x-placemen-disqual M_PLACEMEN Spec INVARIANT Disqualification HOLDS
+x-placemen-actnothead M_PLACEMEN Spec INVARIANT ActingIsNotHead HOLDS
+x-placemen-acttemp M_PLACEMEN Spec INVARIANT ActingIsTemporary HOLDS
+x-placemen-noappoint M_PLACEMEN Spec INVARIANT NoCongressionalAppointment HOLDS
+x-placemen-execexec M_PLACEMEN Spec INVARIANT ExecutionIsExecutive HOLDS
+x-placemen-unitary M_PLACEMEN Spec INVARIANT UnitaryExecutive HOLDS
+x-placemen-pardon M_PLACEMEN Spec INVARIANT PardonScope HOLDS
+x-placemen-war M_PLACEMEN Spec INVARIANT WarIsCongressional HOLDS
+x-placemen-noremove M_PLACEMEN Spec INVARIANT CongressDoesNotRemoveExecutors HOLDS
+x-placemen-treaty M_PLACEMEN Spec INVARIANT TreatiesByTwoThirds HOLDS Treaties={t1}
+
+# M_DISQUAL: breaks Disqualification; holds on the rest
+x-disqual-oneexec M_DISQUAL Spec INVARIANT OneExecutive HOLDS
+x-disqual-incompat M_DISQUAL Spec INVARIANT Incompatibility HOLDS
+x-disqual-disqual M_DISQUAL Spec INVARIANT Disqualification COUNTEREXAMPLE
+x-disqual-actnothead M_DISQUAL Spec INVARIANT ActingIsNotHead HOLDS
+x-disqual-acttemp M_DISQUAL Spec INVARIANT ActingIsTemporary HOLDS
+x-disqual-noappoint M_DISQUAL Spec INVARIANT NoCongressionalAppointment HOLDS
+x-disqual-execexec M_DISQUAL Spec INVARIANT ExecutionIsExecutive HOLDS
+x-disqual-unitary M_DISQUAL Spec INVARIANT UnitaryExecutive HOLDS
+x-disqual-pardon M_DISQUAL Spec INVARIANT PardonScope HOLDS
+x-disqual-war M_DISQUAL Spec INVARIANT WarIsCongressional HOLDS
+x-disqual-noremove M_DISQUAL Spec INVARIANT CongressDoesNotRemoveExecutors HOLDS
+x-disqual-treaty M_DISQUAL Spec INVARIANT TreatiesByTwoThirds HOLDS Treaties={t1}
+
+# M_ACTWHILEFILLED: breaks ActingIsNotHead; holds on the rest
+x-actwhilefilled-oneexec M_ACTWHILEFILLED Spec INVARIANT OneExecutive HOLDS
+x-actwhilefilled-incompat M_ACTWHILEFILLED Spec INVARIANT Incompatibility HOLDS
+x-actwhilefilled-disqual M_ACTWHILEFILLED Spec INVARIANT Disqualification HOLDS
+x-actwhilefilled-actnothead M_ACTWHILEFILLED Spec INVARIANT ActingIsNotHead COUNTEREXAMPLE
+x-actwhilefilled-acttemp M_ACTWHILEFILLED Spec INVARIANT ActingIsTemporary HOLDS
+x-actwhilefilled-noappoint M_ACTWHILEFILLED Spec INVARIANT NoCongressionalAppointment HOLDS
+x-actwhilefilled-execexec M_ACTWHILEFILLED Spec INVARIANT ExecutionIsExecutive HOLDS
+x-actwhilefilled-unitary M_ACTWHILEFILLED Spec INVARIANT UnitaryExecutive HOLDS
+x-actwhilefilled-pardon M_ACTWHILEFILLED Spec INVARIANT PardonScope HOLDS
+x-actwhilefilled-war M_ACTWHILEFILLED Spec INVARIANT WarIsCongressional HOLDS
+x-actwhilefilled-noremove M_ACTWHILEFILLED Spec INVARIANT CongressDoesNotRemoveExecutors HOLDS
+x-actwhilefilled-treaty M_ACTWHILEFILLED Spec INVARIANT TreatiesByTwoThirds HOLDS Treaties={t1}
+
+# M_PREFVRA: breaks ActingIsTemporary; holds on the rest
+x-prefvra-oneexec M_PREFVRA Spec INVARIANT OneExecutive HOLDS constraint=DaysBound
+x-prefvra-incompat M_PREFVRA Spec INVARIANT Incompatibility HOLDS constraint=DaysBound
+x-prefvra-disqual M_PREFVRA Spec INVARIANT Disqualification HOLDS constraint=DaysBound
+x-prefvra-actnothead M_PREFVRA Spec INVARIANT ActingIsNotHead HOLDS constraint=DaysBound
+x-prefvra-acttemp M_PREFVRA Spec INVARIANT ActingIsTemporary COUNTEREXAMPLE constraint=DaysBound
+x-prefvra-noappoint M_PREFVRA Spec INVARIANT NoCongressionalAppointment HOLDS constraint=DaysBound
+x-prefvra-execexec M_PREFVRA Spec INVARIANT ExecutionIsExecutive HOLDS constraint=DaysBound
+x-prefvra-unitary M_PREFVRA Spec INVARIANT UnitaryExecutive HOLDS constraint=DaysBound
+x-prefvra-pardon M_PREFVRA Spec INVARIANT PardonScope HOLDS constraint=DaysBound
+x-prefvra-war M_PREFVRA Spec INVARIANT WarIsCongressional HOLDS constraint=DaysBound
+x-prefvra-noremove M_PREFVRA Spec INVARIANT CongressDoesNotRemoveExecutors HOLDS constraint=DaysBound
+x-prefvra-treaty M_PREFVRA Spec INVARIANT TreatiesByTwoThirds HOLDS Treaties={t1} constraint=DaysBound
+
+# M_FECA: breaks NoCongressionalAppointment; holds on the rest
+x-feca-oneexec M_FECA Spec INVARIANT OneExecutive HOLDS
+x-feca-incompat M_FECA Spec INVARIANT Incompatibility HOLDS
+x-feca-disqual M_FECA Spec INVARIANT Disqualification HOLDS
+x-feca-actnothead M_FECA Spec INVARIANT ActingIsNotHead HOLDS
+x-feca-acttemp M_FECA Spec INVARIANT ActingIsTemporary HOLDS
+x-feca-noappoint M_FECA Spec INVARIANT NoCongressionalAppointment COUNTEREXAMPLE
+x-feca-execexec M_FECA Spec INVARIANT ExecutionIsExecutive HOLDS
+x-feca-unitary M_FECA Spec INVARIANT UnitaryExecutive HOLDS
+x-feca-pardon M_FECA Spec INVARIANT PardonScope HOLDS
+x-feca-war M_FECA Spec INVARIANT WarIsCongressional HOLDS
+x-feca-noremove M_FECA Spec INVARIANT CongressDoesNotRemoveExecutors HOLDS
+x-feca-treaty M_FECA Spec INVARIANT TreatiesByTwoThirds HOLDS Treaties={t1}
+
+# M_GRH: breaks ExecutionIsExecutive, CongressDoesNotRemoveExecutors; holds on the rest
+x-grh-oneexec M_GRH Spec INVARIANT OneExecutive HOLDS
+x-grh-incompat M_GRH Spec INVARIANT Incompatibility HOLDS
+x-grh-disqual M_GRH Spec INVARIANT Disqualification HOLDS
+x-grh-actnothead M_GRH Spec INVARIANT ActingIsNotHead HOLDS
+x-grh-acttemp M_GRH Spec INVARIANT ActingIsTemporary HOLDS
+x-grh-noappoint M_GRH Spec INVARIANT NoCongressionalAppointment HOLDS
+x-grh-execexec M_GRH Spec INVARIANT ExecutionIsExecutive COUNTEREXAMPLE
+x-grh-unitary M_GRH Spec INVARIANT UnitaryExecutive HOLDS
+x-grh-pardon M_GRH Spec INVARIANT PardonScope HOLDS
+x-grh-war M_GRH Spec INVARIANT WarIsCongressional HOLDS
+x-grh-noremove M_GRH Spec INVARIANT CongressDoesNotRemoveExecutors COUNTEREXAMPLE
+x-grh-treaty M_GRH Spec INVARIANT TreatiesByTwoThirds HOLDS Treaties={t1}
+
+# M_JOINTRES: breaks CongressDoesNotRemoveExecutors; holds on the rest
+x-jointres-oneexec M_JOINTRES Spec INVARIANT OneExecutive HOLDS
+x-jointres-incompat M_JOINTRES Spec INVARIANT Incompatibility HOLDS
+x-jointres-disqual M_JOINTRES Spec INVARIANT Disqualification HOLDS
+x-jointres-actnothead M_JOINTRES Spec INVARIANT ActingIsNotHead HOLDS
+x-jointres-acttemp M_JOINTRES Spec INVARIANT ActingIsTemporary HOLDS
+x-jointres-noappoint M_JOINTRES Spec INVARIANT NoCongressionalAppointment HOLDS
+x-jointres-execexec M_JOINTRES Spec INVARIANT ExecutionIsExecutive HOLDS
+x-jointres-unitary M_JOINTRES Spec INVARIANT UnitaryExecutive HOLDS
+x-jointres-pardon M_JOINTRES Spec INVARIANT PardonScope HOLDS
+x-jointres-war M_JOINTRES Spec INVARIANT WarIsCongressional HOLDS
+x-jointres-noremove M_JOINTRES Spec INVARIANT CongressDoesNotRemoveExecutors COUNTEREXAMPLE
+x-jointres-treaty M_JOINTRES Spec INVARIANT TreatiesByTwoThirds HOLDS Treaties={t1}
+
+# M_HUMPHREY: breaks UnitaryExecutive; holds on the rest
+x-humphrey-oneexec M_HUMPHREY Spec INVARIANT OneExecutive HOLDS
+x-humphrey-incompat M_HUMPHREY Spec INVARIANT Incompatibility HOLDS
+x-humphrey-disqual M_HUMPHREY Spec INVARIANT Disqualification HOLDS
+x-humphrey-actnothead M_HUMPHREY Spec INVARIANT ActingIsNotHead HOLDS
+x-humphrey-acttemp M_HUMPHREY Spec INVARIANT ActingIsTemporary HOLDS
+x-humphrey-noappoint M_HUMPHREY Spec INVARIANT NoCongressionalAppointment HOLDS
+x-humphrey-execexec M_HUMPHREY Spec INVARIANT ExecutionIsExecutive HOLDS
+x-humphrey-unitary M_HUMPHREY Spec INVARIANT UnitaryExecutive COUNTEREXAMPLE
+x-humphrey-pardon M_HUMPHREY Spec INVARIANT PardonScope HOLDS
+x-humphrey-war M_HUMPHREY Spec INVARIANT WarIsCongressional HOLDS
+x-humphrey-noremove M_HUMPHREY Spec INVARIANT CongressDoesNotRemoveExecutors HOLDS
+x-humphrey-treaty M_HUMPHREY Spec INVARIANT TreatiesByTwoThirds HOLDS Treaties={t1}
+
+# M_DANBY: breaks PardonScope; holds on the rest
+x-danby-oneexec M_DANBY Spec INVARIANT OneExecutive HOLDS
+x-danby-incompat M_DANBY Spec INVARIANT Incompatibility HOLDS
+x-danby-disqual M_DANBY Spec INVARIANT Disqualification HOLDS
+x-danby-actnothead M_DANBY Spec INVARIANT ActingIsNotHead HOLDS
+x-danby-acttemp M_DANBY Spec INVARIANT ActingIsTemporary HOLDS
+x-danby-noappoint M_DANBY Spec INVARIANT NoCongressionalAppointment HOLDS
+x-danby-execexec M_DANBY Spec INVARIANT ExecutionIsExecutive HOLDS
+x-danby-unitary M_DANBY Spec INVARIANT UnitaryExecutive HOLDS
+x-danby-pardon M_DANBY Spec INVARIANT PardonScope COUNTEREXAMPLE
+x-danby-war M_DANBY Spec INVARIANT WarIsCongressional HOLDS
+x-danby-noremove M_DANBY Spec INVARIANT CongressDoesNotRemoveExecutors HOLDS
+x-danby-treaty M_DANBY Spec INVARIANT TreatiesByTwoThirds HOLDS Treaties={t1}
+
+# M_STATECRIME: breaks PardonScope; holds on the rest
+x-statecrime-oneexec M_STATECRIME Spec INVARIANT OneExecutive HOLDS
+x-statecrime-incompat M_STATECRIME Spec INVARIANT Incompatibility HOLDS
+x-statecrime-disqual M_STATECRIME Spec INVARIANT Disqualification HOLDS
+x-statecrime-actnothead M_STATECRIME Spec INVARIANT ActingIsNotHead HOLDS
+x-statecrime-acttemp M_STATECRIME Spec INVARIANT ActingIsTemporary HOLDS
+x-statecrime-noappoint M_STATECRIME Spec INVARIANT NoCongressionalAppointment HOLDS
+x-statecrime-execexec M_STATECRIME Spec INVARIANT ExecutionIsExecutive HOLDS
+x-statecrime-unitary M_STATECRIME Spec INVARIANT UnitaryExecutive HOLDS
+x-statecrime-pardon M_STATECRIME Spec INVARIANT PardonScope COUNTEREXAMPLE
+x-statecrime-war M_STATECRIME Spec INVARIANT WarIsCongressional HOLDS
+x-statecrime-noremove M_STATECRIME Spec INVARIANT CongressDoesNotRemoveExecutors HOLDS
+x-statecrime-treaty M_STATECRIME Spec INVARIANT TreatiesByTwoThirds HOLDS Treaties={t1}
+
+# M_PREROGATIVE: breaks WarIsCongressional; holds on the rest
+x-prerogative-oneexec M_PREROGATIVE Spec INVARIANT OneExecutive HOLDS
+x-prerogative-incompat M_PREROGATIVE Spec INVARIANT Incompatibility HOLDS
+x-prerogative-disqual M_PREROGATIVE Spec INVARIANT Disqualification HOLDS
+x-prerogative-actnothead M_PREROGATIVE Spec INVARIANT ActingIsNotHead HOLDS
+x-prerogative-acttemp M_PREROGATIVE Spec INVARIANT ActingIsTemporary HOLDS
+x-prerogative-noappoint M_PREROGATIVE Spec INVARIANT NoCongressionalAppointment HOLDS
+x-prerogative-execexec M_PREROGATIVE Spec INVARIANT ExecutionIsExecutive HOLDS
+x-prerogative-unitary M_PREROGATIVE Spec INVARIANT UnitaryExecutive HOLDS
+x-prerogative-pardon M_PREROGATIVE Spec INVARIANT PardonScope HOLDS
+x-prerogative-war M_PREROGATIVE Spec INVARIANT WarIsCongressional COUNTEREXAMPLE
+x-prerogative-noremove M_PREROGATIVE Spec INVARIANT CongressDoesNotRemoveExecutors HOLDS
+x-prerogative-treaty M_PREROGATIVE Spec INVARIANT TreatiesByTwoThirds HOLDS Treaties={t1}
+
+# M_AUG6: breaks TreatiesByTwoThirds; holds on the rest
+x-aug6-oneexec M_AUG6 Spec INVARIANT OneExecutive HOLDS Treaties={t1}
+x-aug6-incompat M_AUG6 Spec INVARIANT Incompatibility HOLDS Treaties={t1}
+x-aug6-disqual M_AUG6 Spec INVARIANT Disqualification HOLDS Treaties={t1}
+x-aug6-actnothead M_AUG6 Spec INVARIANT ActingIsNotHead HOLDS Treaties={t1}
+x-aug6-acttemp M_AUG6 Spec INVARIANT ActingIsTemporary HOLDS Treaties={t1}
+x-aug6-noappoint M_AUG6 Spec INVARIANT NoCongressionalAppointment HOLDS Treaties={t1}
+x-aug6-execexec M_AUG6 Spec INVARIANT ExecutionIsExecutive HOLDS Treaties={t1}
+x-aug6-unitary M_AUG6 Spec INVARIANT UnitaryExecutive HOLDS Treaties={t1}
+x-aug6-pardon M_AUG6 Spec INVARIANT PardonScope HOLDS Treaties={t1}
+x-aug6-war M_AUG6 Spec INVARIANT WarIsCongressional HOLDS Treaties={t1}
+x-aug6-noremove M_AUG6 Spec INVARIANT CongressDoesNotRemoveExecutors HOLDS Treaties={t1}
+x-aug6-treaty M_AUG6 Spec INVARIANT TreatiesByTwoThirds COUNTEREXAMPLE Treaties={t1}
+
+# Reachability witnesses under none: each must be violated
+w-agency none Spec INVARIANT NeverAgency COUNTEREXAMPLE
+w-head none Spec INVARIANT NeverHead COUNTEREXAMPLE
+w-acting none Spec INVARIANT NeverActing COUNTEREXAMPLE
+w-congressappoints none Spec INVARIANT NeverCongressAppoints COUNTEREXAMPLE
+w-protectedhead none Spec INVARIANT NeverProtectedHead COUNTEREXAMPLE
+w-disqualified none Spec INVARIANT NeverDisqualified COUNTEREXAMPLE
+w-selfdeclared none Spec INVARIANT NeverSelfDeclared COUNTEREXAMPLE
+w-cabinetdeclared none Spec INVARIANT NeverCabinetDeclared COUNTEREXAMPLE
+w-war none Spec INVARIANT NeverWar COUNTEREXAMPLE
+w-treaty none Spec INVARIANT NeverTreaty COUNTEREXAMPLE Treaties={t1}
+w-pardon none Spec INVARIANT NeverPardon COUNTEREXAMPLE
+w-abolished none Spec PROPERTY NeverAbolished COUNTEREXAMPLE
+w-presidentremoves none Spec PROPERTY NeverPresidentRemoves COUNTEREXAMPLE
+w-congressremoves none Spec PROPERTY NeverCongressRemoves COUNTEREXAMPLE
+w-actingexpires none Spec PROPERTY NeverActingExpires COUNTEREXAMPLE
+w-congresssustains none Spec PROPERTY NeverCongressSustains COUNTEREXAMPLE
+w-congressrestores none Spec PROPERTY NeverCongressRestores COUNTEREXAMPLE
+w-succession none Spec PROPERTY NeverSuccession COUNTEREXAMPLE
+w-presidentconvenes none Spec PROPERTY NeverPresidentConvenes COUNTEREXAMPLE
+
+# Liveness: the fair spec, each fairness condition dropped, and a behaviour exists
+l-live-acting none SpecLive PROPERTY ActingEventuallyEnds HOLDS
+l-live-acting-l2 none SpecLive PROPERTY ActingEventuallyEnds HOLDS ActingLimit=2
+l-noclock-acting none SpecNoClock PROPERTY ActingEventuallyEnds COUNTEREXAMPLE
+l-nolimit-acting none SpecNoLimit PROPERTY ActingEventuallyEnds COUNTEREXAMPLE
+l-live-nobehaviour none SpecLive PROPERTY NoBehaviour COUNTEREXAMPLE
+l-live-nobehaviour-l2 none SpecLive PROPERTY NoBehaviour COUNTEREXAMPLE ActingLimit=2

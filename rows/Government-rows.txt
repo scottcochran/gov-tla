@@ -1,0 +1,621 @@
+# Rows for scripts/tlc_rows.py: name mut spec kind property expected [KEY=value ...]
+# module: Government
+# title: Government.tla - the authority graph (Articles I-III, V, VII; Amendments XVII, XXV; Buckley, Bowsher, Chadha, Seila Law / Slaughter, Will, Stuart v. Laird)
+# expected: Four configurations. o- rows: no agency or court, every amendment proposable (Agencies = Courts = {}, Proposable = {XVII, XXV}). c- rows: one inferior court (Agencies = {}, Courts = {ct1}). a- rows: one agency whose enabling act gives it executive power, removal by the President for cause or by Congress, and Congress's appointment of inferior officers, under CONSTRAINT LawRowsBound (no trial, no Vice President, no nomination). af- rows: the same agency without the bound. Every row uses VIEW Unrecorded (states differing only in `last` identified).
+# expected: Under Mut = "none" every property HOLDS in the o-, c- and a- configurations, Safety HOLDS in all four, and no state is a deadlock.
+# expected: Each mutation is run against every property in its own configuration: M_OFFEDGE (c) breaks ActsFollowEdges and GoodBehaviour; M_INACTIVE (o) breaks ActsByHolders; M_APPLICABLE (a) breaks EdgesConnectLiveNodes; M_RECHECK (a) breaks nothing and reaches exactly the states of none (states= asserted); M_NOSTUART (c) breaks OfficesAreLive; M_NOPOCKET (a) breaks PocketVetoHonoured; M_UPHOLD (a) breaks BuckleyHonoured, SeilaLawHonoured, BowsherHonoured and ChadhaHonoured, and (c) WillHonoured; M_HUMPHREY, M_PRECHADHA, M_PREBUCKLEY, M_PREBOWSHER (a) break SeilaLawHonoured, ChadhaHonoured, BuckleyHonoured, BowsherHonoured respectively; M_SEVER_PLAIN (a) breaks ExecutorsAreRemovable; M_CONGRESS_AMENDS (o) breaks ConstitutionWrittenByPeopleAndStates, GrantFollowsChainExceptXXV, GrantCyclesPassThroughPeopleStatesOrVP and OnlyGrantCycleIsXXV; M_NO_ARTV (o) breaks ArticleVStands. Every other (mutation, property) row HOLDS.
+# expected: The refuted claims GrantCyclesPassThroughPeopleOrStates and GrantFollowsChain are COUNTEREXAMPLE under none (o). Every Never... witness is COUNTEREXAMPLE under none. Liveness (l- rows without the bound; l-a: the agency with for-cause tenure and Congress's appointment; l-c: the court): UnconstitutionalEdgesAreStruck HOLDS under FairSpec in both, is COUNTEREXAMPLE under SpecNoSuit and SpecNoRuling (court) and under M_UPHOLD and M_HUMPHREY (agency); NoBehaviour is COUNTEREXAMPLE under FairSpec in both. The s- row is a sample at Government.cfg's constants, never a check.
+# const: Agencies = {ag1}
+# const: Courts = {}
+# const: Proposable = {}
+# const: Standing = {"AppointInferior", "RemoveForCause", "Remove", "LegislativeVeto", "DiminishPay"}
+# const: ExecOptions = {TRUE}
+# const: RemoverOptions = {"PresidentForCause", "Congress"}
+# const: VestingOptions = {"Congress"}
+# cfg: VIEW Unrecorded
+
+
+# --- Mut = none, every property, in each bounded configuration, and Safety
+o-none-type                        none               Spec         INVARIANT TypeOK                                 HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-none-live-edges                  none               Spec         INVARIANT EdgesConnectLiveNodes                  HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-none-offices                     none               Spec         INVARIANT OfficesAreLive                         HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-none-text                        none               Spec         INVARIANT TextFollowsArticleV                    HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-none-artv                        none               Spec         INVARIANT ArticleVStands                         HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-none-writers                     none               Spec         INVARIANT ConstitutionWrittenByPeopleAndStates   HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-none-overstep                    none               Spec         INVARIANT OnlyStatutesOverstep                   HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-none-chain-xxv                   none               Spec         INVARIANT GrantFollowsChainExceptXXV             HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-none-acyclic-vp                  none               Spec         INVARIANT GrantCyclesPassThroughPeopleStatesOrVP HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-none-loop                        none               Spec         INVARIANT NominationLoopIffXXV                   HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-none-only-cycle                  none               Spec         INVARIANT OnlyGrantCycleIsXXV                    HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-none-by-law                      none               Spec         INVARIANT EveryBodyIsCreatedByLaw                HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-none-paths                       none               Spec         INVARIANT NamedPathsFromPeople                   HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-none-traces                      none               Spec         INVARIANT PowerTracesToPeople                    HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-none-door-local                  none               Spec         INVARIANT PeoplePowerGoesThroughConstitution     HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-none-door                        none               Spec         INVARIANT ConstitutionIsTheOnlyDoor              HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-none-mutual                      none               Spec         INVARIANT MutualChecks                           HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-none-control-cycle               none               Spec         INVARIANT ControlLayerIsCyclic                   HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-none-primacy                     none               Spec         INVARIANT LegislativePrimacy                     HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-none-buckley                     none               Spec         INVARIANT BuckleyHonoured                        HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-none-seila                       none               Spec         INVARIANT SeilaLawHonoured                       HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-none-bowsher                     none               Spec         INVARIANT BowsherHonoured                        HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-none-chadha                      none               Spec         INVARIANT ChadhaHonoured                         HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-none-will                        none               Spec         INVARIANT WillHonoured                           HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-none-removable                   none               Spec         INVARIANT ExecutorsAreRemovable                  HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-none-on-graph                    none               Spec         INVARIANT ActsFollowEdges                        HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-none-holders                     none               Spec         INVARIANT ActsByHolders                          HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-none-good-behaviour              none               Spec         INVARIANT GoodBehaviour                          HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-none-pocket                      none               Spec         INVARIANT PocketVetoHonoured                     HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-none-text-step                   none               Spec         PROPERTY  TextChangesOnlyByArticleV              HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-none-statute-step                none               Spec         PROPERTY  StatutesChangeOnlyByLawOrCourt         HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-none-safety                      none               Spec         INVARIANT Safety                                 HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-none-acts                        none               Spec         INVARIANT EveryActIsAnEdge                       HOLDS           Agencies={} Proposable={"XVII","XXV"}
+c-none-type                        none               Spec         INVARIANT TypeOK                                 HOLDS           Agencies={} Courts={ct1}
+c-none-live-edges                  none               Spec         INVARIANT EdgesConnectLiveNodes                  HOLDS           Agencies={} Courts={ct1}
+c-none-offices                     none               Spec         INVARIANT OfficesAreLive                         HOLDS           Agencies={} Courts={ct1}
+c-none-text                        none               Spec         INVARIANT TextFollowsArticleV                    HOLDS           Agencies={} Courts={ct1}
+c-none-artv                        none               Spec         INVARIANT ArticleVStands                         HOLDS           Agencies={} Courts={ct1}
+c-none-writers                     none               Spec         INVARIANT ConstitutionWrittenByPeopleAndStates   HOLDS           Agencies={} Courts={ct1}
+c-none-overstep                    none               Spec         INVARIANT OnlyStatutesOverstep                   HOLDS           Agencies={} Courts={ct1}
+c-none-chain-xxv                   none               Spec         INVARIANT GrantFollowsChainExceptXXV             HOLDS           Agencies={} Courts={ct1}
+c-none-acyclic-vp                  none               Spec         INVARIANT GrantCyclesPassThroughPeopleStatesOrVP HOLDS           Agencies={} Courts={ct1}
+c-none-loop                        none               Spec         INVARIANT NominationLoopIffXXV                   HOLDS           Agencies={} Courts={ct1}
+c-none-only-cycle                  none               Spec         INVARIANT OnlyGrantCycleIsXXV                    HOLDS           Agencies={} Courts={ct1}
+c-none-by-law                      none               Spec         INVARIANT EveryBodyIsCreatedByLaw                HOLDS           Agencies={} Courts={ct1}
+c-none-paths                       none               Spec         INVARIANT NamedPathsFromPeople                   HOLDS           Agencies={} Courts={ct1}
+c-none-traces                      none               Spec         INVARIANT PowerTracesToPeople                    HOLDS           Agencies={} Courts={ct1}
+c-none-door-local                  none               Spec         INVARIANT PeoplePowerGoesThroughConstitution     HOLDS           Agencies={} Courts={ct1}
+c-none-door                        none               Spec         INVARIANT ConstitutionIsTheOnlyDoor              HOLDS           Agencies={} Courts={ct1}
+c-none-mutual                      none               Spec         INVARIANT MutualChecks                           HOLDS           Agencies={} Courts={ct1}
+c-none-control-cycle               none               Spec         INVARIANT ControlLayerIsCyclic                   HOLDS           Agencies={} Courts={ct1}
+c-none-primacy                     none               Spec         INVARIANT LegislativePrimacy                     HOLDS           Agencies={} Courts={ct1}
+c-none-buckley                     none               Spec         INVARIANT BuckleyHonoured                        HOLDS           Agencies={} Courts={ct1}
+c-none-seila                       none               Spec         INVARIANT SeilaLawHonoured                       HOLDS           Agencies={} Courts={ct1}
+c-none-bowsher                     none               Spec         INVARIANT BowsherHonoured                        HOLDS           Agencies={} Courts={ct1}
+c-none-chadha                      none               Spec         INVARIANT ChadhaHonoured                         HOLDS           Agencies={} Courts={ct1}
+c-none-will                        none               Spec         INVARIANT WillHonoured                           HOLDS           Agencies={} Courts={ct1}
+c-none-removable                   none               Spec         INVARIANT ExecutorsAreRemovable                  HOLDS           Agencies={} Courts={ct1}
+c-none-on-graph                    none               Spec         INVARIANT ActsFollowEdges                        HOLDS           Agencies={} Courts={ct1}
+c-none-holders                     none               Spec         INVARIANT ActsByHolders                          HOLDS           Agencies={} Courts={ct1}
+c-none-good-behaviour              none               Spec         INVARIANT GoodBehaviour                          HOLDS           Agencies={} Courts={ct1}
+c-none-pocket                      none               Spec         INVARIANT PocketVetoHonoured                     HOLDS           Agencies={} Courts={ct1}
+c-none-text-step                   none               Spec         PROPERTY  TextChangesOnlyByArticleV              HOLDS           Agencies={} Courts={ct1}
+c-none-statute-step                none               Spec         PROPERTY  StatutesChangeOnlyByLawOrCourt         HOLDS           Agencies={} Courts={ct1}
+c-none-safety                      none               Spec         INVARIANT Safety                                 HOLDS           Agencies={} Courts={ct1}
+c-none-acts                        none               Spec         INVARIANT EveryActIsAnEdge                       HOLDS           Agencies={} Courts={ct1}
+a-none-type                        none               Spec         INVARIANT TypeOK                                 HOLDS           constraint=LawRowsBound states=1076
+a-none-live-edges                  none               Spec         INVARIANT EdgesConnectLiveNodes                  HOLDS           constraint=LawRowsBound
+a-none-offices                     none               Spec         INVARIANT OfficesAreLive                         HOLDS           constraint=LawRowsBound
+a-none-text                        none               Spec         INVARIANT TextFollowsArticleV                    HOLDS           constraint=LawRowsBound
+a-none-artv                        none               Spec         INVARIANT ArticleVStands                         HOLDS           constraint=LawRowsBound
+a-none-writers                     none               Spec         INVARIANT ConstitutionWrittenByPeopleAndStates   HOLDS           constraint=LawRowsBound
+a-none-overstep                    none               Spec         INVARIANT OnlyStatutesOverstep                   HOLDS           constraint=LawRowsBound
+a-none-chain-xxv                   none               Spec         INVARIANT GrantFollowsChainExceptXXV             HOLDS           constraint=LawRowsBound
+a-none-acyclic-vp                  none               Spec         INVARIANT GrantCyclesPassThroughPeopleStatesOrVP HOLDS           constraint=LawRowsBound
+a-none-loop                        none               Spec         INVARIANT NominationLoopIffXXV                   HOLDS           constraint=LawRowsBound
+a-none-only-cycle                  none               Spec         INVARIANT OnlyGrantCycleIsXXV                    HOLDS           constraint=LawRowsBound
+a-none-by-law                      none               Spec         INVARIANT EveryBodyIsCreatedByLaw                HOLDS           constraint=LawRowsBound
+a-none-paths                       none               Spec         INVARIANT NamedPathsFromPeople                   HOLDS           constraint=LawRowsBound
+a-none-traces                      none               Spec         INVARIANT PowerTracesToPeople                    HOLDS           constraint=LawRowsBound
+a-none-door-local                  none               Spec         INVARIANT PeoplePowerGoesThroughConstitution     HOLDS           constraint=LawRowsBound
+a-none-door                        none               Spec         INVARIANT ConstitutionIsTheOnlyDoor              HOLDS           constraint=LawRowsBound
+a-none-mutual                      none               Spec         INVARIANT MutualChecks                           HOLDS           constraint=LawRowsBound
+a-none-control-cycle               none               Spec         INVARIANT ControlLayerIsCyclic                   HOLDS           constraint=LawRowsBound
+a-none-primacy                     none               Spec         INVARIANT LegislativePrimacy                     HOLDS           constraint=LawRowsBound
+a-none-buckley                     none               Spec         INVARIANT BuckleyHonoured                        HOLDS           constraint=LawRowsBound
+a-none-seila                       none               Spec         INVARIANT SeilaLawHonoured                       HOLDS           constraint=LawRowsBound
+a-none-bowsher                     none               Spec         INVARIANT BowsherHonoured                        HOLDS           constraint=LawRowsBound
+a-none-chadha                      none               Spec         INVARIANT ChadhaHonoured                         HOLDS           constraint=LawRowsBound
+a-none-will                        none               Spec         INVARIANT WillHonoured                           HOLDS           constraint=LawRowsBound
+a-none-removable                   none               Spec         INVARIANT ExecutorsAreRemovable                  HOLDS           constraint=LawRowsBound
+a-none-on-graph                    none               Spec         INVARIANT ActsFollowEdges                        HOLDS           constraint=LawRowsBound
+a-none-holders                     none               Spec         INVARIANT ActsByHolders                          HOLDS           constraint=LawRowsBound
+a-none-good-behaviour              none               Spec         INVARIANT GoodBehaviour                          HOLDS           constraint=LawRowsBound
+a-none-pocket                      none               Spec         INVARIANT PocketVetoHonoured                     HOLDS           constraint=LawRowsBound
+a-none-text-step                   none               Spec         PROPERTY  TextChangesOnlyByArticleV              HOLDS           constraint=LawRowsBound
+a-none-statute-step                none               Spec         PROPERTY  StatutesChangeOnlyByLawOrCourt         HOLDS           constraint=LawRowsBound
+a-none-safety                      none               Spec         INVARIANT Safety                                 HOLDS           constraint=LawRowsBound
+a-none-acts                        none               Spec         INVARIANT EveryActIsAnEdge                       HOLDS           constraint=LawRowsBound
+af-none-safety                     none               Spec         INVARIANT Safety                                 HOLDS
+af-none-type                       none               Spec         INVARIANT TypeOK                                 HOLDS
+
+# --- Deadlock: no reachable state is terminal (Adjourn and Convene are always possible)
+d-o-none                           none               Spec         DEADLOCK  TypeOK                                 HOLDS           Agencies={} Proposable={"XVII","XXV"}
+d-c-none                           none               Spec         DEADLOCK  TypeOK                                 HOLDS           Agencies={} Courts={ct1}
+d-af-none                          none               Spec         DEADLOCK  TypeOK                                 HOLDS
+
+# --- The refuted claims: XXV's President-Vice President loop
+r-o-none-acyclic                   none               Spec         INVARIANT GrantCyclesPassThroughPeopleOrStates   COUNTEREXAMPLE  Agencies={} Proposable={"XVII","XXV"}
+r-o-none-chain                     none               Spec         INVARIANT GrantFollowsChain                      COUNTEREXAMPLE  Agencies={} Proposable={"XVII","XXV"}
+
+# --- M_OFFEDGE
+c-offedge-type                     M_OFFEDGE          Spec         INVARIANT TypeOK                                 HOLDS           Agencies={} Courts={ct1}
+c-offedge-live-edges               M_OFFEDGE          Spec         INVARIANT EdgesConnectLiveNodes                  HOLDS           Agencies={} Courts={ct1}
+c-offedge-offices                  M_OFFEDGE          Spec         INVARIANT OfficesAreLive                         HOLDS           Agencies={} Courts={ct1}
+c-offedge-text                     M_OFFEDGE          Spec         INVARIANT TextFollowsArticleV                    HOLDS           Agencies={} Courts={ct1}
+c-offedge-artv                     M_OFFEDGE          Spec         INVARIANT ArticleVStands                         HOLDS           Agencies={} Courts={ct1}
+c-offedge-writers                  M_OFFEDGE          Spec         INVARIANT ConstitutionWrittenByPeopleAndStates   HOLDS           Agencies={} Courts={ct1}
+c-offedge-overstep                 M_OFFEDGE          Spec         INVARIANT OnlyStatutesOverstep                   HOLDS           Agencies={} Courts={ct1}
+c-offedge-chain-xxv                M_OFFEDGE          Spec         INVARIANT GrantFollowsChainExceptXXV             HOLDS           Agencies={} Courts={ct1}
+c-offedge-acyclic-vp               M_OFFEDGE          Spec         INVARIANT GrantCyclesPassThroughPeopleStatesOrVP HOLDS           Agencies={} Courts={ct1}
+c-offedge-loop                     M_OFFEDGE          Spec         INVARIANT NominationLoopIffXXV                   HOLDS           Agencies={} Courts={ct1}
+c-offedge-only-cycle               M_OFFEDGE          Spec         INVARIANT OnlyGrantCycleIsXXV                    HOLDS           Agencies={} Courts={ct1}
+c-offedge-by-law                   M_OFFEDGE          Spec         INVARIANT EveryBodyIsCreatedByLaw                HOLDS           Agencies={} Courts={ct1}
+c-offedge-paths                    M_OFFEDGE          Spec         INVARIANT NamedPathsFromPeople                   HOLDS           Agencies={} Courts={ct1}
+c-offedge-traces                   M_OFFEDGE          Spec         INVARIANT PowerTracesToPeople                    HOLDS           Agencies={} Courts={ct1}
+c-offedge-door-local               M_OFFEDGE          Spec         INVARIANT PeoplePowerGoesThroughConstitution     HOLDS           Agencies={} Courts={ct1}
+c-offedge-door                     M_OFFEDGE          Spec         INVARIANT ConstitutionIsTheOnlyDoor              HOLDS           Agencies={} Courts={ct1}
+c-offedge-mutual                   M_OFFEDGE          Spec         INVARIANT MutualChecks                           HOLDS           Agencies={} Courts={ct1}
+c-offedge-control-cycle            M_OFFEDGE          Spec         INVARIANT ControlLayerIsCyclic                   HOLDS           Agencies={} Courts={ct1}
+c-offedge-primacy                  M_OFFEDGE          Spec         INVARIANT LegislativePrimacy                     HOLDS           Agencies={} Courts={ct1}
+c-offedge-buckley                  M_OFFEDGE          Spec         INVARIANT BuckleyHonoured                        HOLDS           Agencies={} Courts={ct1}
+c-offedge-seila                    M_OFFEDGE          Spec         INVARIANT SeilaLawHonoured                       HOLDS           Agencies={} Courts={ct1}
+c-offedge-bowsher                  M_OFFEDGE          Spec         INVARIANT BowsherHonoured                        HOLDS           Agencies={} Courts={ct1}
+c-offedge-chadha                   M_OFFEDGE          Spec         INVARIANT ChadhaHonoured                         HOLDS           Agencies={} Courts={ct1}
+c-offedge-will                     M_OFFEDGE          Spec         INVARIANT WillHonoured                           HOLDS           Agencies={} Courts={ct1}
+c-offedge-removable                M_OFFEDGE          Spec         INVARIANT ExecutorsAreRemovable                  HOLDS           Agencies={} Courts={ct1}
+c-offedge-on-graph                 M_OFFEDGE          Spec         INVARIANT ActsFollowEdges                        COUNTEREXAMPLE  Agencies={} Courts={ct1}
+c-offedge-holders                  M_OFFEDGE          Spec         INVARIANT ActsByHolders                          HOLDS           Agencies={} Courts={ct1}
+c-offedge-good-behaviour           M_OFFEDGE          Spec         INVARIANT GoodBehaviour                          COUNTEREXAMPLE  Agencies={} Courts={ct1}
+c-offedge-pocket                   M_OFFEDGE          Spec         INVARIANT PocketVetoHonoured                     HOLDS           Agencies={} Courts={ct1}
+c-offedge-text-step                M_OFFEDGE          Spec         PROPERTY  TextChangesOnlyByArticleV              HOLDS           Agencies={} Courts={ct1}
+c-offedge-statute-step             M_OFFEDGE          Spec         PROPERTY  StatutesChangeOnlyByLawOrCourt         HOLDS           Agencies={} Courts={ct1}
+
+# --- M_INACTIVE
+o-inactive-type                    M_INACTIVE         Spec         INVARIANT TypeOK                                 HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-inactive-live-edges              M_INACTIVE         Spec         INVARIANT EdgesConnectLiveNodes                  HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-inactive-offices                 M_INACTIVE         Spec         INVARIANT OfficesAreLive                         HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-inactive-text                    M_INACTIVE         Spec         INVARIANT TextFollowsArticleV                    HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-inactive-artv                    M_INACTIVE         Spec         INVARIANT ArticleVStands                         HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-inactive-writers                 M_INACTIVE         Spec         INVARIANT ConstitutionWrittenByPeopleAndStates   HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-inactive-overstep                M_INACTIVE         Spec         INVARIANT OnlyStatutesOverstep                   HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-inactive-chain-xxv               M_INACTIVE         Spec         INVARIANT GrantFollowsChainExceptXXV             HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-inactive-acyclic-vp              M_INACTIVE         Spec         INVARIANT GrantCyclesPassThroughPeopleStatesOrVP HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-inactive-loop                    M_INACTIVE         Spec         INVARIANT NominationLoopIffXXV                   HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-inactive-only-cycle              M_INACTIVE         Spec         INVARIANT OnlyGrantCycleIsXXV                    HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-inactive-by-law                  M_INACTIVE         Spec         INVARIANT EveryBodyIsCreatedByLaw                HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-inactive-paths                   M_INACTIVE         Spec         INVARIANT NamedPathsFromPeople                   HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-inactive-traces                  M_INACTIVE         Spec         INVARIANT PowerTracesToPeople                    HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-inactive-door-local              M_INACTIVE         Spec         INVARIANT PeoplePowerGoesThroughConstitution     HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-inactive-door                    M_INACTIVE         Spec         INVARIANT ConstitutionIsTheOnlyDoor              HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-inactive-mutual                  M_INACTIVE         Spec         INVARIANT MutualChecks                           HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-inactive-control-cycle           M_INACTIVE         Spec         INVARIANT ControlLayerIsCyclic                   HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-inactive-primacy                 M_INACTIVE         Spec         INVARIANT LegislativePrimacy                     HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-inactive-buckley                 M_INACTIVE         Spec         INVARIANT BuckleyHonoured                        HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-inactive-seila                   M_INACTIVE         Spec         INVARIANT SeilaLawHonoured                       HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-inactive-bowsher                 M_INACTIVE         Spec         INVARIANT BowsherHonoured                        HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-inactive-chadha                  M_INACTIVE         Spec         INVARIANT ChadhaHonoured                         HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-inactive-will                    M_INACTIVE         Spec         INVARIANT WillHonoured                           HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-inactive-removable               M_INACTIVE         Spec         INVARIANT ExecutorsAreRemovable                  HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-inactive-on-graph                M_INACTIVE         Spec         INVARIANT ActsFollowEdges                        HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-inactive-holders                 M_INACTIVE         Spec         INVARIANT ActsByHolders                          COUNTEREXAMPLE  Agencies={} Proposable={"XVII","XXV"}
+o-inactive-good-behaviour          M_INACTIVE         Spec         INVARIANT GoodBehaviour                          HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-inactive-pocket                  M_INACTIVE         Spec         INVARIANT PocketVetoHonoured                     HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-inactive-text-step               M_INACTIVE         Spec         PROPERTY  TextChangesOnlyByArticleV              HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-inactive-statute-step            M_INACTIVE         Spec         PROPERTY  StatutesChangeOnlyByLawOrCourt         HOLDS           Agencies={} Proposable={"XVII","XXV"}
+
+# --- M_APPLICABLE
+a-applicable-type                  M_APPLICABLE       Spec         INVARIANT TypeOK                                 HOLDS           constraint=LawRowsBound
+a-applicable-live-edges            M_APPLICABLE       Spec         INVARIANT EdgesConnectLiveNodes                  COUNTEREXAMPLE  constraint=LawRowsBound
+a-applicable-offices               M_APPLICABLE       Spec         INVARIANT OfficesAreLive                         HOLDS           constraint=LawRowsBound
+a-applicable-text                  M_APPLICABLE       Spec         INVARIANT TextFollowsArticleV                    HOLDS           constraint=LawRowsBound
+a-applicable-artv                  M_APPLICABLE       Spec         INVARIANT ArticleVStands                         HOLDS           constraint=LawRowsBound
+a-applicable-writers               M_APPLICABLE       Spec         INVARIANT ConstitutionWrittenByPeopleAndStates   HOLDS           constraint=LawRowsBound
+a-applicable-overstep              M_APPLICABLE       Spec         INVARIANT OnlyStatutesOverstep                   HOLDS           constraint=LawRowsBound
+a-applicable-chain-xxv             M_APPLICABLE       Spec         INVARIANT GrantFollowsChainExceptXXV             HOLDS           constraint=LawRowsBound
+a-applicable-acyclic-vp            M_APPLICABLE       Spec         INVARIANT GrantCyclesPassThroughPeopleStatesOrVP HOLDS           constraint=LawRowsBound
+a-applicable-loop                  M_APPLICABLE       Spec         INVARIANT NominationLoopIffXXV                   HOLDS           constraint=LawRowsBound
+a-applicable-only-cycle            M_APPLICABLE       Spec         INVARIANT OnlyGrantCycleIsXXV                    HOLDS           constraint=LawRowsBound
+a-applicable-by-law                M_APPLICABLE       Spec         INVARIANT EveryBodyIsCreatedByLaw                HOLDS           constraint=LawRowsBound
+a-applicable-paths                 M_APPLICABLE       Spec         INVARIANT NamedPathsFromPeople                   HOLDS           constraint=LawRowsBound
+a-applicable-traces                M_APPLICABLE       Spec         INVARIANT PowerTracesToPeople                    HOLDS           constraint=LawRowsBound
+a-applicable-door-local            M_APPLICABLE       Spec         INVARIANT PeoplePowerGoesThroughConstitution     HOLDS           constraint=LawRowsBound
+a-applicable-door                  M_APPLICABLE       Spec         INVARIANT ConstitutionIsTheOnlyDoor              HOLDS           constraint=LawRowsBound
+a-applicable-mutual                M_APPLICABLE       Spec         INVARIANT MutualChecks                           HOLDS           constraint=LawRowsBound
+a-applicable-control-cycle         M_APPLICABLE       Spec         INVARIANT ControlLayerIsCyclic                   HOLDS           constraint=LawRowsBound
+a-applicable-primacy               M_APPLICABLE       Spec         INVARIANT LegislativePrimacy                     HOLDS           constraint=LawRowsBound
+a-applicable-buckley               M_APPLICABLE       Spec         INVARIANT BuckleyHonoured                        HOLDS           constraint=LawRowsBound
+a-applicable-seila                 M_APPLICABLE       Spec         INVARIANT SeilaLawHonoured                       HOLDS           constraint=LawRowsBound
+a-applicable-bowsher               M_APPLICABLE       Spec         INVARIANT BowsherHonoured                        HOLDS           constraint=LawRowsBound
+a-applicable-chadha                M_APPLICABLE       Spec         INVARIANT ChadhaHonoured                         HOLDS           constraint=LawRowsBound
+a-applicable-will                  M_APPLICABLE       Spec         INVARIANT WillHonoured                           HOLDS           constraint=LawRowsBound
+a-applicable-removable             M_APPLICABLE       Spec         INVARIANT ExecutorsAreRemovable                  HOLDS           constraint=LawRowsBound
+a-applicable-on-graph              M_APPLICABLE       Spec         INVARIANT ActsFollowEdges                        HOLDS           constraint=LawRowsBound
+a-applicable-holders               M_APPLICABLE       Spec         INVARIANT ActsByHolders                          HOLDS           constraint=LawRowsBound
+a-applicable-good-behaviour        M_APPLICABLE       Spec         INVARIANT GoodBehaviour                          HOLDS           constraint=LawRowsBound
+a-applicable-pocket                M_APPLICABLE       Spec         INVARIANT PocketVetoHonoured                     HOLDS           constraint=LawRowsBound
+a-applicable-text-step             M_APPLICABLE       Spec         PROPERTY  TextChangesOnlyByArticleV              HOLDS           constraint=LawRowsBound
+a-applicable-statute-step          M_APPLICABLE       Spec         PROPERTY  StatutesChangeOnlyByLawOrCourt         HOLDS           constraint=LawRowsBound
+
+# --- M_RECHECK
+a-recheck-type                     M_RECHECK          Spec         INVARIANT TypeOK                                 HOLDS           constraint=LawRowsBound states=1076
+a-recheck-live-edges               M_RECHECK          Spec         INVARIANT EdgesConnectLiveNodes                  HOLDS           constraint=LawRowsBound states=1076
+a-recheck-offices                  M_RECHECK          Spec         INVARIANT OfficesAreLive                         HOLDS           constraint=LawRowsBound states=1076
+a-recheck-text                     M_RECHECK          Spec         INVARIANT TextFollowsArticleV                    HOLDS           constraint=LawRowsBound states=1076
+a-recheck-artv                     M_RECHECK          Spec         INVARIANT ArticleVStands                         HOLDS           constraint=LawRowsBound states=1076
+a-recheck-writers                  M_RECHECK          Spec         INVARIANT ConstitutionWrittenByPeopleAndStates   HOLDS           constraint=LawRowsBound states=1076
+a-recheck-overstep                 M_RECHECK          Spec         INVARIANT OnlyStatutesOverstep                   HOLDS           constraint=LawRowsBound states=1076
+a-recheck-chain-xxv                M_RECHECK          Spec         INVARIANT GrantFollowsChainExceptXXV             HOLDS           constraint=LawRowsBound states=1076
+a-recheck-acyclic-vp               M_RECHECK          Spec         INVARIANT GrantCyclesPassThroughPeopleStatesOrVP HOLDS           constraint=LawRowsBound states=1076
+a-recheck-loop                     M_RECHECK          Spec         INVARIANT NominationLoopIffXXV                   HOLDS           constraint=LawRowsBound states=1076
+a-recheck-only-cycle               M_RECHECK          Spec         INVARIANT OnlyGrantCycleIsXXV                    HOLDS           constraint=LawRowsBound states=1076
+a-recheck-by-law                   M_RECHECK          Spec         INVARIANT EveryBodyIsCreatedByLaw                HOLDS           constraint=LawRowsBound states=1076
+a-recheck-paths                    M_RECHECK          Spec         INVARIANT NamedPathsFromPeople                   HOLDS           constraint=LawRowsBound states=1076
+a-recheck-traces                   M_RECHECK          Spec         INVARIANT PowerTracesToPeople                    HOLDS           constraint=LawRowsBound states=1076
+a-recheck-door-local               M_RECHECK          Spec         INVARIANT PeoplePowerGoesThroughConstitution     HOLDS           constraint=LawRowsBound states=1076
+a-recheck-door                     M_RECHECK          Spec         INVARIANT ConstitutionIsTheOnlyDoor              HOLDS           constraint=LawRowsBound states=1076
+a-recheck-mutual                   M_RECHECK          Spec         INVARIANT MutualChecks                           HOLDS           constraint=LawRowsBound states=1076
+a-recheck-control-cycle            M_RECHECK          Spec         INVARIANT ControlLayerIsCyclic                   HOLDS           constraint=LawRowsBound states=1076
+a-recheck-primacy                  M_RECHECK          Spec         INVARIANT LegislativePrimacy                     HOLDS           constraint=LawRowsBound states=1076
+a-recheck-buckley                  M_RECHECK          Spec         INVARIANT BuckleyHonoured                        HOLDS           constraint=LawRowsBound states=1076
+a-recheck-seila                    M_RECHECK          Spec         INVARIANT SeilaLawHonoured                       HOLDS           constraint=LawRowsBound states=1076
+a-recheck-bowsher                  M_RECHECK          Spec         INVARIANT BowsherHonoured                        HOLDS           constraint=LawRowsBound states=1076
+a-recheck-chadha                   M_RECHECK          Spec         INVARIANT ChadhaHonoured                         HOLDS           constraint=LawRowsBound states=1076
+a-recheck-will                     M_RECHECK          Spec         INVARIANT WillHonoured                           HOLDS           constraint=LawRowsBound states=1076
+a-recheck-removable                M_RECHECK          Spec         INVARIANT ExecutorsAreRemovable                  HOLDS           constraint=LawRowsBound states=1076
+a-recheck-on-graph                 M_RECHECK          Spec         INVARIANT ActsFollowEdges                        HOLDS           constraint=LawRowsBound states=1076
+a-recheck-holders                  M_RECHECK          Spec         INVARIANT ActsByHolders                          HOLDS           constraint=LawRowsBound states=1076
+a-recheck-good-behaviour           M_RECHECK          Spec         INVARIANT GoodBehaviour                          HOLDS           constraint=LawRowsBound states=1076
+a-recheck-pocket                   M_RECHECK          Spec         INVARIANT PocketVetoHonoured                     HOLDS           constraint=LawRowsBound states=1076
+a-recheck-text-step                M_RECHECK          Spec         PROPERTY  TextChangesOnlyByArticleV              HOLDS           constraint=LawRowsBound states=1076
+a-recheck-statute-step             M_RECHECK          Spec         PROPERTY  StatutesChangeOnlyByLawOrCourt         HOLDS           constraint=LawRowsBound states=1076
+
+# --- M_NOSTUART
+c-nostuart-type                    M_NOSTUART         Spec         INVARIANT TypeOK                                 HOLDS           Agencies={} Courts={ct1}
+c-nostuart-live-edges              M_NOSTUART         Spec         INVARIANT EdgesConnectLiveNodes                  HOLDS           Agencies={} Courts={ct1}
+c-nostuart-offices                 M_NOSTUART         Spec         INVARIANT OfficesAreLive                         COUNTEREXAMPLE  Agencies={} Courts={ct1}
+c-nostuart-text                    M_NOSTUART         Spec         INVARIANT TextFollowsArticleV                    HOLDS           Agencies={} Courts={ct1}
+c-nostuart-artv                    M_NOSTUART         Spec         INVARIANT ArticleVStands                         HOLDS           Agencies={} Courts={ct1}
+c-nostuart-writers                 M_NOSTUART         Spec         INVARIANT ConstitutionWrittenByPeopleAndStates   HOLDS           Agencies={} Courts={ct1}
+c-nostuart-overstep                M_NOSTUART         Spec         INVARIANT OnlyStatutesOverstep                   HOLDS           Agencies={} Courts={ct1}
+c-nostuart-chain-xxv               M_NOSTUART         Spec         INVARIANT GrantFollowsChainExceptXXV             HOLDS           Agencies={} Courts={ct1}
+c-nostuart-acyclic-vp              M_NOSTUART         Spec         INVARIANT GrantCyclesPassThroughPeopleStatesOrVP HOLDS           Agencies={} Courts={ct1}
+c-nostuart-loop                    M_NOSTUART         Spec         INVARIANT NominationLoopIffXXV                   HOLDS           Agencies={} Courts={ct1}
+c-nostuart-only-cycle              M_NOSTUART         Spec         INVARIANT OnlyGrantCycleIsXXV                    HOLDS           Agencies={} Courts={ct1}
+c-nostuart-by-law                  M_NOSTUART         Spec         INVARIANT EveryBodyIsCreatedByLaw                HOLDS           Agencies={} Courts={ct1}
+c-nostuart-paths                   M_NOSTUART         Spec         INVARIANT NamedPathsFromPeople                   HOLDS           Agencies={} Courts={ct1}
+c-nostuart-traces                  M_NOSTUART         Spec         INVARIANT PowerTracesToPeople                    HOLDS           Agencies={} Courts={ct1}
+c-nostuart-door-local              M_NOSTUART         Spec         INVARIANT PeoplePowerGoesThroughConstitution     HOLDS           Agencies={} Courts={ct1}
+c-nostuart-door                    M_NOSTUART         Spec         INVARIANT ConstitutionIsTheOnlyDoor              HOLDS           Agencies={} Courts={ct1}
+c-nostuart-mutual                  M_NOSTUART         Spec         INVARIANT MutualChecks                           HOLDS           Agencies={} Courts={ct1}
+c-nostuart-control-cycle           M_NOSTUART         Spec         INVARIANT ControlLayerIsCyclic                   HOLDS           Agencies={} Courts={ct1}
+c-nostuart-primacy                 M_NOSTUART         Spec         INVARIANT LegislativePrimacy                     HOLDS           Agencies={} Courts={ct1}
+c-nostuart-buckley                 M_NOSTUART         Spec         INVARIANT BuckleyHonoured                        HOLDS           Agencies={} Courts={ct1}
+c-nostuart-seila                   M_NOSTUART         Spec         INVARIANT SeilaLawHonoured                       HOLDS           Agencies={} Courts={ct1}
+c-nostuart-bowsher                 M_NOSTUART         Spec         INVARIANT BowsherHonoured                        HOLDS           Agencies={} Courts={ct1}
+c-nostuart-chadha                  M_NOSTUART         Spec         INVARIANT ChadhaHonoured                         HOLDS           Agencies={} Courts={ct1}
+c-nostuart-will                    M_NOSTUART         Spec         INVARIANT WillHonoured                           HOLDS           Agencies={} Courts={ct1}
+c-nostuart-removable               M_NOSTUART         Spec         INVARIANT ExecutorsAreRemovable                  HOLDS           Agencies={} Courts={ct1}
+c-nostuart-on-graph                M_NOSTUART         Spec         INVARIANT ActsFollowEdges                        HOLDS           Agencies={} Courts={ct1}
+c-nostuart-holders                 M_NOSTUART         Spec         INVARIANT ActsByHolders                          HOLDS           Agencies={} Courts={ct1}
+c-nostuart-good-behaviour          M_NOSTUART         Spec         INVARIANT GoodBehaviour                          HOLDS           Agencies={} Courts={ct1}
+c-nostuart-pocket                  M_NOSTUART         Spec         INVARIANT PocketVetoHonoured                     HOLDS           Agencies={} Courts={ct1}
+c-nostuart-text-step               M_NOSTUART         Spec         PROPERTY  TextChangesOnlyByArticleV              HOLDS           Agencies={} Courts={ct1}
+c-nostuart-statute-step            M_NOSTUART         Spec         PROPERTY  StatutesChangeOnlyByLawOrCourt         HOLDS           Agencies={} Courts={ct1}
+
+# --- M_NOPOCKET
+a-nopocket-type                    M_NOPOCKET         Spec         INVARIANT TypeOK                                 HOLDS           constraint=LawRowsBound
+a-nopocket-live-edges              M_NOPOCKET         Spec         INVARIANT EdgesConnectLiveNodes                  HOLDS           constraint=LawRowsBound
+a-nopocket-offices                 M_NOPOCKET         Spec         INVARIANT OfficesAreLive                         HOLDS           constraint=LawRowsBound
+a-nopocket-text                    M_NOPOCKET         Spec         INVARIANT TextFollowsArticleV                    HOLDS           constraint=LawRowsBound
+a-nopocket-artv                    M_NOPOCKET         Spec         INVARIANT ArticleVStands                         HOLDS           constraint=LawRowsBound
+a-nopocket-writers                 M_NOPOCKET         Spec         INVARIANT ConstitutionWrittenByPeopleAndStates   HOLDS           constraint=LawRowsBound
+a-nopocket-overstep                M_NOPOCKET         Spec         INVARIANT OnlyStatutesOverstep                   HOLDS           constraint=LawRowsBound
+a-nopocket-chain-xxv               M_NOPOCKET         Spec         INVARIANT GrantFollowsChainExceptXXV             HOLDS           constraint=LawRowsBound
+a-nopocket-acyclic-vp              M_NOPOCKET         Spec         INVARIANT GrantCyclesPassThroughPeopleStatesOrVP HOLDS           constraint=LawRowsBound
+a-nopocket-loop                    M_NOPOCKET         Spec         INVARIANT NominationLoopIffXXV                   HOLDS           constraint=LawRowsBound
+a-nopocket-only-cycle              M_NOPOCKET         Spec         INVARIANT OnlyGrantCycleIsXXV                    HOLDS           constraint=LawRowsBound
+a-nopocket-by-law                  M_NOPOCKET         Spec         INVARIANT EveryBodyIsCreatedByLaw                HOLDS           constraint=LawRowsBound
+a-nopocket-paths                   M_NOPOCKET         Spec         INVARIANT NamedPathsFromPeople                   HOLDS           constraint=LawRowsBound
+a-nopocket-traces                  M_NOPOCKET         Spec         INVARIANT PowerTracesToPeople                    HOLDS           constraint=LawRowsBound
+a-nopocket-door-local              M_NOPOCKET         Spec         INVARIANT PeoplePowerGoesThroughConstitution     HOLDS           constraint=LawRowsBound
+a-nopocket-door                    M_NOPOCKET         Spec         INVARIANT ConstitutionIsTheOnlyDoor              HOLDS           constraint=LawRowsBound
+a-nopocket-mutual                  M_NOPOCKET         Spec         INVARIANT MutualChecks                           HOLDS           constraint=LawRowsBound
+a-nopocket-control-cycle           M_NOPOCKET         Spec         INVARIANT ControlLayerIsCyclic                   HOLDS           constraint=LawRowsBound
+a-nopocket-primacy                 M_NOPOCKET         Spec         INVARIANT LegislativePrimacy                     HOLDS           constraint=LawRowsBound
+a-nopocket-buckley                 M_NOPOCKET         Spec         INVARIANT BuckleyHonoured                        HOLDS           constraint=LawRowsBound
+a-nopocket-seila                   M_NOPOCKET         Spec         INVARIANT SeilaLawHonoured                       HOLDS           constraint=LawRowsBound
+a-nopocket-bowsher                 M_NOPOCKET         Spec         INVARIANT BowsherHonoured                        HOLDS           constraint=LawRowsBound
+a-nopocket-chadha                  M_NOPOCKET         Spec         INVARIANT ChadhaHonoured                         HOLDS           constraint=LawRowsBound
+a-nopocket-will                    M_NOPOCKET         Spec         INVARIANT WillHonoured                           HOLDS           constraint=LawRowsBound
+a-nopocket-removable               M_NOPOCKET         Spec         INVARIANT ExecutorsAreRemovable                  HOLDS           constraint=LawRowsBound
+a-nopocket-on-graph                M_NOPOCKET         Spec         INVARIANT ActsFollowEdges                        HOLDS           constraint=LawRowsBound
+a-nopocket-holders                 M_NOPOCKET         Spec         INVARIANT ActsByHolders                          HOLDS           constraint=LawRowsBound
+a-nopocket-good-behaviour          M_NOPOCKET         Spec         INVARIANT GoodBehaviour                          HOLDS           constraint=LawRowsBound
+a-nopocket-pocket                  M_NOPOCKET         Spec         INVARIANT PocketVetoHonoured                     COUNTEREXAMPLE  constraint=LawRowsBound
+a-nopocket-text-step               M_NOPOCKET         Spec         PROPERTY  TextChangesOnlyByArticleV              HOLDS           constraint=LawRowsBound
+a-nopocket-statute-step            M_NOPOCKET         Spec         PROPERTY  StatutesChangeOnlyByLawOrCourt         HOLDS           constraint=LawRowsBound
+
+# --- M_UPHOLD
+a-uphold-type                      M_UPHOLD           Spec         INVARIANT TypeOK                                 HOLDS           constraint=LawRowsBound
+a-uphold-live-edges                M_UPHOLD           Spec         INVARIANT EdgesConnectLiveNodes                  HOLDS           constraint=LawRowsBound
+a-uphold-offices                   M_UPHOLD           Spec         INVARIANT OfficesAreLive                         HOLDS           constraint=LawRowsBound
+a-uphold-text                      M_UPHOLD           Spec         INVARIANT TextFollowsArticleV                    HOLDS           constraint=LawRowsBound
+a-uphold-artv                      M_UPHOLD           Spec         INVARIANT ArticleVStands                         HOLDS           constraint=LawRowsBound
+a-uphold-writers                   M_UPHOLD           Spec         INVARIANT ConstitutionWrittenByPeopleAndStates   HOLDS           constraint=LawRowsBound
+a-uphold-overstep                  M_UPHOLD           Spec         INVARIANT OnlyStatutesOverstep                   HOLDS           constraint=LawRowsBound
+a-uphold-chain-xxv                 M_UPHOLD           Spec         INVARIANT GrantFollowsChainExceptXXV             HOLDS           constraint=LawRowsBound
+a-uphold-acyclic-vp                M_UPHOLD           Spec         INVARIANT GrantCyclesPassThroughPeopleStatesOrVP HOLDS           constraint=LawRowsBound
+a-uphold-loop                      M_UPHOLD           Spec         INVARIANT NominationLoopIffXXV                   HOLDS           constraint=LawRowsBound
+a-uphold-only-cycle                M_UPHOLD           Spec         INVARIANT OnlyGrantCycleIsXXV                    HOLDS           constraint=LawRowsBound
+a-uphold-by-law                    M_UPHOLD           Spec         INVARIANT EveryBodyIsCreatedByLaw                HOLDS           constraint=LawRowsBound
+a-uphold-paths                     M_UPHOLD           Spec         INVARIANT NamedPathsFromPeople                   HOLDS           constraint=LawRowsBound
+a-uphold-traces                    M_UPHOLD           Spec         INVARIANT PowerTracesToPeople                    HOLDS           constraint=LawRowsBound
+a-uphold-door-local                M_UPHOLD           Spec         INVARIANT PeoplePowerGoesThroughConstitution     HOLDS           constraint=LawRowsBound
+a-uphold-door                      M_UPHOLD           Spec         INVARIANT ConstitutionIsTheOnlyDoor              HOLDS           constraint=LawRowsBound
+a-uphold-mutual                    M_UPHOLD           Spec         INVARIANT MutualChecks                           HOLDS           constraint=LawRowsBound
+a-uphold-control-cycle             M_UPHOLD           Spec         INVARIANT ControlLayerIsCyclic                   HOLDS           constraint=LawRowsBound
+a-uphold-primacy                   M_UPHOLD           Spec         INVARIANT LegislativePrimacy                     HOLDS           constraint=LawRowsBound
+a-uphold-buckley                   M_UPHOLD           Spec         INVARIANT BuckleyHonoured                        COUNTEREXAMPLE  constraint=LawRowsBound
+a-uphold-seila                     M_UPHOLD           Spec         INVARIANT SeilaLawHonoured                       COUNTEREXAMPLE  constraint=LawRowsBound
+a-uphold-bowsher                   M_UPHOLD           Spec         INVARIANT BowsherHonoured                        COUNTEREXAMPLE  constraint=LawRowsBound
+a-uphold-chadha                    M_UPHOLD           Spec         INVARIANT ChadhaHonoured                         COUNTEREXAMPLE  constraint=LawRowsBound
+a-uphold-will                      M_UPHOLD           Spec         INVARIANT WillHonoured                           HOLDS           constraint=LawRowsBound
+a-uphold-removable                 M_UPHOLD           Spec         INVARIANT ExecutorsAreRemovable                  HOLDS           constraint=LawRowsBound
+a-uphold-on-graph                  M_UPHOLD           Spec         INVARIANT ActsFollowEdges                        HOLDS           constraint=LawRowsBound
+a-uphold-holders                   M_UPHOLD           Spec         INVARIANT ActsByHolders                          HOLDS           constraint=LawRowsBound
+a-uphold-good-behaviour            M_UPHOLD           Spec         INVARIANT GoodBehaviour                          HOLDS           constraint=LawRowsBound
+a-uphold-pocket                    M_UPHOLD           Spec         INVARIANT PocketVetoHonoured                     HOLDS           constraint=LawRowsBound
+a-uphold-text-step                 M_UPHOLD           Spec         PROPERTY  TextChangesOnlyByArticleV              HOLDS           constraint=LawRowsBound
+a-uphold-statute-step              M_UPHOLD           Spec         PROPERTY  StatutesChangeOnlyByLawOrCourt         HOLDS           constraint=LawRowsBound
+c-uphold-will                      M_UPHOLD           Spec         INVARIANT WillHonoured                           COUNTEREXAMPLE  Agencies={} Courts={ct1}
+
+# --- M_HUMPHREY
+a-humphrey-type                    M_HUMPHREY         Spec         INVARIANT TypeOK                                 HOLDS           constraint=LawRowsBound
+a-humphrey-live-edges              M_HUMPHREY         Spec         INVARIANT EdgesConnectLiveNodes                  HOLDS           constraint=LawRowsBound
+a-humphrey-offices                 M_HUMPHREY         Spec         INVARIANT OfficesAreLive                         HOLDS           constraint=LawRowsBound
+a-humphrey-text                    M_HUMPHREY         Spec         INVARIANT TextFollowsArticleV                    HOLDS           constraint=LawRowsBound
+a-humphrey-artv                    M_HUMPHREY         Spec         INVARIANT ArticleVStands                         HOLDS           constraint=LawRowsBound
+a-humphrey-writers                 M_HUMPHREY         Spec         INVARIANT ConstitutionWrittenByPeopleAndStates   HOLDS           constraint=LawRowsBound
+a-humphrey-overstep                M_HUMPHREY         Spec         INVARIANT OnlyStatutesOverstep                   HOLDS           constraint=LawRowsBound
+a-humphrey-chain-xxv               M_HUMPHREY         Spec         INVARIANT GrantFollowsChainExceptXXV             HOLDS           constraint=LawRowsBound
+a-humphrey-acyclic-vp              M_HUMPHREY         Spec         INVARIANT GrantCyclesPassThroughPeopleStatesOrVP HOLDS           constraint=LawRowsBound
+a-humphrey-loop                    M_HUMPHREY         Spec         INVARIANT NominationLoopIffXXV                   HOLDS           constraint=LawRowsBound
+a-humphrey-only-cycle              M_HUMPHREY         Spec         INVARIANT OnlyGrantCycleIsXXV                    HOLDS           constraint=LawRowsBound
+a-humphrey-by-law                  M_HUMPHREY         Spec         INVARIANT EveryBodyIsCreatedByLaw                HOLDS           constraint=LawRowsBound
+a-humphrey-paths                   M_HUMPHREY         Spec         INVARIANT NamedPathsFromPeople                   HOLDS           constraint=LawRowsBound
+a-humphrey-traces                  M_HUMPHREY         Spec         INVARIANT PowerTracesToPeople                    HOLDS           constraint=LawRowsBound
+a-humphrey-door-local              M_HUMPHREY         Spec         INVARIANT PeoplePowerGoesThroughConstitution     HOLDS           constraint=LawRowsBound
+a-humphrey-door                    M_HUMPHREY         Spec         INVARIANT ConstitutionIsTheOnlyDoor              HOLDS           constraint=LawRowsBound
+a-humphrey-mutual                  M_HUMPHREY         Spec         INVARIANT MutualChecks                           HOLDS           constraint=LawRowsBound
+a-humphrey-control-cycle           M_HUMPHREY         Spec         INVARIANT ControlLayerIsCyclic                   HOLDS           constraint=LawRowsBound
+a-humphrey-primacy                 M_HUMPHREY         Spec         INVARIANT LegislativePrimacy                     HOLDS           constraint=LawRowsBound
+a-humphrey-buckley                 M_HUMPHREY         Spec         INVARIANT BuckleyHonoured                        HOLDS           constraint=LawRowsBound
+a-humphrey-seila                   M_HUMPHREY         Spec         INVARIANT SeilaLawHonoured                       COUNTEREXAMPLE  constraint=LawRowsBound
+a-humphrey-bowsher                 M_HUMPHREY         Spec         INVARIANT BowsherHonoured                        HOLDS           constraint=LawRowsBound
+a-humphrey-chadha                  M_HUMPHREY         Spec         INVARIANT ChadhaHonoured                         HOLDS           constraint=LawRowsBound
+a-humphrey-will                    M_HUMPHREY         Spec         INVARIANT WillHonoured                           HOLDS           constraint=LawRowsBound
+a-humphrey-removable               M_HUMPHREY         Spec         INVARIANT ExecutorsAreRemovable                  HOLDS           constraint=LawRowsBound
+a-humphrey-on-graph                M_HUMPHREY         Spec         INVARIANT ActsFollowEdges                        HOLDS           constraint=LawRowsBound
+a-humphrey-holders                 M_HUMPHREY         Spec         INVARIANT ActsByHolders                          HOLDS           constraint=LawRowsBound
+a-humphrey-good-behaviour          M_HUMPHREY         Spec         INVARIANT GoodBehaviour                          HOLDS           constraint=LawRowsBound
+a-humphrey-pocket                  M_HUMPHREY         Spec         INVARIANT PocketVetoHonoured                     HOLDS           constraint=LawRowsBound
+a-humphrey-text-step               M_HUMPHREY         Spec         PROPERTY  TextChangesOnlyByArticleV              HOLDS           constraint=LawRowsBound
+a-humphrey-statute-step            M_HUMPHREY         Spec         PROPERTY  StatutesChangeOnlyByLawOrCourt         HOLDS           constraint=LawRowsBound
+
+# --- M_PRECHADHA
+a-prechadha-type                   M_PRECHADHA        Spec         INVARIANT TypeOK                                 HOLDS           constraint=LawRowsBound
+a-prechadha-live-edges             M_PRECHADHA        Spec         INVARIANT EdgesConnectLiveNodes                  HOLDS           constraint=LawRowsBound
+a-prechadha-offices                M_PRECHADHA        Spec         INVARIANT OfficesAreLive                         HOLDS           constraint=LawRowsBound
+a-prechadha-text                   M_PRECHADHA        Spec         INVARIANT TextFollowsArticleV                    HOLDS           constraint=LawRowsBound
+a-prechadha-artv                   M_PRECHADHA        Spec         INVARIANT ArticleVStands                         HOLDS           constraint=LawRowsBound
+a-prechadha-writers                M_PRECHADHA        Spec         INVARIANT ConstitutionWrittenByPeopleAndStates   HOLDS           constraint=LawRowsBound
+a-prechadha-overstep               M_PRECHADHA        Spec         INVARIANT OnlyStatutesOverstep                   HOLDS           constraint=LawRowsBound
+a-prechadha-chain-xxv              M_PRECHADHA        Spec         INVARIANT GrantFollowsChainExceptXXV             HOLDS           constraint=LawRowsBound
+a-prechadha-acyclic-vp             M_PRECHADHA        Spec         INVARIANT GrantCyclesPassThroughPeopleStatesOrVP HOLDS           constraint=LawRowsBound
+a-prechadha-loop                   M_PRECHADHA        Spec         INVARIANT NominationLoopIffXXV                   HOLDS           constraint=LawRowsBound
+a-prechadha-only-cycle             M_PRECHADHA        Spec         INVARIANT OnlyGrantCycleIsXXV                    HOLDS           constraint=LawRowsBound
+a-prechadha-by-law                 M_PRECHADHA        Spec         INVARIANT EveryBodyIsCreatedByLaw                HOLDS           constraint=LawRowsBound
+a-prechadha-paths                  M_PRECHADHA        Spec         INVARIANT NamedPathsFromPeople                   HOLDS           constraint=LawRowsBound
+a-prechadha-traces                 M_PRECHADHA        Spec         INVARIANT PowerTracesToPeople                    HOLDS           constraint=LawRowsBound
+a-prechadha-door-local             M_PRECHADHA        Spec         INVARIANT PeoplePowerGoesThroughConstitution     HOLDS           constraint=LawRowsBound
+a-prechadha-door                   M_PRECHADHA        Spec         INVARIANT ConstitutionIsTheOnlyDoor              HOLDS           constraint=LawRowsBound
+a-prechadha-mutual                 M_PRECHADHA        Spec         INVARIANT MutualChecks                           HOLDS           constraint=LawRowsBound
+a-prechadha-control-cycle          M_PRECHADHA        Spec         INVARIANT ControlLayerIsCyclic                   HOLDS           constraint=LawRowsBound
+a-prechadha-primacy                M_PRECHADHA        Spec         INVARIANT LegislativePrimacy                     HOLDS           constraint=LawRowsBound
+a-prechadha-buckley                M_PRECHADHA        Spec         INVARIANT BuckleyHonoured                        HOLDS           constraint=LawRowsBound
+a-prechadha-seila                  M_PRECHADHA        Spec         INVARIANT SeilaLawHonoured                       HOLDS           constraint=LawRowsBound
+a-prechadha-bowsher                M_PRECHADHA        Spec         INVARIANT BowsherHonoured                        HOLDS           constraint=LawRowsBound
+a-prechadha-chadha                 M_PRECHADHA        Spec         INVARIANT ChadhaHonoured                         COUNTEREXAMPLE  constraint=LawRowsBound
+a-prechadha-will                   M_PRECHADHA        Spec         INVARIANT WillHonoured                           HOLDS           constraint=LawRowsBound
+a-prechadha-removable              M_PRECHADHA        Spec         INVARIANT ExecutorsAreRemovable                  HOLDS           constraint=LawRowsBound
+a-prechadha-on-graph               M_PRECHADHA        Spec         INVARIANT ActsFollowEdges                        HOLDS           constraint=LawRowsBound
+a-prechadha-holders                M_PRECHADHA        Spec         INVARIANT ActsByHolders                          HOLDS           constraint=LawRowsBound
+a-prechadha-good-behaviour         M_PRECHADHA        Spec         INVARIANT GoodBehaviour                          HOLDS           constraint=LawRowsBound
+a-prechadha-pocket                 M_PRECHADHA        Spec         INVARIANT PocketVetoHonoured                     HOLDS           constraint=LawRowsBound
+a-prechadha-text-step              M_PRECHADHA        Spec         PROPERTY  TextChangesOnlyByArticleV              HOLDS           constraint=LawRowsBound
+a-prechadha-statute-step           M_PRECHADHA        Spec         PROPERTY  StatutesChangeOnlyByLawOrCourt         HOLDS           constraint=LawRowsBound
+
+# --- M_PREBUCKLEY
+a-prebuckley-type                  M_PREBUCKLEY       Spec         INVARIANT TypeOK                                 HOLDS           constraint=LawRowsBound
+a-prebuckley-live-edges            M_PREBUCKLEY       Spec         INVARIANT EdgesConnectLiveNodes                  HOLDS           constraint=LawRowsBound
+a-prebuckley-offices               M_PREBUCKLEY       Spec         INVARIANT OfficesAreLive                         HOLDS           constraint=LawRowsBound
+a-prebuckley-text                  M_PREBUCKLEY       Spec         INVARIANT TextFollowsArticleV                    HOLDS           constraint=LawRowsBound
+a-prebuckley-artv                  M_PREBUCKLEY       Spec         INVARIANT ArticleVStands                         HOLDS           constraint=LawRowsBound
+a-prebuckley-writers               M_PREBUCKLEY       Spec         INVARIANT ConstitutionWrittenByPeopleAndStates   HOLDS           constraint=LawRowsBound
+a-prebuckley-overstep              M_PREBUCKLEY       Spec         INVARIANT OnlyStatutesOverstep                   HOLDS           constraint=LawRowsBound
+a-prebuckley-chain-xxv             M_PREBUCKLEY       Spec         INVARIANT GrantFollowsChainExceptXXV             HOLDS           constraint=LawRowsBound
+a-prebuckley-acyclic-vp            M_PREBUCKLEY       Spec         INVARIANT GrantCyclesPassThroughPeopleStatesOrVP HOLDS           constraint=LawRowsBound
+a-prebuckley-loop                  M_PREBUCKLEY       Spec         INVARIANT NominationLoopIffXXV                   HOLDS           constraint=LawRowsBound
+a-prebuckley-only-cycle            M_PREBUCKLEY       Spec         INVARIANT OnlyGrantCycleIsXXV                    HOLDS           constraint=LawRowsBound
+a-prebuckley-by-law                M_PREBUCKLEY       Spec         INVARIANT EveryBodyIsCreatedByLaw                HOLDS           constraint=LawRowsBound
+a-prebuckley-paths                 M_PREBUCKLEY       Spec         INVARIANT NamedPathsFromPeople                   HOLDS           constraint=LawRowsBound
+a-prebuckley-traces                M_PREBUCKLEY       Spec         INVARIANT PowerTracesToPeople                    HOLDS           constraint=LawRowsBound
+a-prebuckley-door-local            M_PREBUCKLEY       Spec         INVARIANT PeoplePowerGoesThroughConstitution     HOLDS           constraint=LawRowsBound
+a-prebuckley-door                  M_PREBUCKLEY       Spec         INVARIANT ConstitutionIsTheOnlyDoor              HOLDS           constraint=LawRowsBound
+a-prebuckley-mutual                M_PREBUCKLEY       Spec         INVARIANT MutualChecks                           HOLDS           constraint=LawRowsBound
+a-prebuckley-control-cycle         M_PREBUCKLEY       Spec         INVARIANT ControlLayerIsCyclic                   HOLDS           constraint=LawRowsBound
+a-prebuckley-primacy               M_PREBUCKLEY       Spec         INVARIANT LegislativePrimacy                     HOLDS           constraint=LawRowsBound
+a-prebuckley-buckley               M_PREBUCKLEY       Spec         INVARIANT BuckleyHonoured                        COUNTEREXAMPLE  constraint=LawRowsBound
+a-prebuckley-seila                 M_PREBUCKLEY       Spec         INVARIANT SeilaLawHonoured                       HOLDS           constraint=LawRowsBound
+a-prebuckley-bowsher               M_PREBUCKLEY       Spec         INVARIANT BowsherHonoured                        HOLDS           constraint=LawRowsBound
+a-prebuckley-chadha                M_PREBUCKLEY       Spec         INVARIANT ChadhaHonoured                         HOLDS           constraint=LawRowsBound
+a-prebuckley-will                  M_PREBUCKLEY       Spec         INVARIANT WillHonoured                           HOLDS           constraint=LawRowsBound
+a-prebuckley-removable             M_PREBUCKLEY       Spec         INVARIANT ExecutorsAreRemovable                  HOLDS           constraint=LawRowsBound
+a-prebuckley-on-graph              M_PREBUCKLEY       Spec         INVARIANT ActsFollowEdges                        HOLDS           constraint=LawRowsBound
+a-prebuckley-holders               M_PREBUCKLEY       Spec         INVARIANT ActsByHolders                          HOLDS           constraint=LawRowsBound
+a-prebuckley-good-behaviour        M_PREBUCKLEY       Spec         INVARIANT GoodBehaviour                          HOLDS           constraint=LawRowsBound
+a-prebuckley-pocket                M_PREBUCKLEY       Spec         INVARIANT PocketVetoHonoured                     HOLDS           constraint=LawRowsBound
+a-prebuckley-text-step             M_PREBUCKLEY       Spec         PROPERTY  TextChangesOnlyByArticleV              HOLDS           constraint=LawRowsBound
+a-prebuckley-statute-step          M_PREBUCKLEY       Spec         PROPERTY  StatutesChangeOnlyByLawOrCourt         HOLDS           constraint=LawRowsBound
+
+# --- M_PREBOWSHER
+a-prebowsher-type                  M_PREBOWSHER       Spec         INVARIANT TypeOK                                 HOLDS           constraint=LawRowsBound
+a-prebowsher-live-edges            M_PREBOWSHER       Spec         INVARIANT EdgesConnectLiveNodes                  HOLDS           constraint=LawRowsBound
+a-prebowsher-offices               M_PREBOWSHER       Spec         INVARIANT OfficesAreLive                         HOLDS           constraint=LawRowsBound
+a-prebowsher-text                  M_PREBOWSHER       Spec         INVARIANT TextFollowsArticleV                    HOLDS           constraint=LawRowsBound
+a-prebowsher-artv                  M_PREBOWSHER       Spec         INVARIANT ArticleVStands                         HOLDS           constraint=LawRowsBound
+a-prebowsher-writers               M_PREBOWSHER       Spec         INVARIANT ConstitutionWrittenByPeopleAndStates   HOLDS           constraint=LawRowsBound
+a-prebowsher-overstep              M_PREBOWSHER       Spec         INVARIANT OnlyStatutesOverstep                   HOLDS           constraint=LawRowsBound
+a-prebowsher-chain-xxv             M_PREBOWSHER       Spec         INVARIANT GrantFollowsChainExceptXXV             HOLDS           constraint=LawRowsBound
+a-prebowsher-acyclic-vp            M_PREBOWSHER       Spec         INVARIANT GrantCyclesPassThroughPeopleStatesOrVP HOLDS           constraint=LawRowsBound
+a-prebowsher-loop                  M_PREBOWSHER       Spec         INVARIANT NominationLoopIffXXV                   HOLDS           constraint=LawRowsBound
+a-prebowsher-only-cycle            M_PREBOWSHER       Spec         INVARIANT OnlyGrantCycleIsXXV                    HOLDS           constraint=LawRowsBound
+a-prebowsher-by-law                M_PREBOWSHER       Spec         INVARIANT EveryBodyIsCreatedByLaw                HOLDS           constraint=LawRowsBound
+a-prebowsher-paths                 M_PREBOWSHER       Spec         INVARIANT NamedPathsFromPeople                   HOLDS           constraint=LawRowsBound
+a-prebowsher-traces                M_PREBOWSHER       Spec         INVARIANT PowerTracesToPeople                    HOLDS           constraint=LawRowsBound
+a-prebowsher-door-local            M_PREBOWSHER       Spec         INVARIANT PeoplePowerGoesThroughConstitution     HOLDS           constraint=LawRowsBound
+a-prebowsher-door                  M_PREBOWSHER       Spec         INVARIANT ConstitutionIsTheOnlyDoor              HOLDS           constraint=LawRowsBound
+a-prebowsher-mutual                M_PREBOWSHER       Spec         INVARIANT MutualChecks                           HOLDS           constraint=LawRowsBound
+a-prebowsher-control-cycle         M_PREBOWSHER       Spec         INVARIANT ControlLayerIsCyclic                   HOLDS           constraint=LawRowsBound
+a-prebowsher-primacy               M_PREBOWSHER       Spec         INVARIANT LegislativePrimacy                     HOLDS           constraint=LawRowsBound
+a-prebowsher-buckley               M_PREBOWSHER       Spec         INVARIANT BuckleyHonoured                        HOLDS           constraint=LawRowsBound
+a-prebowsher-seila                 M_PREBOWSHER       Spec         INVARIANT SeilaLawHonoured                       HOLDS           constraint=LawRowsBound
+a-prebowsher-bowsher               M_PREBOWSHER       Spec         INVARIANT BowsherHonoured                        COUNTEREXAMPLE  constraint=LawRowsBound
+a-prebowsher-chadha                M_PREBOWSHER       Spec         INVARIANT ChadhaHonoured                         HOLDS           constraint=LawRowsBound
+a-prebowsher-will                  M_PREBOWSHER       Spec         INVARIANT WillHonoured                           HOLDS           constraint=LawRowsBound
+a-prebowsher-removable             M_PREBOWSHER       Spec         INVARIANT ExecutorsAreRemovable                  HOLDS           constraint=LawRowsBound
+a-prebowsher-on-graph              M_PREBOWSHER       Spec         INVARIANT ActsFollowEdges                        HOLDS           constraint=LawRowsBound
+a-prebowsher-holders               M_PREBOWSHER       Spec         INVARIANT ActsByHolders                          HOLDS           constraint=LawRowsBound
+a-prebowsher-good-behaviour        M_PREBOWSHER       Spec         INVARIANT GoodBehaviour                          HOLDS           constraint=LawRowsBound
+a-prebowsher-pocket                M_PREBOWSHER       Spec         INVARIANT PocketVetoHonoured                     HOLDS           constraint=LawRowsBound
+a-prebowsher-text-step             M_PREBOWSHER       Spec         PROPERTY  TextChangesOnlyByArticleV              HOLDS           constraint=LawRowsBound
+a-prebowsher-statute-step          M_PREBOWSHER       Spec         PROPERTY  StatutesChangeOnlyByLawOrCourt         HOLDS           constraint=LawRowsBound
+
+# --- M_SEVER_PLAIN
+a-severplain-type                  M_SEVER_PLAIN      Spec         INVARIANT TypeOK                                 HOLDS           constraint=LawRowsBound
+a-severplain-live-edges            M_SEVER_PLAIN      Spec         INVARIANT EdgesConnectLiveNodes                  HOLDS           constraint=LawRowsBound
+a-severplain-offices               M_SEVER_PLAIN      Spec         INVARIANT OfficesAreLive                         HOLDS           constraint=LawRowsBound
+a-severplain-text                  M_SEVER_PLAIN      Spec         INVARIANT TextFollowsArticleV                    HOLDS           constraint=LawRowsBound
+a-severplain-artv                  M_SEVER_PLAIN      Spec         INVARIANT ArticleVStands                         HOLDS           constraint=LawRowsBound
+a-severplain-writers               M_SEVER_PLAIN      Spec         INVARIANT ConstitutionWrittenByPeopleAndStates   HOLDS           constraint=LawRowsBound
+a-severplain-overstep              M_SEVER_PLAIN      Spec         INVARIANT OnlyStatutesOverstep                   HOLDS           constraint=LawRowsBound
+a-severplain-chain-xxv             M_SEVER_PLAIN      Spec         INVARIANT GrantFollowsChainExceptXXV             HOLDS           constraint=LawRowsBound
+a-severplain-acyclic-vp            M_SEVER_PLAIN      Spec         INVARIANT GrantCyclesPassThroughPeopleStatesOrVP HOLDS           constraint=LawRowsBound
+a-severplain-loop                  M_SEVER_PLAIN      Spec         INVARIANT NominationLoopIffXXV                   HOLDS           constraint=LawRowsBound
+a-severplain-only-cycle            M_SEVER_PLAIN      Spec         INVARIANT OnlyGrantCycleIsXXV                    HOLDS           constraint=LawRowsBound
+a-severplain-by-law                M_SEVER_PLAIN      Spec         INVARIANT EveryBodyIsCreatedByLaw                HOLDS           constraint=LawRowsBound
+a-severplain-paths                 M_SEVER_PLAIN      Spec         INVARIANT NamedPathsFromPeople                   HOLDS           constraint=LawRowsBound
+a-severplain-traces                M_SEVER_PLAIN      Spec         INVARIANT PowerTracesToPeople                    HOLDS           constraint=LawRowsBound
+a-severplain-door-local            M_SEVER_PLAIN      Spec         INVARIANT PeoplePowerGoesThroughConstitution     HOLDS           constraint=LawRowsBound
+a-severplain-door                  M_SEVER_PLAIN      Spec         INVARIANT ConstitutionIsTheOnlyDoor              HOLDS           constraint=LawRowsBound
+a-severplain-mutual                M_SEVER_PLAIN      Spec         INVARIANT MutualChecks                           HOLDS           constraint=LawRowsBound
+a-severplain-control-cycle         M_SEVER_PLAIN      Spec         INVARIANT ControlLayerIsCyclic                   HOLDS           constraint=LawRowsBound
+a-severplain-primacy               M_SEVER_PLAIN      Spec         INVARIANT LegislativePrimacy                     HOLDS           constraint=LawRowsBound
+a-severplain-buckley               M_SEVER_PLAIN      Spec         INVARIANT BuckleyHonoured                        HOLDS           constraint=LawRowsBound
+a-severplain-seila                 M_SEVER_PLAIN      Spec         INVARIANT SeilaLawHonoured                       HOLDS           constraint=LawRowsBound
+a-severplain-bowsher               M_SEVER_PLAIN      Spec         INVARIANT BowsherHonoured                        HOLDS           constraint=LawRowsBound
+a-severplain-chadha                M_SEVER_PLAIN      Spec         INVARIANT ChadhaHonoured                         HOLDS           constraint=LawRowsBound
+a-severplain-will                  M_SEVER_PLAIN      Spec         INVARIANT WillHonoured                           HOLDS           constraint=LawRowsBound
+a-severplain-removable             M_SEVER_PLAIN      Spec         INVARIANT ExecutorsAreRemovable                  COUNTEREXAMPLE  constraint=LawRowsBound
+a-severplain-on-graph              M_SEVER_PLAIN      Spec         INVARIANT ActsFollowEdges                        HOLDS           constraint=LawRowsBound
+a-severplain-holders               M_SEVER_PLAIN      Spec         INVARIANT ActsByHolders                          HOLDS           constraint=LawRowsBound
+a-severplain-good-behaviour        M_SEVER_PLAIN      Spec         INVARIANT GoodBehaviour                          HOLDS           constraint=LawRowsBound
+a-severplain-pocket                M_SEVER_PLAIN      Spec         INVARIANT PocketVetoHonoured                     HOLDS           constraint=LawRowsBound
+a-severplain-text-step             M_SEVER_PLAIN      Spec         PROPERTY  TextChangesOnlyByArticleV              HOLDS           constraint=LawRowsBound
+a-severplain-statute-step          M_SEVER_PLAIN      Spec         PROPERTY  StatutesChangeOnlyByLawOrCourt         HOLDS           constraint=LawRowsBound
+
+# --- M_CONGRESS_AMENDS
+o-congressamends-type              M_CONGRESS_AMENDS  Spec         INVARIANT TypeOK                                 HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-congressamends-live-edges        M_CONGRESS_AMENDS  Spec         INVARIANT EdgesConnectLiveNodes                  HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-congressamends-offices           M_CONGRESS_AMENDS  Spec         INVARIANT OfficesAreLive                         HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-congressamends-text              M_CONGRESS_AMENDS  Spec         INVARIANT TextFollowsArticleV                    HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-congressamends-artv              M_CONGRESS_AMENDS  Spec         INVARIANT ArticleVStands                         HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-congressamends-writers           M_CONGRESS_AMENDS  Spec         INVARIANT ConstitutionWrittenByPeopleAndStates   COUNTEREXAMPLE  Agencies={} Proposable={"XVII","XXV"}
+o-congressamends-overstep          M_CONGRESS_AMENDS  Spec         INVARIANT OnlyStatutesOverstep                   HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-congressamends-chain-xxv         M_CONGRESS_AMENDS  Spec         INVARIANT GrantFollowsChainExceptXXV             COUNTEREXAMPLE  Agencies={} Proposable={"XVII","XXV"}
+o-congressamends-acyclic-vp        M_CONGRESS_AMENDS  Spec         INVARIANT GrantCyclesPassThroughPeopleStatesOrVP COUNTEREXAMPLE  Agencies={} Proposable={"XVII","XXV"}
+o-congressamends-loop              M_CONGRESS_AMENDS  Spec         INVARIANT NominationLoopIffXXV                   HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-congressamends-only-cycle        M_CONGRESS_AMENDS  Spec         INVARIANT OnlyGrantCycleIsXXV                    COUNTEREXAMPLE  Agencies={} Proposable={"XVII","XXV"}
+o-congressamends-by-law            M_CONGRESS_AMENDS  Spec         INVARIANT EveryBodyIsCreatedByLaw                HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-congressamends-paths             M_CONGRESS_AMENDS  Spec         INVARIANT NamedPathsFromPeople                   HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-congressamends-traces            M_CONGRESS_AMENDS  Spec         INVARIANT PowerTracesToPeople                    HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-congressamends-door-local        M_CONGRESS_AMENDS  Spec         INVARIANT PeoplePowerGoesThroughConstitution     HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-congressamends-door              M_CONGRESS_AMENDS  Spec         INVARIANT ConstitutionIsTheOnlyDoor              HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-congressamends-mutual            M_CONGRESS_AMENDS  Spec         INVARIANT MutualChecks                           HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-congressamends-control-cycle     M_CONGRESS_AMENDS  Spec         INVARIANT ControlLayerIsCyclic                   HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-congressamends-primacy           M_CONGRESS_AMENDS  Spec         INVARIANT LegislativePrimacy                     HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-congressamends-buckley           M_CONGRESS_AMENDS  Spec         INVARIANT BuckleyHonoured                        HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-congressamends-seila             M_CONGRESS_AMENDS  Spec         INVARIANT SeilaLawHonoured                       HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-congressamends-bowsher           M_CONGRESS_AMENDS  Spec         INVARIANT BowsherHonoured                        HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-congressamends-chadha            M_CONGRESS_AMENDS  Spec         INVARIANT ChadhaHonoured                         HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-congressamends-will              M_CONGRESS_AMENDS  Spec         INVARIANT WillHonoured                           HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-congressamends-removable         M_CONGRESS_AMENDS  Spec         INVARIANT ExecutorsAreRemovable                  HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-congressamends-on-graph          M_CONGRESS_AMENDS  Spec         INVARIANT ActsFollowEdges                        HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-congressamends-holders           M_CONGRESS_AMENDS  Spec         INVARIANT ActsByHolders                          HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-congressamends-good-behaviour    M_CONGRESS_AMENDS  Spec         INVARIANT GoodBehaviour                          HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-congressamends-pocket            M_CONGRESS_AMENDS  Spec         INVARIANT PocketVetoHonoured                     HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-congressamends-text-step         M_CONGRESS_AMENDS  Spec         PROPERTY  TextChangesOnlyByArticleV              HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-congressamends-statute-step      M_CONGRESS_AMENDS  Spec         PROPERTY  StatutesChangeOnlyByLawOrCourt         HOLDS           Agencies={} Proposable={"XVII","XXV"}
+
+# --- M_NO_ARTV
+o-noartv-type                      M_NO_ARTV          Spec         INVARIANT TypeOK                                 HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-noartv-live-edges                M_NO_ARTV          Spec         INVARIANT EdgesConnectLiveNodes                  HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-noartv-offices                   M_NO_ARTV          Spec         INVARIANT OfficesAreLive                         HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-noartv-text                      M_NO_ARTV          Spec         INVARIANT TextFollowsArticleV                    HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-noartv-artv                      M_NO_ARTV          Spec         INVARIANT ArticleVStands                         COUNTEREXAMPLE  Agencies={} Proposable={"XVII","XXV"}
+o-noartv-writers                   M_NO_ARTV          Spec         INVARIANT ConstitutionWrittenByPeopleAndStates   HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-noartv-overstep                  M_NO_ARTV          Spec         INVARIANT OnlyStatutesOverstep                   HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-noartv-chain-xxv                 M_NO_ARTV          Spec         INVARIANT GrantFollowsChainExceptXXV             HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-noartv-acyclic-vp                M_NO_ARTV          Spec         INVARIANT GrantCyclesPassThroughPeopleStatesOrVP HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-noartv-loop                      M_NO_ARTV          Spec         INVARIANT NominationLoopIffXXV                   HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-noartv-only-cycle                M_NO_ARTV          Spec         INVARIANT OnlyGrantCycleIsXXV                    HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-noartv-by-law                    M_NO_ARTV          Spec         INVARIANT EveryBodyIsCreatedByLaw                HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-noartv-paths                     M_NO_ARTV          Spec         INVARIANT NamedPathsFromPeople                   HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-noartv-traces                    M_NO_ARTV          Spec         INVARIANT PowerTracesToPeople                    HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-noartv-door-local                M_NO_ARTV          Spec         INVARIANT PeoplePowerGoesThroughConstitution     HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-noartv-door                      M_NO_ARTV          Spec         INVARIANT ConstitutionIsTheOnlyDoor              HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-noartv-mutual                    M_NO_ARTV          Spec         INVARIANT MutualChecks                           HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-noartv-control-cycle             M_NO_ARTV          Spec         INVARIANT ControlLayerIsCyclic                   HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-noartv-primacy                   M_NO_ARTV          Spec         INVARIANT LegislativePrimacy                     HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-noartv-buckley                   M_NO_ARTV          Spec         INVARIANT BuckleyHonoured                        HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-noartv-seila                     M_NO_ARTV          Spec         INVARIANT SeilaLawHonoured                       HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-noartv-bowsher                   M_NO_ARTV          Spec         INVARIANT BowsherHonoured                        HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-noartv-chadha                    M_NO_ARTV          Spec         INVARIANT ChadhaHonoured                         HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-noartv-will                      M_NO_ARTV          Spec         INVARIANT WillHonoured                           HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-noartv-removable                 M_NO_ARTV          Spec         INVARIANT ExecutorsAreRemovable                  HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-noartv-on-graph                  M_NO_ARTV          Spec         INVARIANT ActsFollowEdges                        HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-noartv-holders                   M_NO_ARTV          Spec         INVARIANT ActsByHolders                          HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-noartv-good-behaviour            M_NO_ARTV          Spec         INVARIANT GoodBehaviour                          HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-noartv-pocket                    M_NO_ARTV          Spec         INVARIANT PocketVetoHonoured                     HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-noartv-text-step                 M_NO_ARTV          Spec         PROPERTY  TextChangesOnlyByArticleV              HOLDS           Agencies={} Proposable={"XVII","XXV"}
+o-noartv-statute-step              M_NO_ARTV          Spec         PROPERTY  StatutesChangeOnlyByLawOrCourt         HOLDS           Agencies={} Proposable={"XVII","XXV"}
+
+# --- Witnesses: each Never... must be violated under none
+w-o-xvii                           none               Spec         INVARIANT NeverXVII                              COUNTEREXAMPLE  Agencies={} Proposable={"XVII","XXV"}
+w-o-xxv                            none               Spec         INVARIANT NeverXXV                               COUNTEREXAMPLE  Agencies={} Proposable={"XVII","XXV"}
+w-o-vp-nominated                   none               Spec         PROPERTY  NeverVPByNomination                    COUNTEREXAMPLE  Agencies={} Proposable={"XVII","XXV"}
+w-o-inability                      none               Spec         PROPERTY  NeverInabilityContested                COUNTEREXAMPLE  Agencies={} Proposable={"XVII","XXV"}
+w-af-agency-created                none               Spec         INVARIANT NeverAgencyCreated                     COUNTEREXAMPLE
+w-af-agency-abolished              none               Spec         PROPERTY  NeverAgencyAbolished                   COUNTEREXAMPLE
+w-af-forbidden-enacted             none               Spec         INVARIANT NeverForbiddenEnacted                  COUNTEREXAMPLE
+w-af-struck-buckley                none               Spec         PROPERTY  NeverStruckBuckley                     COUNTEREXAMPLE
+w-af-struck-seila                  none               Spec         PROPERTY  NeverStruckSeilaLaw                    COUNTEREXAMPLE
+w-af-struck-bowsher                none               Spec         PROPERTY  NeverStruckBowsher                     COUNTEREXAMPLE
+w-af-struck-chadha                 none               Spec         PROPERTY  NeverStruckChadha                      COUNTEREXAMPLE
+w-af-desk-in-recess                none               Spec         INVARIANT NeverBillOnDeskInRecess                COUNTEREXAMPLE
+w-c-court-established              none               Spec         INVARIANT NeverCourtEstablished                  COUNTEREXAMPLE  Agencies={} Courts={ct1}
+w-c-abolished-under-judge          none               Spec         PROPERTY  NeverCourtAbolishedUnderAJudge         COUNTEREXAMPLE  Agencies={} Courts={ct1}
+w-c-struck-will                    none               Spec         PROPERTY  NeverStruckWill                        COUNTEREXAMPLE  Agencies={} Courts={ct1}
+
+# --- Liveness: one agency (for-cause tenure with executive power; Congress appoints) or one court, no bound
+l-a-none-struck                    none               FairSpec     PROPERTY  UnconstitutionalEdgesAreStruck         HOLDS           RemoverOptions={"PresidentForCause"}
+l-a-none-nobehaviour               none               FairSpec     PROPERTY  NoBehaviour                            COUNTEREXAMPLE  RemoverOptions={"PresidentForCause"}
+l-a-uphold-struck                  M_UPHOLD           FairSpec     PROPERTY  UnconstitutionalEdgesAreStruck         COUNTEREXAMPLE  RemoverOptions={"PresidentForCause"}
+l-a-humphrey-struck                M_HUMPHREY         FairSpec     PROPERTY  UnconstitutionalEdgesAreStruck         COUNTEREXAMPLE  RemoverOptions={"PresidentForCause"}
+l-c-none-struck                    none               FairSpec     PROPERTY  UnconstitutionalEdgesAreStruck         HOLDS           Agencies={} Courts={ct1}
+l-c-none-nobehaviour               none               FairSpec     PROPERTY  NoBehaviour                            COUNTEREXAMPLE  Agencies={} Courts={ct1}
+l-c-nosuit-struck                  none               SpecNoSuit   PROPERTY  UnconstitutionalEdgesAreStruck         COUNTEREXAMPLE  Agencies={} Courts={ct1}
+l-c-noruling-struck                none               SpecNoRuling PROPERTY  UnconstitutionalEdgesAreStruck         COUNTEREXAMPLE  Agencies={} Courts={ct1}
+
+# --- A sample at Government.cfg's constants: no error sampled is not a check
+s-gov-none-safety                  none               Spec         SIMULATE  Safety                                 NO-ERROR-SAMPLED Agencies={ag1,ag2} Courts={ct1} Proposable={"XVII","XXV"} Standing={"Enable","NominateHead","ConsentHead","Appropriate","Impeach","Review","ExecutivePower","Direct","Remove","RemoveForCause","AppointInferior","Establish","ArtIII","Nominate","Consent","Jurisdiction","Appeal","LegislativeVeto","DiminishPay"} ExecOptions={TRUE,FALSE} RemoverOptions={"President","PresidentForCause","Congress"} VestingOptions={"President","Head","Courts","Congress"} num=1000 depth=40 seed=1
