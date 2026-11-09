@@ -323,26 +323,37 @@ uv run python authority_graph.py [seed] [--steps N] [--layer grant|control|all]
 
 ### authority_poster.py
 
-The same graph as a 24 × 36 in print poster:
-[`Government_authority_poster.pdf`](Government_authority_poster.pdf)
-(preview: [`Government_authority_poster.png`](Government_authority_poster.png)).
+The same graph as a 24 × 36 in print poster, for the founding graph or for
+any later year:
+[`Government_authority_poster_1789.pdf`](Government_authority_poster_1789.pdf)
+and [`Government_authority_poster_2026.pdf`](Government_authority_poster_2026.pdf)
+(previews: [1789](Government_authority_poster_1789.png),
+[2026](Government_authority_poster_2026.png)).
 
 **Usage:**
 ```bash
-uv run python authority_poster.py
+uv run python authority_poster.py               # 1789: the founding graph
+uv run python authority_poster.py --year 2026   # as amended through 2026
 ```
 
-Instead of one tangle of 30 edges, the poster separates the two layers.
+`--year` applies every amendment in the model ratified by that year: XVII
+(1913) moves the Senate's Select edge from the States to the People, and XXV
+(1967) gives Congress two edges onto the Executive. What each amendment
+changes comes from the model: the script compares the text edges just before
+and just after the `Ratify` step in simulated behaviours. Only the years are
+written into the script, in `RATIFIED`, and it stops if the model gains an
+amendment that has no year there.
+
+Instead of one tangle of edges, the poster separates the two layers.
 The grant layer is drawn as a chain read top to bottom. The control layer
 draws one arrow per direction between branches, its width the number of
 checks, with the checks listed beside it. Headline numbers (edge counts,
-Congress's 9 checks against 5, zero grant cycles among government bodies)
-are computed from the graph, and the edges come from TLC: the initial state
-for the founding graph, and a simulated behaviour that ratifies both
-amendments for the XVII and XXV panel. The script stops if the model has an
-edge the poster's layout does not place.
+Congress's checks against the other branches', zero grant cycles among
+government bodies) are computed from the graph, and the edges come from TLC.
+The script stops if the model has an edge the poster's layout does not
+place.
 
-Writes `Government_authority_poster.html`, then renders the PDF and PNG if
+Writes `Government_authority_poster_YEAR.html`, then renders the PDF and PNG if
 Node.js and Playwright are installed; otherwise print the HTML to PDF at
 24 × 36 in from a browser.
 

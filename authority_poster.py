@@ -2,15 +2,15 @@
 """Render Government.tla's authority graph as a print poster (24 x 36 in).
 
 The edges come from the model, not from this file: the founding graph is
-the initial state TLC computes, and the amendments' effect is read off a
-simulated behaviour in which both are ratified. This file supplies only the
+the initial state TLC computes, and each amendment's effect is read off the
+step that ratifies it in simulated behaviours. This file supplies only the
 layout (where each node sits and how each edge is routed) and the plain
 English names of the edges; it stops if the model has an edge the layout
 does not place, so the poster cannot silently drift from the spec.
 
-Writes Government_authority_poster.html, and, if Node.js with Playwright is
-available, Government_authority_poster.pdf (vector, print size) and
-Government_authority_poster.png (preview).
+Writes Government_authority_poster_YEAR.html (1789 unless --year is given),
+and, if Node.js with Playwright is available, the .pdf (vector, print size)
+and .png (preview) beside it.
 """
 
 import argparse
@@ -127,7 +127,9 @@ GRANT_LAYOUT = {
         ('M470,255 V290 Q470,310 450,310 H300 Q280,310 280,330 V1200 Q280,1220 300,1220 H452',
          280, 1040),
     ('People', 'Congress', 'ElectHouse'):
-        ('M130,238 V520 Q130,540 150,540 H452', 130, 400),
+        ('M110,238 V520 Q110,540 130,540 H452', 110, 330),
+    ('People', 'Congress', 'ElectSenate'):            # from XVII on
+        ('M200,238 V490 Q200,510 220,510 H452', 200, 440),
     ('States', 'Congress', 'ElectSenate'):
         ('M900,238 V490 Q900,510 880,510 H748', 900, 330),
     ('Congress', 'States', 'Propose'):
@@ -135,9 +137,15 @@ GRANT_LAYOUT = {
     ('States', 'Executive', 'AppointElectors'):
         ('M1040,238 V860 Q1040,880 1020,880 H748', 935, 880),
     ('Congress', 'Executive', 'ContingentElection'): ('M600,588 V824', 600, 706),
+    ('Congress', 'Executive', 'ConfirmVP'): ('M680,588 V824', 680, 730),    # from XXV on
     ('Executive', 'Judiciary', 'Nominate'): ('M600,928 V1164', 600, 1046),
     ('Congress', 'Judiciary', 'Consent'):
         ('M740,575 H800 Q820,575 820,595 V1200 Q820,1220 800,1220 H748', 820, 1040),
+}
+# Where an edge moves over to make room for another.
+MAKE_ROOM = {
+    ('Congress', 'Executive', 'ConfirmVP'):
+        {('Congress', 'Executive', 'ContingentElection'): ('M560,588 V824', 560, 660)},
 }
 # Drawn first, so the edges crossing them pass over with a gap.
 UNDER = {('Constitution', 'Executive', 'ArtII'), ('Constitution', 'Judiciary', 'ArtIII'),
@@ -146,18 +154,21 @@ UNDER = {('Constitution', 'Executive', 'ArtII'), ('Constitution', 'Judiciary', '
 
 def grant_panel(edges):
     grant = {(e['from'], e['to'], e['label']): e for e in edges if e['kind'] != 'Control'}
-    missing = set(grant) - set(GRANT_LAYOUT)
-    extra = set(GRANT_LAYOUT) - set(grant)
-    if missing or extra:
-        raise SystemExit(f'Grant layer and poster layout disagree: model has {missing or "-"}, '
-                         f'layout has {extra or "-"}; update GRANT_LAYOUT.')
+    layout = dict(GRANT_LAYOUT)
+    for k, moves in MAKE_ROOM.items():
+        if k in grant:
+            layout.update(moves)
+    missing = set(grant) - set(layout)
+    if missing:
+        raise SystemExit(f'The model has grant edges the poster layout does not place: '
+                         f'{missing}; add them to GRANT_LAYOUT.')
     body = []
     order = sorted(grant, key=lambda k: k not in UNDER)
     for k in order:
-        d, _, _ = GRANT_LAYOUT[k]
+        d, _, _ = layout[k]
         body.append(edge(d, grant[k]['kind']))
     for k in order:
-        _, lx, ly = GRANT_LAYOUT[k]
+        _, lx, ly = layout[k]
         body.append(label(lx, ly, NAMES[k[2]]))
     body.append(node(130, 200, 200, 76, 'People', 'source'))
     body.append(node(970, 200, 200, 76, 'States', 'source'))
@@ -415,7 +426,7 @@ ul.struck .case {{ color: {INK2}; font-size: 22px; }}
 footer {{ margin-top: auto; display: flex; justify-content: space-between; gap: 60px;
           font-size: 22px; line-height: 1.45; color: {MUTED}; border-top: 1px solid {HAIRLINE};
           padding-top: 26px; }}
-footer p {{ max-width: 1500px; }}
+footer p {{ max-width: 1800px; }}
 footer b {{ color: {INK2}; }}
 """
 
@@ -432,8 +443,25 @@ def stop_icon():
             f'<line x1="7" y1="27" x2="27" y2="7" stroke="{CRITICAL}" stroke-width="3.5"/></svg>')
 
 
-def page(edges, added, dropped, check_note):
+def page(year, edges, added, dropped, check_note):
     f = facts(edges)
+    in_force = [x for x, y in sorted(RATIFIED.items(), key=lambda i: i[1]) if y <= year]
+    if year == FOUNDING:
+        graph_of, as_of = 'the founding graph', 'the Constitution of 1789 with the Bill of Rights'
+        force = 'Both came later.'
+    else:
+        graph_of = f'the graph of {year}'
+        as_of = f'the Constitution as amended through {year}'
+        force = (f'In {year} {"both are" if len(in_force) == len(RATIFIED) else "only " + in_force[0] + " is" if in_force else "neither is"} in force.')
+    source = ('<span class="tag">Government.tla</span> in gov-tla. The founding graph (1789, '
+              'with the Bill of Rights) is the initial state TLC computes')
+    if in_force:
+        source += ('; each amendment ratified by ' + str(year) + ', '
+                   + ', '.join(f'{x} ({RATIFIED[x]})' for x in in_force)
+                   + ', is applied as the model\'s <span class="tag">Ratify</span> step rewrites '
+                   'it. The model treats no other amendment as changing the graph.')
+    else:
+        source += '.'
     control_svg, pairs = control_panel(edges)
     legend = ''.join(
         f'<span>{swatch(k)}{t}</span>' for k, t in
@@ -451,16 +479,16 @@ def page(edges, added, dropped, check_note):
 <style>{CSS}</style></head>
 <body>
 <header>
-  <div class="kicker">gov-tla &nbsp;·&nbsp; Government.tla &nbsp;·&nbsp; a TLA+ model of the U.S. Constitution</div>
+  <div class="kicker">gov-tla &nbsp;·&nbsp; Government.tla &nbsp;·&nbsp; a TLA+ model of the U.S. Constitution &nbsp;·&nbsp; {year}</div>
   <h1>Who answers to whom</h1>
-  <p class="deck">The Constitution as a graph: <b>{f['total']} edges</b> of authority among the People,
+  <p class="deck">{as_of[0].upper() + as_of[1:]}, as a graph: <b>{f['total']} edges</b> of authority among the People,
   the States, the text and the three branches. Power flows <b>down</b> a single chain;
   checks run <b>in a circle</b>, and Congress holds most of them.</p>
 </header>
 
 <section class="stats">
   <div class="stat"><div class="n">{f['total']}</div>
-    <div class="t"><b>edges in the founding graph:</b> {f['grant']} say where authority comes
+    <div class="t"><b>edges in {graph_of}:</b> {f['grant']} say where authority comes
     from, {f['control']} let one branch act on another.</div></div>
   <div class="stat"><div class="n">{f['out_c']} <small>vs</small> {f['in_c']}</div>
     <div class="t"><b>checks Congress holds</b> on the other two branches, against the checks
@@ -491,7 +519,7 @@ def page(edges, added, dropped, check_note):
 <section class="row small">
   <div class="panel">
     <h2>Amendments rewire the graph</h2>
-    <p class="lede">Text edges change only by Article V. Two amendments in the model move them.</p>
+    <p class="lede">Text edges change only by Article V. Two amendments in the model move them. {force}</p>
     <div class="fig">{amendment_panel(added, dropped)}</div>
   </div>
   <div class="panel">
@@ -504,16 +532,38 @@ def page(edges, added, dropped, check_note):
 </section>
 
 <footer>
-  <p><b>Source:</b> the initial state of <span class="tag">Government.tla</span> in gov-tla, as
-  computed by TLC: the Constitution of 1789 with the Bill of Rights. Judicial review is
+  <p><b>Source:</b> {source} Judicial review is
   Marbury's reading of Articles III and VI, not text. Vote thresholds, persons and the
-  Vice President as a separate node are abstracted away. The amendment panel is read from a
-  simulated behaviour in which both amendments are ratified.{note} A model for study, not
+  Vice President as a separate node are abstracted away.{note} A model for study, not
   legal advice.</p>
   <p style="text-align:right; white-space:nowrap">Generated by<br>
   <span class="tag">authority_poster.py</span></p>
 </footer>
 </body></html>"""
+
+
+FOUNDING = 1789
+# Year each amendment in the model was ratified. The model decides what an
+# amendment does to the graph; this table only says when it happened.
+RATIFIED = {'XVII': 1913, 'XXV': 1967}
+
+
+def amendment_effects():
+    """(edges added, edges dropped) by each amendment, read off the text
+    edges just before and just after the step that ratifies it."""
+    effects = {}
+    for seed in range(1, 300):
+        trace = tlaviz.simulate('Government', seed, 40)
+        for (_, prev), (action, state) in zip(trace, trace[1:]):
+            before, now = dict(prev['amendment']), dict(state['amendment'])
+            for x in now:
+                if now[x] == 'Ratified' and before[x] != 'Ratified' and x not in effects:
+                    old = {e for e in prev['edges'] if e.get('basis') == 'Text'}
+                    new = {e for e in state['edges'] if e.get('basis') == 'Text'}
+                    effects[x] = (new - old, old - new)
+        if set(effects) == set(RATIFIED):
+            return effects
+    raise SystemExit(f'No simulated behaviour ratified {set(RATIFIED) - set(effects)}.')
 
 
 RENDER_JS = r"""
@@ -537,29 +587,38 @@ const { chromium } = require('playwright');
 def main():
     parser = argparse.ArgumentParser(description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument('--year', type=int, default=FOUNDING,
+                        help='draw the graph as amended through this year '
+                             f'(default: {FOUNDING}, the founding graph)')
     parser.add_argument('--check-note', default='',
                         help='a sentence for the footer, e.g. the result of a TLC run')
     args = parser.parse_args()
 
+    if args.year < FOUNDING:
+        raise SystemExit(f'The model starts in {FOUNDING}.')
+
     print('Reading the founding graph from TLC...')
-    founding = tlaviz.simulate('Government', 0, 0)[0][1]['edges']
-    edges = [dict(e) for e in founding]
+    init = tlaviz.simulate('Government', 0, 0)[0][1]
+    if {x for x, _ in init['amendment']} != set(RATIFIED):
+        raise SystemExit(f'Government.tla models amendments {[x for x, _ in init["amendment"]]}; '
+                         f'add their years to RATIFIED.')
+    founding = set(init['edges'])
 
-    print('Finding a behaviour in which both amendments are ratified...')
-    for seed in range(1, 200):
-        state = tlaviz.simulate('Government', seed, 40)[-1][1]
-        if all(v == 'Ratified' for _, v in state['amendment']):
-            break
-    else:
-        raise SystemExit('No simulated behaviour ratified both amendments.')
-    text_now = {e for e in state['edges'] if e.get('basis') == 'Text'}
-    added = [dict(e) for e in text_now - set(founding)]
-    dropped = [dict(e) for e in set(founding) - text_now]
+    print('Reading what each amendment changes from simulated behaviours...')
+    effects = amendment_effects()
+    graph = set(founding)
+    for x in sorted(RATIFIED, key=RATIFIED.get):
+        if RATIFIED[x] <= args.year:
+            adds, drops = effects[x]
+            graph = (graph - drops) | adds
+    edges = [dict(e) for e in sorted(graph, key=tlaviz.fmt)]
+    added = [dict(e) for x in effects for e in effects[x][0]]
+    dropped = [dict(e) for x in effects for e in effects[x][1]]
 
-    out = 'Government_authority_poster'
+    out = f'Government_authority_poster_{args.year}'
     path = os.path.join(tlaviz.ROOT, f'{out}.html')
     with open(path, 'w') as fh:
-        fh.write(page(edges, added, dropped, args.check_note))
+        fh.write(page(args.year, edges, added, dropped, args.check_note))
     print(f'Generated {out}.html')
 
     if shutil.which('node'):
