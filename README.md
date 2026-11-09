@@ -17,9 +17,11 @@ regenerates.
 The skill is in
 [`.claude/skills/writing-tla-specs-and-proofs/`](.claude/skills/writing-tla-specs-and-proofs/SKILL.md),
 where Claude Code loads it for work in this repository. It is a copy,
-unchanged, of the skill in
-[TOPAK](https://github.com/scottcochran/TOPAK) (`skills/writing-tla-specs-and-proofs`,
-commit `7771a8a`), licensed CC BY 4.0. Where the skill and this README
+unchanged, of the skill on TOPAK's `main`:
+[`skills/writing-tla-specs-and-proofs`](https://github.com/scottcochran/TOPAK/tree/main/skills/writing-tla-specs-and-proofs),
+merged in TOPAK PR #29 (merge commit `a157659`; the skill's last change is
+`7771a8a`), licensed CC BY 4.0. If the skill changes on TOPAK's `main`,
+copy it again and update this paragraph. Where the skill and this README
 differ, the README describes how this repository does it: one generic row
 generator (`scripts/tlc_rows.py`) instead of a run script per module, and
 pin files instead of a tracked jar.
