@@ -90,8 +90,9 @@ they can exist, but they cannot execute the laws.
 
 The other three modules model what each branch does. This one models how
 authority runs *between* them: a directed, labelled multigraph over the
-People, the States, the Constitution, the three branches, and the agencies
-and inferior courts Congress creates. Edges come in two layers:
+People, the States, the Constitution, the three branches, the Vice President,
+and the agencies and inferior courts Congress creates. Edges come in two
+layers:
 
 - **Grant** — where authority comes from: `Power` (vesting clauses, enabling
   acts), `Select` (elections, nomination, consent), `Amend` (Articles V, VII).
@@ -102,12 +103,15 @@ Every exercise of authority is the firing of an edge present in the graph at
 that moment, under its condition (a sitting Congress, a seated President, a
 pending case, a presidential trial). Firing can reshape the graph: statutes
 add and remove edges and nodes, amendments rewrite text edges (XVII moves the
-Senate from the States to the People; XXV gives Congress two new edges onto
-the Executive), and courts sever unconstitutional statutory edges.
+Senate from the States to the People; XXV lets the President nominate a Vice
+President whom Congress confirms, and adds the inability edges), and courts
+sever unconstitutional statutory edges.
 
 | Claim | Where |
 |---|---|
-| Grant layer is partially linear: outside the People and the States it is acyclic and every edge runs forward along Constitution → Congress → Executive → Judiciary → statute | `GrantCyclesPassThroughPeopleOrStates`, `GrantFollowsChain` |
+| Grant layer is nearly linear: outside the People, the States and the Vice Presidency it is acyclic, and every edge but the President's nomination of a Vice President runs forward along Constitution → Congress → Vice President → Executive → Judiciary → statute | `GrantCyclesPassThroughPeopleStatesOrVP`, `GrantFollowsChainExceptXXV` |
+| The President–Vice President loop is the only grant cycle among government bodies, and exists exactly while XXV is in force | `OnlyGrantCycleIsXXV` |
+| *Refuted:* every grant cycle closes through the People or the States, and the grant layer runs strictly forward (see below) | `GrantCyclesPassThroughPeopleOrStates`, `GrantFollowsChain`, checked by `Government_strict.cfg` |
 | Only the People and the States write the Constitution | `ConstitutionWrittenByPeopleAndStates` |
 | Every branch, agency and court traces back to the People; power (as opposed to office) reaches them only through the Constitution | `PowerTracesToPeople`, `ConstitutionIsTheOnlyDoor` |
 | Agencies and inferior courts exist only by statute | `EveryBodyIsCreatedByLaw` |
@@ -142,7 +146,46 @@ java -cp tla2tools.jar tlc2.TLC -simulate num=100000 -depth 40 -workers auto -co
 
 All three specs pass `Safety` and their action and liveness properties
 across several hundred thousand random traces of depth 40–50.
-`Government.tla` has not yet been run through TLC.
+`Government.tla`'s `Safety` held across about 3.4 million states of
+random simulation (before the Vice President was added); with the Vice
+President, `Government_strict.cfg` gives the counterexample below, and an
+exhaustive check of the revised `Safety` is in progress.
+
+### A claim TLC refuted
+
+`Government.tla` first folded the Vice President into the Executive, and
+claimed that, with the People and the States set aside, the grant layer is
+acyclic and runs strictly down the chain Constitution → Congress →
+Executive → Judiciary. With the Vice President as a node of its own (chosen
+by electors or the Senate, presiding over the Senate, succeeding a departing
+President), TLC refutes both claims in two steps:
+
+```
+State 1: <Initial predicate>
+State 2: <Propose>   amendment = [XVII |-> "None", XXV |-> "Proposed"]
+State 3: <Ratify>    amendment = [XVII |-> "None", XXV |-> "Ratified"]
+Error: Invariant GrantCyclesPassThroughPeopleOrStates is violated.
+```
+
+Section 2 of the Twenty-fifth Amendment lets the President nominate a Vice
+President, and the Vice President may succeed the President, so
+Executive → Vice President → Executive is a cycle of authority that never
+passes through the People or the States. It is how Gerald Ford became
+President in 1974, nominated by Nixon in 1973 and confirmed by Congress, and
+how Ford then chose Nelson Rockefeller. Before XXV the claims hold: a vacant
+Vice Presidency simply stayed vacant.
+
+The original properties are kept, unchanged, as refuted claims;
+`Government_strict.cfg` checks them and reproduces the counterexample:
+
+```
+java -cp tla2tools.jar tlc2.TLC -workers 1 -config Government_strict.cfg Government.tla
+```
+
+`Safety` now checks what does hold instead: the inner grant layer is acyclic
+once the Vice Presidency is also set aside, every grant edge but the
+nomination runs forward, and the President–Vice President loop is the only
+cycle, present exactly when XXV is ratified.
 
 ### Bugs TLC found while writing this
 
@@ -240,7 +283,7 @@ uv run python visualize_states.py Executive 2 --merge 0   # all 731 states
 | Constitution | 10 | 68 |
 | Executive | 47 | 731 |
 | Judiciary | 147 | 2,801 |
-| Government | 63 | 1,007 |
+| Government | 65 | 1,182 |
 
 (Distinct states within that many steps of the initial state, with the
 configs in this repository.)
@@ -315,8 +358,8 @@ uv run python authority_graph.py [seed] [--steps N] [--layer grant|control|all]
   it ends, marking edges added by amendment (bold), edges repealed (dotted
   gray), statutory edges under challenge (red, ⚖) and the edge that fired
   last, e.g. [`Government_authority_seed6.png`](Government_authority_seed6.png)
-  (XVII and XXV ratified, an agency and an inferior court created, and a
-  suit pending over one of the agency's statutory edges)
+  (XXV ratified and XVII proposed, an agency created, and two of its
+  statutory edges challenged in court)
 - `--layer` draws only the grant layer or only the control layer
 
 ---
@@ -338,7 +381,8 @@ uv run python authority_poster.py --year 2026   # as amended through 2026
 
 `--year` applies every amendment in the model ratified by that year: XVII
 (1913) moves the Senate's Select edge from the States to the People, and XXV
-(1967) gives Congress two edges onto the Executive. What each amendment
+(1967) lets the President nominate a Vice President whom Congress confirms,
+and adds the inability edges. What each amendment
 changes comes from the model: the script compares the text edges just before
 and just after the `Ratify` step in simulated behaviours. Only the years are
 written into the script, in `RATIFIED`, and it stops if the model gains an
@@ -348,8 +392,9 @@ Instead of one tangle of edges, the poster separates the two layers.
 The grant layer is drawn as a chain read top to bottom. The control layer
 draws one arrow per direction between branches, its width the number of
 checks, with the checks listed beside it. Headline numbers (edge counts,
-Congress's checks against the other branches', zero grant cycles among
-government bodies) are computed from the graph, and the edges come from TLC.
+Congress's checks against the other branches', grant cycles among
+government bodies: none in 1789, the President–Vice President loop from 1967)
+are computed from the graph, and the edges come from TLC.
 The script stops if the model has an edge the poster's layout does not
 place.
 

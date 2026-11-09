@@ -45,6 +45,8 @@ NAMES = {
     'Review': 'Judicial review', 'PresideTrial': "Preside at a President's trial",
     'Pardon': 'Pardon', 'Sue': 'Sue', 'ApplyForConvention': 'Apply for a convention',
     'ConfirmVP': 'Confirm a Vice President', 'DecideInability': 'Decide a contested inability',
+    'NominateVP': 'Nominate a Vice President', 'Succession': 'Succession',
+    'PresideSenate': 'Tie-breaking vote', 'DeclareInability': 'Declare inability',
 }
 
 
@@ -115,41 +117,52 @@ def svg(width, height, body, title, top=0):
 # ---------------------------------------------------------------------------
 # Panel A: the grant layer, as a chain read top to bottom
 
+# (from, to, label): (path, label x, label y[, anchor[, text]])
 GRANT_LAYOUT = {
-    # (from, to, label): (path, label x, label y)
-    ('People', 'Constitution', 'Ordain'): ('M230,200 H442', 336, 200),
-    ('States', 'Constitution', 'Ratify'): ('M870,200 H758', 812, 200),
-    ('Constitution', 'Congress', 'ArtI'): ('M600,255 V484', 600, 370),
+    ('People', 'Constitution', 'Ordain'):
+        ('M350,345 V290 Q350,270 370,270 H470 Q490,270 490,263', 420, 270),
+    ('States', 'Constitution', 'Ratify'): ('M880,200 H758', 819, 200),
+    ('Constitution', 'Congress', 'ArtI'): ('M600,255 V444', 600, 350),
+    ('Constitution', 'VicePresident', 'ArtI'):
+        ('M450,235 H210 Q190,235 190,255 V710 Q190,730 210,730 H467', 200, 600, 'start'),
     ('Constitution', 'Executive', 'ArtII'):
-        ('M505,255 V330 Q505,350 485,350 H400 Q380,350 380,370 V860 Q380,880 400,880 H452',
-         380, 720),
+        ('M450,205 H150 Q130,205 130,225 V955 Q130,975 150,975 H452', 140, 860, 'start'),
     ('Constitution', 'Judiciary', 'ArtIII'):
-        ('M470,255 V290 Q470,310 450,310 H300 Q280,310 280,330 V1200 Q280,1220 300,1220 H452',
-         280, 1040),
+        ('M450,175 H90 Q70,175 70,195 V1230 Q70,1250 90,1250 H452', 80, 1110, 'start'),
     ('People', 'Congress', 'ElectHouse'):
-        ('M110,238 V520 Q110,540 130,540 H452', 110, 330),
+        ('M300,415 V470 Q300,490 320,490 H452', 300, 448),
     ('People', 'Congress', 'ElectSenate'):            # from XVII on
-        ('M200,238 V490 Q200,510 220,510 H452', 200, 440),
-    ('States', 'Congress', 'ElectSenate'):
-        ('M900,238 V490 Q900,510 880,510 H748', 900, 330),
+        ('M390,415 V442 Q390,462 410,462 H452', 392, 432, 'start'),
+    ('States', 'Congress', 'ElectSenate'):            # until XVII
+        ('M910,238 V450 Q910,470 890,470 H748', 910, 300),
     ('Congress', 'States', 'Propose'):
-        ('M740,555 H980 Q1000,555 1000,535 V246', 1000, 440),
+        ('M740,500 H950 Q970,500 970,480 V246', 970, 420),
+    ('States', 'VicePresident', 'AppointElectors'):
+        ('M1010,238 V710 Q1010,730 990,730 H733', 870, 730),
     ('States', 'Executive', 'AppointElectors'):
-        ('M1040,238 V860 Q1040,880 1020,880 H748', 935, 880),
-    ('Congress', 'Executive', 'ContingentElection'): ('M600,588 V824', 600, 706),
-    ('Congress', 'Executive', 'ConfirmVP'): ('M680,588 V824', 680, 730),    # from XXV on
-    ('Executive', 'Judiciary', 'Nominate'): ('M600,928 V1164', 600, 1046),
+        ('M1050,238 V940 Q1050,960 1030,960 H748', 900, 960),
+    ('Congress', 'VicePresident', 'ContingentElection'): ('M600,548 V682', 600, 619),
+    ('Congress', 'VicePresident', 'ConfirmVP'):       # from XXV on
+        ('M560,548 V682', 548, 619, 'end', 'Confirm'),
+    ('VicePresident', 'Executive', 'Succession'): ('M600,770 V904', 600, 841),
+    ('Executive', 'VicePresident', 'NominateVP'):     # from XXV on
+        ('M640,912 V778', 652, 841, 'start', 'Nominate'),
+    ('Congress', 'Executive', 'ContingentElection'):
+        ('M460,540 H400 Q380,540 380,560 V925 Q380,945 400,945 H452', 380, 885),
     ('Congress', 'Judiciary', 'Consent'):
-        ('M740,575 H800 Q820,575 820,595 V1200 Q820,1220 800,1220 H748', 820, 1040),
+        ('M460,515 H340 Q320,515 320,535 V1195 Q320,1215 340,1215 H452', 330, 1110, 'start'),
+    ('Executive', 'Judiciary', 'Nominate'): ('M600,1008 V1174', 600, 1095),
 }
 # Where an edge moves over to make room for another.
 MAKE_ROOM = {
-    ('Congress', 'Executive', 'ConfirmVP'):
-        {('Congress', 'Executive', 'ContingentElection'): ('M560,588 V824', 560, 660)},
+    ('Congress', 'VicePresident', 'ConfirmVP'):
+        {('Congress', 'VicePresident', 'ContingentElection'):
+             ('M640,548 V682', 652, 619, 'start')},
+    ('Executive', 'VicePresident', 'NominateVP'):
+        {('VicePresident', 'Executive', 'Succession'): ('M560,770 V904', 548, 841, 'end')},
 }
 # Drawn first, so the edges crossing them pass over with a gap.
-UNDER = {('Constitution', 'Executive', 'ArtII'), ('Constitution', 'Judiciary', 'ArtIII'),
-         ('Congress', 'Judiciary', 'Consent')}
+UNDER = {('Congress', 'Executive', 'ContingentElection'), ('Congress', 'Judiciary', 'Consent')}
 
 
 def grant_panel(edges):
@@ -165,32 +178,37 @@ def grant_panel(edges):
     body = []
     order = sorted(grant, key=lambda k: k not in UNDER)
     for k in order:
-        d, _, _ = layout[k]
-        body.append(edge(d, grant[k]['kind']))
+        body.append(edge(layout[k][0], grant[k]['kind']))
     for k in order:
-        _, lx, ly = layout[k]
-        body.append(label(lx, ly, NAMES[k[2]]))
-    body.append(node(130, 200, 200, 76, 'People', 'source'))
-    body.append(node(970, 200, 200, 76, 'States', 'source'))
+        _, lx, ly, *rest = layout[k]
+        anchor = rest[0] if rest else 'middle'
+        text = rest[1] if len(rest) > 1 else NAMES[k[2]]
+        body.append(label(lx, ly, text, anchor=anchor))
+    body.append(node(350, 380, 180, 70, 'People', 'source'))
+    body.append(node(980, 200, 200, 76, 'States', 'source'))
     body.append(node(600, 200, 300, 110, 'Constitution', 'text', size=32))
-    body.append(node(600, 540, 280, 96, 'Congress'))
-    body.append(node(600, 880, 280, 96, 'Executive', sub='the President'))
-    body.append(node(600, 1220, 280, 96, 'Judiciary', sub='the Supreme Court'))
-    return svg(1100, 1130, ''.join(body), 'Grant layer of the authority graph', top=140)
+    body.append(node(600, 500, 280, 96, 'Congress'))
+    body.append(node(600, 730, 250, 80, 'Vice President', size=27))
+    body.append(node(600, 960, 280, 96, 'Executive', sub='the President'))
+    body.append(node(600, 1230, 280, 96, 'Judiciary', sub='the Supreme Court'))
+    return svg(1100, 1148, ''.join(body), 'Grant layer of the authority graph', top=140)
 
 
 # ---------------------------------------------------------------------------
 # Panel B: the control layer, one arrow per direction, width = number of checks
 
-POS = {'Congress': (500, 360), 'Executive': (175, 1080), 'Judiciary': (825, 1080)}
+POS = {'Congress': (500, 360), 'Executive': (175, 1080), 'Judiciary': (825, 1080),
+       'VicePresident': (500, 720)}
+SIZE = {'VicePresident': (230, 76)}
 NODE_W, NODE_H = 260, 96
 
 
-def _trim(x0, y0, x1, y1, pad):
-    """Point where the segment from (x0,y0) toward (x1,y1) leaves a node box."""
+def _trim(n, x1, y1, pad):
+    """Point where the segment from node n toward (x1,y1) leaves its box."""
+    (x0, y0), (w, h) = POS[n], SIZE.get(n, (NODE_W, NODE_H))
     dx, dy = x1 - x0, y1 - y0
-    tx = (NODE_W / 2 + pad) / abs(dx) if dx else float('inf')
-    ty = (NODE_H / 2 + pad) / abs(dy) if dy else float('inf')
+    tx = (w / 2 + pad) / abs(dx) if dx else float('inf')
+    ty = (h / 2 + pad) / abs(dy) if dy else float('inf')
     t = min(tx, ty)
     return x0 + dx * t, y0 + dy * t
 
@@ -200,8 +218,8 @@ def arrow(a, b, n, offset):
     length = ((x1 - x0) ** 2 + (y1 - y0) ** 2) ** 0.5
     ux, uy = (x1 - x0) / length, (y1 - y0) / length
     px, py = -uy * offset, ux * offset          # perpendicular shift
-    sx, sy = _trim(x0, y0, x1, y1, 14)
-    ex, ey = _trim(x1, y1, x0, y0, 14)
+    sx, sy = _trim(a, x1, y1, 14)
+    ex, ey = _trim(b, x0, y0, 14)
     sx, sy, ex, ey = sx + px, sy + py, ex + px, ey + py
     w = 3 * n
     head = 22 + w
@@ -230,26 +248,35 @@ def checks_block(x, y, rows, anchor='start'):
     return ''.join(out)
 
 
+def display(n):
+    return 'Vice President' if n == 'VicePresident' else n
+
+
 def control_panel(edges):
     pairs = defaultdict(list)
     for e in edges:
         if e['kind'] == 'Control':
             pairs[(e['from'], e['to'])].append(NAMES[e['label']])
-    branches = set(POS)
     known = {('States', 'Congress'), ('People', 'Judiciary')}
     for (a, b) in pairs:
-        if not ({a, b} <= branches or (a, b) in known):
+        if not ({a, b} <= set(POS) or (a, b) in known):
             raise SystemExit(f'Control edge {a} -> {b} has no place in the poster layout.')
 
     def n(a, b):
         return len(pairs.get((a, b), []))
 
+    def rows(*dirs):
+        return [(f'{display(a)} → {display(b)}', n(a, b), pairs[(a, b)])
+                for a, b in dirs if n(a, b)]
+
     body = []
     for a, b in [('Congress', 'Executive'), ('Executive', 'Congress'),
                  ('Congress', 'Judiciary'), ('Judiciary', 'Congress'),
-                 ('Executive', 'Judiciary'), ('Judiciary', 'Executive')]:
+                 ('Executive', 'Judiciary'), ('Judiciary', 'Executive'),
+                 ('Congress', 'VicePresident'), ('VicePresident', 'Congress'),
+                 ('VicePresident', 'Executive')]:
         if n(a, b):
-            body.append(arrow(a, b, n(a, b), 22))
+            body.append(arrow(a, b, n(a, b), 22 if 'VicePresident' not in (a, b) else 14))
     # sources
     body.append(edge('M780,130 Q690,130 655,300', 'Control', width=3))
     body.append(label(800, 215, NAMES['ApplyForConvention'], size=19))
@@ -258,30 +285,29 @@ def control_panel(edges):
     body.append(label(825, 1240, NAMES['Sue'], size=19))
     body.append(node(825, 1360, 180, 66, 'People', 'source', size=26))
     for name, (x, y) in POS.items():
-        body.append(node(x, y, NODE_W, NODE_H, name))
+        w, h = SIZE.get(name, (NODE_W, NODE_H))
+        body.append(node(x, y, w, h, display(name), size=26 if name in SIZE else 30))
 
-    body.append(checks_block(20, 440, [
-        ('Congress → Executive', n('Congress', 'Executive'), pairs[('Congress', 'Executive')]),
-        ('Executive → Congress', n('Executive', 'Congress'), pairs[('Executive', 'Congress')]),
-    ]))
-    body.append(checks_block(980, 440, [
-        ('Congress → Judiciary', n('Congress', 'Judiciary'), pairs[('Congress', 'Judiciary')]),
-        ('Judiciary → Congress', n('Judiciary', 'Congress'), pairs[('Judiciary', 'Congress')]),
-    ], anchor='end'))
-    body.append(checks_block(500, 1195, [
-        ('Executive → Judiciary', n('Executive', 'Judiciary'), pairs[('Executive', 'Judiciary')]),
-    ], anchor='middle'))
-    body.append(checks_block(500, 905, [
-        ('Judiciary → Executive', n('Judiciary', 'Executive'), pairs[('Judiciary', 'Executive')]),
-    ], anchor='middle'))
-    return svg(1000, 1330, ''.join(body), 'Control layer of the authority graph', top=70), pairs
+    body.append(checks_block(20, 110, rows(('VicePresident', 'Congress'),
+                                           ('Congress', 'VicePresident'),
+                                           ('VicePresident', 'Executive'))))
+    body.append(checks_block(20, 412, rows(('Congress', 'Executive'),
+                                           ('Executive', 'Congress'))))
+    body.append(checks_block(980, 440, rows(('Congress', 'Judiciary'),
+                                            ('Judiciary', 'Congress')), anchor='end'))
+    body.append(checks_block(500, 1195, rows(('Executive', 'Judiciary')), anchor='middle'))
+    body.append(checks_block(500, 905, rows(('Judiciary', 'Executive')), anchor='middle'))
+    return svg(1000, 1325, ''.join(body), 'Control layer of the authority graph', top=72), pairs
 
 
 # ---------------------------------------------------------------------------
 # Panel C: amendments that rewired the graph
 
 def amendment_panel(added, dropped):
-    want_add = {('People', 'Congress', 'ElectSenate'), ('Congress', 'Executive', 'ConfirmVP'),
+    want_add = {('People', 'Congress', 'ElectSenate'),
+                ('Executive', 'VicePresident', 'NominateVP'),
+                ('Congress', 'VicePresident', 'ConfirmVP'),
+                ('VicePresident', 'Executive', 'DeclareInability'),
                 ('Congress', 'Executive', 'DecideInability')}
     want_drop = {('States', 'Congress', 'ElectSenate')}
     got_add = {(e['from'], e['to'], e['label']) for e in added}
@@ -301,21 +327,26 @@ def amendment_panel(added, dropped):
     b.append(node(390, 95, 170, 62, 'People', 'source', size=24))
     b.append(node(250, 385, 220, 80, 'Congress', size=26))
     # XXV
-    b.append(edge('M670,138 Q590,250 670,342', 'Select'))
-    b.append(label(625, 225, 'Confirm a', size=20, anchor='end'))
-    b.append(label(625, 255, 'Vice President', size=20, anchor='end'))
-    b.append(edge('M770,138 Q850,250 770,342', 'Control'))
-    b.append(label(815, 225, 'Decide a contested', size=20, anchor='start'))
-    b.append(label(815, 255, 'inability', size=20, anchor='start'))
-    b.append(node(720, 95, 220, 80, 'Congress', size=26))
-    b.append(node(720, 385, 220, 80, 'Executive', size=26))
+    b.append(edge('M700,135 Q620,200 625,337', 'Select'))
+    b.append(label(640, 225, 'Confirm', size=20, anchor='end'))
+    b.append(edge('M820,135 Q900,200 895,337', 'Control'))
+    b.append(label(885, 210, 'Decide', size=20, anchor='start'))
+    b.append(label(885, 238, 'inability', size=20, anchor='start'))
+    b.append(edge('M805,370 H728', 'Select'))
+    b.append(label(767, 335, 'Nominate', size=20))
+    b.append(edge('M715,402 H795', 'Control'))
+    b.append(label(757, 448, 'Declare inability', size=20))
+    b.append(node(760, 95, 200, 80, 'Congress', size=26))
+    b.append(node(620, 385, 190, 80, 'Vice President', size=22))
+    b.append(node(900, 385, 180, 80, 'Executive', size=24))
     for x, head, lines in (
             (250, 'XVII · 1913', ['Senators are chosen by the People,', 'no longer by the States.']),
-            (720, 'XXV · 1967', ['Congress fills a Vice-Presidential', 'vacancy and settles inability.'])):
+            (760, 'XXV · 1967', ['The President nominates a Vice President;',
+                                 'Congress confirms and settles inability.'])):
         b.append(label(x, 18, head, size=26, weight=800, halo=False))
         for i, line in enumerate(lines):
-            b.append(label(x, 470 + 32 * i, line, size=21, colour=INK2, halo=False))
-    return svg(1000, 545, ''.join(b), 'Edges changed by the Seventeenth and Twenty-fifth Amendments',
+            b.append(label(x, 505 + 32 * i, line, size=21, colour=INK2, halo=False))
+    return svg(1000, 580, ''.join(b), 'Edges changed by the Seventeenth and Twenty-fifth Amendments',
                top=-20)
 
 
@@ -367,12 +398,16 @@ def facts(edges):
     in_c = sum(1 for e in control if e['to'] == 'Congress' and e['from'] in branches)
     inner = [e for e in grant if e['from'] not in ('People', 'States')
              and e['to'] not in ('People', 'States')]
-    cycles = sum(1 for e in inner if e['from'] in reach(inner, e['to']))
+    on_cycle = [e for e in inner if e['from'] in reach(inner, e['to'])]
+    # a cycle's nodes: those that reach, and are reached from, a node on it
+    loops = {frozenset({e['from']} | {v for v in reach(inner, e['from'])
+                                      if e['from'] in reach(inner, v)})
+             for e in on_cycle}
     door = [e for e in edges if e['kind'] in ('Power', 'Amend')]
     bypass = reach(door, 'People', exclude={'Constitution'}) & set(branches)
     return dict(total=len(edges), grant=len(grant), control=len(control),
                 kinds={k: sum(1 for e in edges if e['kind'] == k) for k in KIND},
-                out_c=out_c, in_c=in_c, cycles=cycles, bypass=len(bypass))
+                out_c=out_c, in_c=in_c, loops=[sorted(l) for l in loops], bypass=len(bypass))
 
 
 # ---------------------------------------------------------------------------
@@ -383,7 +418,7 @@ CSS = f"""
 * {{ box-sizing: border-box; margin: 0; padding: 0; }}
 html, body {{ width: 2304px; height: 3456px; background: {PLANE}; }}
 body {{ font-family: Inter, system-ui, -apple-system, "Segoe UI", sans-serif; color: {INK};
-        padding: 84px 120px 56px; display: flex; flex-direction: column; gap: 36px;
+        padding: 84px 120px 56px; display: flex; flex-direction: column; gap: 32px;
         -webkit-print-color-adjust: exact; print-color-adjust: exact; }}
 svg {{ display: block; width: 100%; height: auto; font-family: inherit; }}
 .kicker {{ font-size: 26px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase;
@@ -473,6 +508,18 @@ def page(year, edges, added, dropped, check_note):
         f'<span class="case">{esc(case)} · {esc(after)}</span></div></li>'
         for what, case, after in FORBIDDEN)
     note = f' {check_note}' if check_note else ''
+    if f['loops']:
+        names = ' and '.join({'Executive': 'President'}.get(n, display(n)) for n in f['loops'][0])
+        chain_caveat = ' with a single loop'
+        loop_text = (f'<b>grant cycle among government bodies</b>, the {names}: since XXV '
+                     'the President nominates a successor, skipping the People and the States.')
+        back_text = ('Two point back up: Article V (Congress → States) and XXV '
+                     '(President → Vice President).')
+    else:
+        chain_caveat = ''
+        loop_text = ('<b>grant cycles among government bodies.</b> Every loop of authority '
+                     'closes through the People or the States.')
+        back_text = 'Only Article V points back up, from Congress to the States.'
     return f"""<!doctype html>
 <html lang="en"><head><meta charset="utf-8">
 <title>Who Answers to Whom</title>
@@ -482,7 +529,7 @@ def page(year, edges, added, dropped, check_note):
   <div class="kicker">gov-tla &nbsp;·&nbsp; Government.tla &nbsp;·&nbsp; a TLA+ model of the U.S. Constitution &nbsp;·&nbsp; {year}</div>
   <h1>Who answers to whom</h1>
   <p class="deck">{as_of[0].upper() + as_of[1:]}, as a graph: <b>{f['total']} edges</b> of authority among the People,
-  the States, the text and the three branches. Power flows <b>down</b> a single chain;
+  the States, the text and the government. Power flows <b>down</b> one chain{chain_caveat};
   checks run <b>in a circle</b>, and Congress holds most of them.</p>
 </header>
 
@@ -493,17 +540,15 @@ def page(year, edges, added, dropped, check_note):
   <div class="stat"><div class="n">{f['out_c']} <small>vs</small> {f['in_c']}</div>
     <div class="t"><b>checks Congress holds</b> on the other two branches, against the checks
     they hold on Congress.</div></div>
-  <div class="stat"><div class="n">{f['cycles']}</div>
-    <div class="t"><b>grant cycles among government bodies.</b> Every loop of authority
-    closes through the People or the States.</div></div>
+  <div class="stat"><div class="n">{len(f['loops'])}</div>
+    <div class="t">{loop_text}</div></div>
 </section>
 
 <section class="row main">
   <div class="panel">
     <h2>Where authority comes from</h2>
-    <p class="lede">The <b>grant layer</b>: {f['grant']} edges. Between government bodies every
-    edge runs <b>downward</b>, Constitution → Congress → Executive → Judiciary. Only Article V
-    points back up, from Congress to the States.</p>
+    <p class="lede">The <b>grant layer</b>: {f['grant']} edges, running <b>downward</b> from the
+    Constitution to the courts. {back_text}</p>
     <div class="legend">{legend}</div>
     <div class="fig">{grant_panel(edges)}</div>
   </div>
@@ -533,8 +578,8 @@ def page(year, edges, added, dropped, check_note):
 
 <footer>
   <p><b>Source:</b> {source} Judicial review is
-  Marbury's reading of Articles III and VI, not text. Vote thresholds, persons and the
-  Vice President as a separate node are abstracted away.{note} A model for study, not
+  Marbury's reading of Articles III and VI, not text. Vote thresholds and persons are
+  abstracted away.{note} A model for study, not
   legal advice.</p>
   <p style="text-align:right; white-space:nowrap">Generated by<br>
   <span class="tag">authority_poster.py</span></p>

@@ -21,6 +21,7 @@ NODE_STYLE = {
     'Constitution': dict(shape='note',    fillcolor='lightyellow'),
     'Congress':     dict(shape='box',     fillcolor='lightblue'),
     'Executive':    dict(shape='box',     fillcolor='lightsalmon'),
+    'VicePresident': dict(shape='box',    fillcolor='peachpuff'),
     'Judiciary':    dict(shape='box',     fillcolor='lightgreen'),
 }
 
@@ -35,8 +36,13 @@ def create_graph(state, founding, layers, title):
     seated = set(state['seated'])
     for n, style in NODE_STYLE.items():
         label = n
-        if n == 'Executive':
+        if n in ('Executive', 'VicePresident'):
+            label = 'Vice President' if n == 'VicePresident' else n
             label += '\n(seated)' if n in seated else '\n(vacant)'
+            if n in state['nominated']:
+                label += '\nnominee pending'
+            if state['trial'] == n:
+                label += '\non trial'
         if n == 'Judiciary' and state['trial'] == 'Judiciary':
             label += '\n(a judge on trial)'
         dot.node(n, label, **style)

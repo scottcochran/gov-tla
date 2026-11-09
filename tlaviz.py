@@ -269,21 +269,24 @@ _ACTIONS = {
         CongressRemovesHead ConfirmHead RejectHead RatifyTreaty RejectTreaty
         EstablishCourt AbolishCourt SetSeats SetSalary SetExceptions ConfirmJudge
         RejectJudge ConfirmChief RejectChief Pass BillFails ContingentElection
+        ContingentElectionVP
         Lapse''',
     'executive': '''Sign Veto PocketVeto Nominate NominateVP RecessAppoint
         DeclareInability DeclareAble CabinetDeclares ConveneByPresident NominateHead
         AppointInferior ActAsHead PresidentRemovesHead PresidentRemovesInferior
-        Pardon Negotiate NominateJudge NominateChief Remove''',
+        Pardon Negotiate NominateJudge NominateChief Remove Succeed''',
     'judicial': 'Decide Appeal AppellateDecide Close Review',
     'impeachment': 'Impeach Convict Acquit',
     'people': '''Elect ApplyForConvention ProposeByConvention Ratify File Sue
-        ElectPresident Propose''',
+        ElectPresident ElectVicePresident Propose''',
     'lapse': '''Tick PresidentVacates VicePresidentVacates OfficerResigns
-        ActingTick ActingExpires Resign TermExpires PresidentLeaves''',
+        ActingTick ActingExpires Resign TermExpires PresidentLeaves
+        VicePresidentLeaves''',
 }
 ACTION_CATEGORY = {a: cat for cat, names in _ACTIONS.items() for a in names.split()}
 
 _NODE_CATEGORY = {'Congress': 'legislative', 'Executive': 'executive',
+                  'VicePresident': 'executive',
                   'Judiciary': 'judicial', 'People': 'people', 'States': 'people'}
 
 

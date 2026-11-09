@@ -50,10 +50,13 @@
 (* (the Senate chosen by the People, not the States) and XXV (Congress     *)
 (* confirms a VP and decides a contested inability).                       *)
 (*                                                                         *)
-(* Abstracted away: vote counts (see the other modules), persons, the      *)
-(* VP as a separate node, State governments' internal structure, the       *)
-(* Youngstown framework, and standing doctrine (any statutory edge may be  *)
-(* challenged). Agencies' internal head-to-inferior delegation is not an   *)
+(* The Vice President is a node of its own: chosen with the President,    *)
+(* presiding over the Senate, succeeding to the presidency, and (since     *)
+(* XXV) nominated by the President.                                        *)
+(*                                                                         *)
+(* Abstracted away: vote counts (see the other modules), persons, State    *)
+(* governments' internal structure, the Youngstown framework, and standing *)
+(* doctrine (any statutory edge may be challenged). Agencies' internal head-to-inferior delegation is not an   *)
 (* edge, since it does not cross between bodies.                           *)
 (***************************************************************************)
 EXTENDS Naturals, FiniteSets
@@ -67,14 +70,15 @@ ASSUME Agencies \cap Courts = {}
 -----------------------------------------------------------------------------
 (* Nodes and edges                                                         *)
 
-Fixed    == {"People", "States", "Constitution", "Congress", "Executive", "Judiciary"}
+Fixed    == {"People", "States", "Constitution", "Congress", "Executive", "Judiciary",
+             "VicePresident"}
 Branches == {"Congress", "Executive", "Judiciary"}
 Nodes    == Fixed \cup Agencies \cup Courts
 
 \* Nodes that are vacant unless someone holds the office. The Supreme Court
 \* is treated as an institution that never lapses; impeaching one justice
 \* does not empty it.
-Offices  == {"Executive"} \cup Agencies \cup Courts
+Offices  == {"Executive", "VicePresident"} \cup Agencies \cup Courts
 
 Kinds      == {"Power", "Select", "Amend", "Control"}
 GrantKinds == {"Power", "Select", "Amend"}
@@ -87,11 +91,12 @@ Labels ==
     "ArtI", "ArtII", "ArtIII",
     \* selection
     "ElectHouse", "ElectSenate", "AppointElectors", "ContingentElection",
-    "Nominate", "Consent", "ConfirmVP",
+    "Nominate", "Consent", "ConfirmVP", "NominateVP", "Succession",
     \* control between the branches
     "Presentment", "Veto", "Override", "Appropriate", "Impeach",
     "AdviseTreaties", "DeclareWar", "Convene", "Adjourn", "Exceptions",
     "Organize", "Pardon", "Review", "PresideTrial", "Sue", "DecideInability",
+    "PresideSenate", "DeclareInability",
     \* statutory
     "Enable", "ExecutivePower", "Direct", "NominateHead", "ConsentHead",
     "Remove", "RemoveForCause", "AppointInferior", "Establish",
@@ -148,7 +153,17 @@ Founding ==
     \* -- The Executive onto the Judiciary
     Txt("Executive", "Judiciary", "Control", "Pardon"),        \* not in cases of impeachment
     \* -- The People onto the Judiciary: Art. III acts only on a case
-    Txt("People", "Judiciary", "Control", "Sue") }
+    Txt("People", "Judiciary", "Control", "Sue"),
+    \* -- The Vice President
+    Txt("Constitution",  "VicePresident", "Power",   "ArtI"),     \* Art. I sec. 3 cl. 4
+    Txt("States",        "VicePresident", "Select",  "AppointElectors"),
+                                              \* Art. II sec. 1 cl. 2; Amend. XII
+    Txt("Congress",      "VicePresident", "Select",  "ContingentElection"),
+                                              \* Amend. XII: the Senate chooses
+    Txt("VicePresident", "Executive",     "Select",  "Succession"), \* Art. II sec. 1 cl. 6
+    Txt("VicePresident", "Congress",      "Control", "PresideSenate"),
+                                              \* Art. I sec. 3 cl. 4: the tie vote
+    Txt("Congress",      "VicePresident", "Control", "Impeach") }  \* Art. II sec. 4
 
 -----------------------------------------------------------------------------
 (* Amendments that reshape the graph                                       *)
@@ -157,8 +172,11 @@ AmendIds == {"XVII", "XXV"}
 
 Adds(x) ==
   CASE x = "XVII" -> {Txt("People", "Congress", "Select", "ElectSenate")}
-    [] x = "XXV"  -> {Txt("Congress", "Executive", "Select", "ConfirmVP"),
-                      Txt("Congress", "Executive", "Control", "DecideInability")}
+    [] x = "XXV"  -> {Txt("Executive", "VicePresident", "Select", "NominateVP"),    \* sec. 2
+                      Txt("Congress", "VicePresident", "Select", "ConfirmVP"),       \* sec. 2
+                      Txt("VicePresident", "Executive", "Control", "DeclareInability"),
+                                                                             \* sec. 4
+                      Txt("Congress", "Executive", "Control", "DecideInability")}    \* sec. 4
 
 Drops(x) ==
   CASE x = "XVII" -> {Txt("States", "Congress", "Select", "ElectSenate")}
@@ -252,7 +270,7 @@ TypeOK ==
   /\ \A e \in edges : e \in EdgeType
   /\ live \subseteq Agencies \cup Courts
   /\ seated \subseteq Offices
-  /\ nominated \subseteq Agencies \cup Courts
+  /\ nominated \subseteq Agencies \cup Courts \cup {"VicePresident"}
   /\ trial \in Offices \cup {"Judiciary", "None"}
   /\ bill \in [stage : {"None", "Presented", "Vetoed"}, op : Ops \cup {NoOp}]
   /\ inSession \in BOOLEAN
@@ -264,7 +282,7 @@ TypeOK ==
 (* Graph helpers                                                           *)
 
 LiveNodes == Fixed \cup live
-GovNodes  == Branches \cup live
+GovNodes  == Branches \cup {"VicePresident"} \cup live
 
 OfKind(E, K)     == {e \in E : e.kind \in K}
 GrantEdges       == OfKind(edges, GrantKinds)
@@ -288,11 +306,12 @@ Acyclic(E) == \A e \in E : e.from # e.to /\ e.from \notin Reach(E, e.to)
 \* The order the grant layer follows once the People and the States are
 \* set aside.
 Rank(n) ==
-  CASE n = "Constitution" -> 1
-    [] n = "Congress"     -> 2
-    [] n = "Executive"    -> 3
-    [] n = "Judiciary"    -> 4
-    [] OTHER              -> 5      \* creatures of statute
+  CASE n = "Constitution"  -> 1
+    [] n = "Congress"      -> 2
+    [] n = "VicePresident" -> 3
+    [] n = "Executive"     -> 4
+    [] n = "Judiciary"     -> 5
+    [] OTHER               -> 6      \* creatures of statute
 
 \* An office acts only while someone holds it.
 Active(n) == n \notin Offices \/ n \in seated
@@ -400,8 +419,8 @@ LiveAfter(op) ==
 Enact(op) ==
   /\ live' = LiveAfter(op)
   /\ SetEdges(EdgesAfter(op))
-  /\ seated' = seated \cap ({"Executive"} \cup live')
-  /\ nominated' = nominated \cap live'
+  /\ seated' = seated \cap ({"Executive", "VicePresident"} \cup live')
+  /\ nominated' = nominated \cap (live' \cup {"VicePresident"})
   /\ trial' = IF trial \in (Agencies \cup Courts) \ live' THEN "None" ELSE trial
 
 \* Both houses pass a bill; it is presented to the President.
@@ -512,6 +531,56 @@ ContingentElection ==
   /\ seated' = seated \cup {"Executive"}
   /\ UNCHANGED <<graphVars, nominated, trial, lawVars, amendment>>
 
+\* The electors choose a Vice President too; if none has a majority, the
+\* Senate chooses (Amend. XII).
+ElectVicePresident ==
+  /\ "VicePresident" \notin seated
+  /\ Fire(Txt("States", "VicePresident", "Select", "AppointElectors"))
+  /\ seated' = seated \cup {"VicePresident"}
+  /\ UNCHANGED <<graphVars, nominated, trial, lawVars, amendment>>
+
+ContingentElectionVP ==
+  /\ "VicePresident" \notin seated
+  /\ Fire(Txt("Congress", "VicePresident", "Select", "ContingentElection"))
+  /\ seated' = seated \cup {"VicePresident"}
+  /\ UNCHANGED <<graphVars, nominated, trial, lawVars, amendment>>
+
+\* Art. II sec. 1 cl. 6, Amend. XXV sec. 1: the presidency devolves on the
+\* Vice President, whose own office falls vacant.
+Succeed ==
+  /\ "Executive" \notin seated
+  /\ Fire(Txt("VicePresident", "Executive", "Select", "Succession"))
+  /\ seated' = (seated \ {"VicePresident"}) \cup {"Executive"}
+  /\ UNCHANGED <<graphVars, nominated, trial, lawVars, amendment>>
+
+\* Amend. XXV sec. 2: the President nominates, a majority of both houses
+\* confirms. Before XXV these edges do not exist and a vacancy stays open.
+NominateVP ==
+  /\ "VicePresident" \notin seated \cup nominated
+  /\ Fire(Txt("Executive", "VicePresident", "Select", "NominateVP"))
+  /\ nominated' = nominated \cup {"VicePresident"}
+  /\ UNCHANGED <<graphVars, seated, trial, lawVars, amendment>>
+
+ConfirmVP ==
+  /\ "VicePresident" \in nominated
+  /\ "VicePresident" \notin seated               \* re-checked at confirmation
+  /\ Fire(Txt("Congress", "VicePresident", "Select", "ConfirmVP"))
+  /\ seated' = seated \cup {"VicePresident"}
+  /\ nominated' = nominated \ {"VicePresident"}
+  /\ UNCHANGED <<graphVars, trial, lawVars, amendment>>
+
+RejectVP ==
+  /\ "VicePresident" \in nominated
+  /\ Fire(Txt("Congress", "VicePresident", "Select", "ConfirmVP"))
+  /\ nominated' = nominated \ {"VicePresident"}
+  /\ UNCHANGED <<graphVars, seated, trial, lawVars, amendment>>
+
+VicePresidentLeaves ==
+  /\ "VicePresident" \in seated
+  /\ seated' = seated \ {"VicePresident"}
+  /\ last' = NoEdge
+  /\ UNCHANGED <<graphVars, nominated, trial, lawVars, amendment>>
+
 \* Death, resignation, end of term. Not an exercise of anyone's authority.
 PresidentLeaves ==
   /\ "Executive" \in seated
@@ -566,7 +635,7 @@ Resign(n) ==
 (* Impeachment: the House impeaches, the Senate tries                      *)
 
 ImpeachEdge(n) ==
-  IF n \in {"Executive", "Judiciary"}
+  IF n \in {"Executive", "VicePresident", "Judiciary"}
     THEN Txt("Congress", n, "Control", "Impeach")
     ELSE Law("Congress", n, "Control", "Impeach")
 
@@ -639,15 +708,16 @@ Ratify(x) ==
 IsInert(e) ==
   \/ e.label \in {"Appropriate", "AdviseTreaties", "DeclareWar", "Pardon",
                   "Direct", "AppointInferior", "Jurisdiction", "Appeal",
-                  "LegislativeVeto", "DiminishPay", "ConfirmVP",
-                  "DecideInability", "PresideTrial"}
+                  "LegislativeVeto", "DiminishPay", "DecideInability",
+                  "DeclareInability", "PresideTrial", "PresideSenate"}
   \/ e.label = "Review" /\ e.to # "Congress"
   \/ e.label \in {"Nominate", "Consent"} /\ e.to = "Judiciary"
 
 \* Conditional edges whose condition is visible at this level.
 Guard(e) ==
   /\ e.label = "PresideTrial" => trial = "Executive"     \* only the President's trial
-  /\ e.label \in {"ConfirmVP", "DecideInability"} => "Executive" \in seated
+  /\ e.label \in {"DecideInability", "DeclareInability"} => "Executive" \in seated
+  /\ e.label = "PresideSenate" => inSession
 
 Exercise(e) ==
   /\ IsInert(e)
@@ -661,6 +731,8 @@ Next ==
   \/ Sign \/ Lapse \/ Veto \/ PocketVeto \/ Override \/ BillFails
   \/ Adjourn \/ Convene \/ ConveneByPresident
   \/ ElectPresident \/ ContingentElection \/ PresidentLeaves
+  \/ ElectVicePresident \/ ContingentElectionVP \/ VicePresidentLeaves \/ Succeed
+  \/ NominateVP \/ ConfirmVP \/ RejectVP
   \/ \E n \in Agencies \cup Courts :
        Nominate(n) \/ Consent(n) \/ Reject(n) \/ Remove(n) \/ Resign(n)
   \/ \E n \in Offices \cup {"Judiciary"} : Impeach(n)
@@ -683,26 +755,50 @@ EdgesConnectLiveNodes ==
   \A e \in edges : e.from \in LiveNodes /\ e.to \in LiveNodes
 
 OfficesAreLive ==
-  /\ seated \subseteq {"Executive"} \cup live
-  /\ nominated \subseteq live
+  /\ seated \subseteq {"Executive", "VicePresident"} \cup live
+  /\ nominated \subseteq live \cup {"VicePresident"}
 
 \* Only the People and the States write the Constitution. Nothing in any
 \* layer runs from a branch into it.
 ConstitutionWrittenByPeopleAndStates ==
   \A e \in edges : e.to = "Constitution" => e.from \in {"People", "States"}
 
-\* Set the People and the States aside and the grant layer is acyclic:
-\* every grant cycle closes through them (elections, Article V).
-GrantCyclesPassThroughPeopleOrStates ==
-  Acyclic(Restrict(GrantEdges, LiveNodes \ {"People", "States"}))
+\* The grant layer with the People and the States set aside.
+InnerGrant == Restrict(GrantEdges, LiveNodes \ {"People", "States"})
 
-\* ... and it runs forward along one chain:
-\*   Constitution -> Congress -> Executive -> Judiciary -> creatures of statute
-\* (Congress -> Executive by contingent election and VP confirmation;
-\* Executive -> Judiciary by nomination; everything -> statute bodies.)
-GrantFollowsChain ==
-  \A e \in Restrict(GrantEdges, LiveNodes \ {"People", "States"}) :
-    Rank(e.from) < Rank(e.to)
+\* As first written, these two claimed that the inner grant layer is
+\* acyclic - every grant cycle closes through the People or the States -
+\* and that it runs forward along one chain:
+\*   Constitution -> Congress -> Vice President -> Executive -> Judiciary
+\*     -> creatures of statute
+\* Both held while the Vice President was folded into the Executive. With
+\* the Vice President as a node, TLC refutes both in two steps: propose
+\* XXV, ratify it. Section 2 lets the President nominate a Vice President,
+\* who may succeed the President, so Executive -> VicePresident ->
+\* Executive is a grant cycle that touches neither the People nor the
+\* States (Ford, nominated 1973 and President 1974; Rockefeller,
+\* nominated by Ford). They are kept, unchanged, as refuted claims:
+\* Government_strict.cfg checks them and reproduces the counterexample.
+GrantCyclesPassThroughPeopleOrStates == Acyclic(InnerGrant)
+
+GrantFollowsChain == \A e \in InnerGrant : Rank(e.from) < Rank(e.to)
+
+\* What does hold. Every grant cycle closes through the People, the
+\* States, or the Vice Presidency ...
+GrantCyclesPassThroughPeopleStatesOrVP ==
+  Acyclic(Restrict(GrantEdges, LiveNodes \ {"People", "States", "VicePresident"}))
+
+\* ... every grant edge but the President's nomination of a Vice President
+\* runs forward along the chain ...
+GrantFollowsChainExceptXXV ==
+  \A e \in InnerGrant : e.label # "NominateVP" => Rank(e.from) < Rank(e.to)
+
+\* ... and the President-Vice President loop is the only inner grant
+\* cycle there is, present exactly when XXV is in force.
+OnlyGrantCycleIsXXV ==
+  /\ ~Acyclic(InnerGrant) <=> amendment["XXV"] = "Ratified"
+  /\ \A e \in InnerGrant :
+       e.from \in Reach(InnerGrant, e.to) => {e.from, e.to} = {"Executive", "VicePresident"}
 
 \* Every branch, agency and court traces its authority back to the People.
 PowerTracesToPeople ==
@@ -742,7 +838,8 @@ OnlyStatutesOverstep ==
 Safety ==
   /\ EdgesConnectLiveNodes /\ OfficesAreLive
   /\ ConstitutionWrittenByPeopleAndStates
-  /\ GrantCyclesPassThroughPeopleOrStates /\ GrantFollowsChain
+  /\ GrantCyclesPassThroughPeopleStatesOrVP /\ GrantFollowsChainExceptXXV
+  /\ OnlyGrantCycleIsXXV
   /\ PowerTracesToPeople /\ ConstitutionIsTheOnlyDoor
   /\ EveryBodyIsCreatedByLaw
   /\ MutualChecks /\ ControlLayerIsCyclic /\ LegislativePrimacy
