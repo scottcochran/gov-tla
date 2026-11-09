@@ -321,6 +321,33 @@ uv run python authority_graph.py [seed] [--steps N] [--layer grant|control|all]
 
 ---
 
+### authority_poster.py
+
+The same graph as a 24 × 36 in print poster:
+[`Government_authority_poster.pdf`](Government_authority_poster.pdf)
+(preview: [`Government_authority_poster.png`](Government_authority_poster.png)).
+
+**Usage:**
+```bash
+uv run python authority_poster.py
+```
+
+Instead of one tangle of 30 edges, the poster separates the two layers.
+The grant layer is drawn as a chain read top to bottom. The control layer
+draws one arrow per direction between branches, its width the number of
+checks, with the checks listed beside it. Headline numbers (edge counts,
+Congress's 9 checks against 5, zero grant cycles among government bodies)
+are computed from the graph, and the edges come from TLC: the initial state
+for the founding graph, and a simulated behaviour that ratifies both
+amendments for the XVII and XXV panel. The script stops if the model has an
+edge the poster's layout does not place.
+
+Writes `Government_authority_poster.html`, then renders the PDF and PNG if
+Node.js and Playwright are installed; otherwise print the HTML to PDF at
+24 × 36 in from a browser.
+
+---
+
 ## Ideas for next steps
 
 - Refinement mappings from `Constitution.tla`, `Executive.tla` and
