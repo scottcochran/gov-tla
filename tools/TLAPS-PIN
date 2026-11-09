@@ -1,0 +1,15 @@
+# The prover every proof results file cites. One line per field, `key value`.
+# tools/tlapm refuses a binary whose sha256 is not binary_sha256 unless TLAPM_UNPINNED=1 is set;
+# tools/install-tlaps.sh compares what it installed with this file; scripts/proof_sync.py compares
+# the prover each proof results file prints with it.
+# The release tag floats: 1.6.0-pre is a pre-release that GitHub rebuilds under the same name, so a
+# fresh install may not yield this binary. A results file made by another build cites another prover,
+# and moving this pin is the record of that.
+version 1.6.0-pre
+commit c8ddc44
+binary_sha256 81fd7bd59b64b3ceb1d8e3842bc2543dc76bff2537a8dd9898c105938c65a536
+platform x86_64-linux-gnu
+tarball tlapm-1.6.0-pre-x86_64-linux-gnu.tar.gz
+tarball_sha256 fa6d537fb62f8526e7dd0d716c88e3d18931cc5c6b5d9ba1949afdb8096fb758
+backends Z3 4.8.9; Zenon 0.8.4 [a268]; Isabelle2025; LS4
+pinned 2026.11.09
