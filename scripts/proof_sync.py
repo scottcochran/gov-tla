@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Report whether every results file is in step with the tree.
 
-usage: scripts/proof_sync.py [--run]
+usage: scripts/proof_sync.py [--run [--threads N]]
 
 For every base module (a .tla at the top level that is not a proof module):
 
@@ -71,6 +71,7 @@ def gaps():
 
 def main(argv):
     run = "--run" in argv
+    threads = argv[argv.index("--threads") + 1] if "--threads" in argv else None
     bad = 0
     tlc_pin = pin("TLC-PIN", "jar_sha256")
     tlaps_pin = pin("TLAPS-PIN", "binary_sha256")
@@ -110,9 +111,9 @@ def main(argv):
         if moved and run:
             cache = tempfile.mkdtemp(prefix="tlapm_sync_")
             try:
-                p = subprocess.run([os.path.join(ROOT, "tools", "tlapm"), "--cleanfp", "--strict",
-                                    "--cache-dir", cache, f"{m}_proof.tla"],
-                                   cwd=ROOT, capture_output=True, text=True)
+                cmd = [os.path.join(ROOT, "tools", "tlapm"), "--cleanfp", "--strict",
+                       "--cache-dir", cache] + (["--threads", threads] if threads else [])
+                p = subprocess.run(cmd + [f"{m}_proof.tla"], cwd=ROOT, capture_output=True, text=True)
             finally:
                 shutil.rmtree(cache, ignore_errors=True)
             out = p.stdout + p.stderr
