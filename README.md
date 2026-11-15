@@ -68,12 +68,18 @@ practice.
 | `Judiciary.tla` | 451 | 23 | 12 | 2,150 |
 | `Executive.tla` | 208 | 14 | 19 | 814 |
 | `Government.tla` | 565 | 14 | 15 | 1,543 |
+| `Elections.tla` | 579 | 24 | 24 | none: checked only |
 
 Every flip test fails as required: with one mutation hypothesis flipped
 to `Mut = "M_X"`, each proof breaks in the lemma of the property that
 mutation must break.
 
 What is **not** proved, and why:
+
+- **`Elections.tla` has no proof module yet.** Its nineteen properties
+  are checked by TLC at the constants in its row list and nothing more.
+  [`PROOF-GAPS.txt`](PROOF-GAPS.txt) records the gap, which is where
+  `scripts/proof_sync.py` looks for a module without a proof.
 
 - **Liveness properties** (`PresentedBillsResolve`, `ActingEventuallyEnds`,
   `UnconstitutionalEdgesAreStruck`) are checked by TLC, not proved. Each is
@@ -319,6 +325,141 @@ Three properties changed meaning:
 holds under `SpecLive`, and fails under `SpecNoClock` and under
 `SpecNoLimit`.
 
+### `Elections.tla` — the presidential cycle
+
+`Constitution.tla` and `Executive.tla` seat a President and a Vice
+President in one `Elect` step. This module is that step, from election
+day to the next election day:
+
+- the States appoint electors, and the electors vote on one day;
+- Congress counts, and announces a result or sends the choice to the
+  House and the Senate;
+- at noon on 20 January the old term ends, whether or not anyone was
+  chosen, and someone holds or acts in the office;
+- the term runs in two halves, and the next election opens.
+
+It stands alone, like the other modules, and does not replace their
+`Elect`.
+
+| Provision | Where |
+|---|---|
+| Art. II §1 cl. 2 — the States appoint electors; no member of Congress or officer is one | `Appoint`, `MayBeElector`, `ElectorsHoldNoOffice` |
+| Art. II §1 cl. 4, 3 U.S.C. §1 — election day, and one day for the electors' votes | `AppointmentOpen`, `PollsOpen`, `AppointedOnElectionDay`, `SameDay` |
+| Amend. XII — two names on distinct ballots, one at least not an inhabitant of the elector's State | `Vote`, `TwoNames`, `Habitation`, `OneNotAnInhabitant` |
+| *Chiafalo v. Washington* (2020) — a State may hold its electors to their pledge | `Faithful`, `PledgesBind` |
+| Amend. XX §§1–2 — the new Congress counts | `OpenCount`, `NewCongressCounts` |
+| 3 U.S.C. §15 — a vote is rejected only by both Houses; an elector held not lawfully certified leaves the whole number appointed | `Sustain`, `Appointed`, `Counted`, `CountIsCongress` |
+| Amend. XII — a majority of the whole number of electors appointed, or the choice passes on | `Announce`, `PCarries`, `VCarries`, `ElectorsChoose`, `DevolvesOnlyWithoutMajority`, `CountCanClose` |
+| Amend. XII — the House: the three highest, by States, a quorum of two-thirds of the States, a majority of all | `HouseChooses`, `PTop`, `ChoiceFromTheList`, `HouseVote` |
+| Amend. XII — the Senate: the two highest, a quorum of two-thirds, a majority of the whole number | `SenateChooses`, `VTop`, `SenateVote` |
+| Art. II §1 cl. 5, Amend. XII (last sentence), Amend. XIV §3 — who may hold either office | `VQualified`, `Qualified`, `RemoveDisability`, `Qualifications`, `Disability` |
+| Amend. XX §§1, 3 — noon on 20 January; a President elect dead, unqualified or not yet chosen | `NoonInaugurates`, `NoonSucceeds`, `NoonVacant`, `Qualify`, `VPQualify`, `VPActs`, `VPElectBecomesOnlyOnDeath` |
+| 3 U.S.C. §19 — the officer the statute names acts when there is neither | `SuccessorActs`, `ActingOrder` |
+| Amend. XXII — elected twice; once, after more than two years of another's term | `TermAllowed`, `WithinXXII`, `TwoTermLimit` |
+| Amend. XXV §1 — the Vice President becomes President | `Die` |
+| Art. II §1 — President and Vice President are two persons | `TwoPersons`, `PresidentNotVP` |
+
+Abstracted:
+
+- the States, on the electors' side: an elector is a seat that some
+  State fills, pledged to a candidate, so winner-take-all, districts and
+  the popular vote are whatever pledges the seats get;
+- the House's delegations: a State's vote is given, not built from its
+  members;
+- the calendar, apart from the order of the stages and a term in two
+  halves;
+- one-fifth of each House to object, competing slates, and the grounds
+  of objection beyond the two that differ in effect;
+- who checks a qualification: it is checked where the office is taken;
+- every way an office falls vacant in a term but death;
+- the statutory line, which is one person who never dies.
+
+Three readings are fixed, and the module header says where:
+
+- a tie for the last place on a list admits everyone tied;
+- the term limit is a qualification checked at noon, so a President
+  elect it bars has "failed to qualify";
+- Amendment XII's last sentence is read without Amendment XXII.
+
+| Mutation | Removes | Earlier text, doctrine or practice | Breaks |
+|---|---|---|---|
+| `M_OFFICER_ELECTOR` | no officer is an elector | Oregon's elector Watts, a postmaster (1876) | `ElectorsHoldNoOffice` |
+| `M_FAILED_CHOICE` | appointment on election day | 3 U.S.C. §2 until 2022 | `AppointedOnElectionDay` |
+| `M_LATE_VOTE` | the electors vote on one day | Wisconsin's electors, a day late in a snowstorm (1856) | `SameDay` |
+| `M_HABITATION` | the inhabitant rule | — | `OneNotAnInhabitant` |
+| `M_SAME_NAME` | an elector names two persons | Art. II's "two Persons", which XII does not repeat | `CountCanClose` |
+| `M_FAITHLESS` | the pledge binds | *Baca* (10th Cir. 2019), reversed with *Chiafalo* | `PledgesBind` |
+| `M_PRE_XX` | the new Congress counts | the text before 1933 | `NewCongressCounts` |
+| `M_PRESIDING` | both Houses reject a vote | the reading 3 U.S.C. §15(b) (2022) forecloses | `CountIsCongress` |
+| `M_PRE_XII` | the list for President is the ballots for President | Art. II before 1804; Jefferson and Burr in 1800 | `ElectorsChoose`; `CountCanClose` with three candidates |
+| `M_PLURALITY` | a majority, not the most votes | — | `ElectorsChoose`; `CountCanClose` with three candidates |
+| `M_ENTITLED` | the majority is of the electors appointed | the seats unfilled in 1789 and uncounted in 1865 | `DevolvesOnlyWithoutMajority` |
+| `M_OFF_LIST` | the House and Senate choose from their lists | — | `ChoiceFromTheList` |
+| `M_HOUSE_QUORUM` | a quorum of two-thirds of the States | — | `HouseVote` (five States) |
+| `M_HOUSE_PRESENT` | a majority of all the States | — | `HouseVote` (four States) |
+| `M_SENATE_QUORUM` | a quorum of two-thirds of the Senators | — | `SenateVote` (five Senators) |
+| `M_SENATE_PRESENT` | a majority of the whole number | — | `SenateVote` (four Senators) |
+| `M_ONE_PERSON` | two persons, at the announcement, in each House's choice and at every seating | — | `PresidentNotVP` |
+| `M_UNQUALIFIED` | Art. II §1 cl. 5 | — | `Qualifications` |
+| `M_XIV3` | Amend. XIV §3 | the text before 1868 | `Disability` |
+| `M_XXII` | the term limit | the text before 1951 | `TwoTermLimit` |
+| `M_XXII_SERVICE` | the two-years-of-another's-term clause | `Constitution.tla`'s `TermAllowed` | `TwoTermLimit` |
+| `M_XX3_BECOMES` | the Vice President elect becomes President only on a death | — | `VPElectBecomesOnlyOnDeath` |
+| `M_SPEAKER_FIRST` | the Vice President acts before the statute's officer | — | `ActingOrder` |
+| `M_NO_STATUTE` | 3 U.S.C. §19 | Amend. XX §3 without the law it invites | no safety property; `ExecutiveIsFilled` |
+
+`Safety` is the conjunction of the nineteen safety properties in the
+"Breaks" column.
+
+Witnesses (each violated):
+
+- a President; a seat no State filled; an elector who casts no vote; an
+  unbound elector departing from the pledge;
+- a vote rejected, and a President elect who lacks a majority of the
+  electors the States appointed, made by rejecting electors;
+- a person voted for as Vice President and left off the Senate's list;
+- the House and the Senate each choosing;
+- noon with no President after a finished count; the Vice President
+  elect becoming President; the Vice President acting; the statutory
+  successor acting;
+- a President elect and a Vice President elect each qualifying after
+  noon; the count announced after noon; a disability removed;
+- a President elect dead; succession within a term;
+- a person elected President twice; more than two years of another's
+  term; a President elect barred by the term limit;
+- a person twice elected President becoming President again by
+  succession; the next election opening.
+
+**`CountCanClose`.** Eighteen properties are each decided by a check at
+the step that could break them. This one is not. It says that whatever the ballots say, some result can
+be announced: the two lists never give one person both offices, which
+`Announce` could not announce. No guard says so. It holds because two
+majorities of the same electors share an elector, and that elector's
+ballot names two persons.
+
+**Liveness.** `FairSpec` adds `SomeoneActs`: weak fairness on `VPActs`
+and `SuccessorActs` taken together. `ExecutiveIsFilled` holds under
+`FairSpec`. It fails:
+
+- under `Spec`;
+- under `SpecVPOnly` and `SpecSuccessorOnly`, which each drop one
+  officer;
+- under `SpecEachAlone`, weak fairness on each officer separately (see
+  Findings);
+- under `FairSpec` with `M_NO_STATUTE`.
+
+`NoBehaviour` is violated under `FairSpec`. No state is terminal.
+
+**Rows.** The defaults are the smallest constants that run a whole
+election: three electors, each held to the pledge, and two candidates.
+That is 38,180 states. Each mutation runs against every property at the
+constants where its check binds, and `Safety` runs unmutated at each of
+those sets of constants. Two rows are larger: three candidates
+(1,301,661 states) and the constants of `Elections.cfg` (2,060,728).
+
+The rows cannot reach the House's list of three excluding a fourth
+person voted for, which needs seven electors.
+
 ### `Government.tla` — the authority graph
 
 The other three modules model what each branch does. This one models how
@@ -496,6 +637,42 @@ and nothing changes its precondition between passage and enactment.
 **The graph claims of 1789 and the XXV cycle**: see "A claim TLC refuted"
 above.
 
+**In `Elections.tla`**, checked and not proved:
+
+- **One person can lead both lists unless the rule is a majority.**
+  `CountCanClose` was added after a probe with `M_PLURALITY` and three
+  candidates reached a count that could not be announced: one person
+  had the most votes for President and for Vice President. `M_PRE_XII`
+  does the same. Under the text's majority rule TLC finds no such state,
+  with two candidates or three.
+- **The count can also stall on the ballot.** Amendment XII does not
+  repeat Article II's "two Persons". If an elector may name one person
+  twice (`M_SAME_NAME`), a person with a majority on both lists can be
+  announced for neither office.
+- **The executive power is continuous because of a statute.** With
+  `M_NO_STATUTE`, a term that begins with neither a President elect nor
+  a Vice President elect qualified leaves the office empty until one of
+  them qualifies, which may be never.
+- **Weak fairness on each officer separately is not enough.** Under
+  `SpecEachAlone` a vacancy lasts forever while a Vice President elect
+  qualifies in one term and none does in the next: the Vice President
+  and the statute's officer are each obliged only from time to time,
+  and neither ever acts. The fairness that works is on the two together.
+- **Rejecting electors can make a majority.** Two electors are
+  appointed and one votes, so nobody has a majority. Both Houses hold
+  the other not lawfully certified, the whole number appointed falls to
+  one, and the one vote elects (`NeverElectedByRejection`).
+- **The quorum rules bind only at some sizes.** With three or four
+  States a majority of all the States is already two-thirds of them, so
+  `M_HOUSE_QUORUM` changes nothing there: its rows at those sizes hold,
+  with the state count of `none`. Its other rows use five States, and
+  `M_HOUSE_PRESENT`'s use four. The same holds for the Senate.
+- **What one reading admits.** Read without Amendment XXII, Amendment
+  XII's last sentence lets a person twice elected President be elected
+  Vice President and become President again
+  (`NeverThirdTermBySuccession`). This is a consequence of the reading
+  the module fixes, not a claim about which reading is right.
+
 ## Running
 
 Install the pinned tools once:
@@ -543,7 +720,9 @@ the change.
 **Configs.** The `.cfg` files describe a larger model: three
 Representatives, two Senators, two agencies, every amendment. They exist
 for the visualization tools and ad hoc runs, and set `Mut = "none"`.
-Exhaustive runs at those constants are very large. To sample them:
+Exhaustive runs at those constants are very large (`Elections.cfg` is
+the exception: the row `c-cfg-safety` checks its constants). To sample
+them:
 
 ```
 java -cp tools/tla2tools.jar tlc2.TLC -simulate num=100000 -depth 40 -workers auto -config Judiciary.cfg Judiciary.tla
@@ -761,6 +940,15 @@ Node.js and Playwright are installed; otherwise print the HTML to PDF at
 
 ## Ideas for next steps
 
+- A proof module for `Elections.tla`. Most of its properties are flags
+  or guard-decided state predicates; `CountCanClose` needs a counting
+  argument.
+- Congressional elections: seats that are filled, vacated and refilled,
+  Senate classes, and each House judging its own elections. With members
+  grouped by State, the House's contingent vote can be built from its
+  delegations.
+- `Elections.tla` in place of the one-step `Elect` in `Constitution.tla`
+  and `Executive.tla`.
 - Refinement mappings from `Constitution.tla`, `Executive.tla` and
   `Judiciary.tla` to `Government.tla`, so every action in the detailed
   modules is shown to be the firing of an edge in the authority graph.
