@@ -1,0 +1,683 @@
+# Rows for scripts/tlc_rows.py: name mut spec kind property expected [KEY=value ...]
+# module: Elections
+# title: Elections.tla - the presidential cycle (Article II s.1, Amendments XII, XX and XXII)
+# expected: Mut = "none" HOLDS on TypeOK, Safety and every one of the nineteen properties, at every set of constants a row uses, with no deadlock reached.
+# expected: Each mutation is COUNTEREXAMPLE on the properties it is listed against and HOLDS on every other, and on TypeOK:
+# expected: M_OFFICER_ELECTOR breaks ElectorsHoldNoOffice; M_FAILED_CHOICE AppointedOnElectionDay; M_LATE_VOTE SameDay;
+# expected: M_HABITATION OneNotAnInhabitant; M_SAME_NAME CountCanClose; M_FAITHLESS PledgesBind; M_PRE_XX NewCongressCounts;
+# expected: M_PRESIDING CountIsCongress; M_PRE_XII and M_PLURALITY ElectorsChoose, and CountCanClose with three candidates only;
+# expected: M_ENTITLED DevolvesOnlyWithoutMajority; M_OFF_LIST ChoiceFromTheList; M_HOUSE_QUORUM (five States) and
+# expected: M_HOUSE_PRESENT (four States) HouseVote; M_SENATE_QUORUM (five Senators) and M_SENATE_PRESENT (four) SenateVote;
+# expected: M_ONE_PERSON PresidentNotVP; M_UNQUALIFIED Qualifications; M_XIV3 Disability; M_XXII and M_XXII_SERVICE TwoTermLimit;
+# expected: M_XX3_BECOMES VPElectBecomesOnlyOnDeath; M_SPEAKER_FIRST ActingOrder; M_NO_STATUTE no safety property.
+# expected: The quorum mutations HOLD at three and four States or Senators, and the majority-of-those-present mutations at three and five.
+# expected: Every Never... witness is COUNTEREXAMPLE unmutated (state witnesses as INVARIANT rows, step witnesses as PROPERTY rows).
+# expected: ExecutiveIsFilled HOLDS under FairSpec (with and without deaths) and is COUNTEREXAMPLE under Spec, SpecVPOnly,
+# expected: SpecSuccessorOnly and SpecEachAlone, and under FairSpec with M_NO_STATUTE; NoBehaviour is COUNTEREXAMPLE under FairSpec.
+#
+# Constants. The defaults are the smallest that run a whole election: three seats in the college, every elector
+# held to the pledge (so a ballot is the pledge and the other candidate), two candidates, nobody mortal, disabled
+# or in office, no vote open to objection, three States and three Senators. 38,180 states. The persons c, e4 and
+# e5 are in Persons for the rows that add a candidate or a seat; unused, they add no state.
+#
+# Each mutation runs against every property at the constants where its check binds, so that a HOLDS in its block
+# says the mutation is live and leaves that property alone:
+#   M_OFFICER_ELECTOR   e3 holds an office (unmutated, that seat is never filled)
+#   M_HABITATION        e1 shares a State with both candidates (unmutated, e1 can cast no ballot)
+#   M_PRESIDING         e1's vote is open to objection
+#   M_HOUSE_QUORUM      five States, the fewest at which a majority of all the States can lack a quorum
+#   M_HOUSE_PRESENT     four States, the fewest at which a majority of a quorum is not a majority of all
+#   M_SENATE_QUORUM, M_SENATE_PRESENT   the same, with Senators
+#   M_UNQUALIFIED, M_XX3_BECOMES, M_SPEAKER_FIRST   b is not eligible (so b elected is a President elect who fails to qualify)
+#   M_XIV3              b is under the disability
+#   M_XXII              constraint ElectionsBound (elected <= 3), the count of elections being otherwise unbounded
+#   M_XXII_SERVICE      one seat and b mortal: b dies early in a term and a serves out more than two years of it
+# The other mutations bind at the defaults. Safety and the deadlock audit also run unmutated at each of these
+# sets of constants (the c- rows), so a COUNTEREXAMPLE in a mutation's block is the mutation's and not the
+# constants'. Two further c- rows are larger: three candidates (1,301,661 states), and the constants of
+# Elections.cfg (2,060,728 states).
+#
+# CountCanClose is the one property no single guard decides. M_PRE_XII and M_PLURALITY leave it alone with two
+# candidates and break it with three (m-prexii-canclose-3, m-plurality-canclose-3; the second needs four seats).
+# Unmutated it is checked with three candidates and three seats (p-none-canclose-3) and with two candidates and
+# four seats (c-four2-safety); three candidates with four seats, unmutated, is too large for a row.
+#
+# The quorum rules bind only at some sizes. With three or four States (or six) a majority of all the States is
+# already two-thirds of them, so M_HOUSE_QUORUM changes nothing there: m-housequorum-house-3 and -4 HOLD, with the
+# state count of none. With three or five States a majority of any quorum is a majority of all the States, so
+# M_HOUSE_PRESENT's flag is never raised there: m-housepresent-house-3 and -5 HOLD. The same for the Senate.
+#
+# What the rows cannot reach: the House's list of the three highest excluding a fourth person voted for (seven
+# seats, four candidates). The Senate's list of two is exercised by w-offsenatelist (five seats, three candidates).
+#
+# DEADLOCK: each stage of an election can be closed, noon comes once the count is open, and Midterm and
+# OpenElection follow, so no state is terminal; d-none-deadlock and the c-...-deadlock rows check it.
+#
+# const: Persons = {a, b, c, e1, e2, e3, e4, e5, sp}
+# const: Electors = {e1, e2, e3}
+# const: Candidates = {a, b}
+# const: Eligible = {a, b, c, sp}
+# const: Disabled = {}
+# const: Officers = {}
+# const: Mortal = {}
+# const: Inhabitants = {}
+# const: Binding = {e1, e2, e3}
+# const: Contestable = {}
+# const: States = {t1, t2, t3}
+# const: Senators = {n1, n2, n3}
+# const: Successor = sp
+# const: NoOne = NoOne
+#
+# name                             mut                spec               kind      property                     expected        [KEY=value ...]
+# --- TypeOK, Safety and the deadlock audit, unmutated
+t-none-typeok                      none               Spec               INVARIANT TypeOK                       HOLDS
+s-none-safety                      none               Spec               INVARIANT Safety                       HOLDS
+d-none-deadlock                    none               Spec               DEADLOCK  Safety                       HOLDS
+# --- every property unmutated
+p-none-nooffice                    none               Spec               INVARIANT ElectorsHoldNoOffice         HOLDS
+p-none-electionday                 none               Spec               INVARIANT AppointedOnElectionDay       HOLDS
+p-none-sameday                     none               Spec               INVARIANT SameDay                      HOLDS
+p-none-inhabitant                  none               Spec               INVARIANT OneNotAnInhabitant           HOLDS
+p-none-pledge                      none               Spec               INVARIANT PledgesBind                  HOLDS
+p-none-newcongress                 none               Spec               INVARIANT NewCongressCounts            HOLDS
+p-none-congress                    none               Spec               INVARIANT CountIsCongress              HOLDS
+p-none-choose                      none               Spec               INVARIANT ElectorsChoose               HOLDS
+p-none-devolve                     none               Spec               INVARIANT DevolvesOnlyWithoutMajority  HOLDS
+p-none-canclose                    none               Spec               INVARIANT CountCanClose                HOLDS
+p-none-list                        none               Spec               INVARIANT ChoiceFromTheList            HOLDS
+p-none-house                       none               Spec               INVARIANT HouseVote                    HOLDS
+p-none-senate                      none               Spec               INVARIANT SenateVote                   HOLDS
+p-none-twopersons                  none               Spec               INVARIANT PresidentNotVP               HOLDS
+p-none-qualif                      none               Spec               INVARIANT Qualifications               HOLDS
+p-none-disability                  none               Spec               INVARIANT Disability                   HOLDS
+p-none-xxii                        none               Spec               INVARIANT TwoTermLimit                 HOLDS
+p-none-becomes                     none               Spec               INVARIANT VPElectBecomesOnlyOnDeath    HOLDS
+p-none-acting                      none               Spec               INVARIANT ActingOrder                  HOLDS
+# --- Safety and the deadlock audit unmutated, at each set of constants a row below uses
+c-officer-safety                   none               Spec               INVARIANT Safety                       HOLDS          Officers={e3}
+c-officer-deadlock                 none               Spec               DEADLOCK  TypeOK                       HOLDS          Officers={e3}
+c-inhabitants-safety               none               Spec               INVARIANT Safety                       HOLDS          Inhabitants={{e1,a,b}}
+c-inhabitants-deadlock             none               Spec               DEADLOCK  TypeOK                       HOLDS          Inhabitants={{e1,a,b}}
+c-contest-safety                   none               Spec               INVARIANT Safety                       HOLDS          Contestable={e1}
+c-contest-deadlock                 none               Spec               DEADLOCK  TypeOK                       HOLDS          Contestable={e1}
+c-free-safety                      none               Spec               INVARIANT Safety                       HOLDS          Binding={}
+c-free-deadlock                    none               Spec               DEADLOCK  TypeOK                       HOLDS          Binding={}
+c-states5-safety                   none               Spec               INVARIANT Safety                       HOLDS          States={t1,t2,t3,t4,t5}
+c-states5-deadlock                 none               Spec               DEADLOCK  TypeOK                       HOLDS          States={t1,t2,t3,t4,t5}
+c-states4-safety                   none               Spec               INVARIANT Safety                       HOLDS          States={t1,t2,t3,t4}
+c-states4-deadlock                 none               Spec               DEADLOCK  TypeOK                       HOLDS          States={t1,t2,t3,t4}
+c-senators5-safety                 none               Spec               INVARIANT Safety                       HOLDS          Senators={n1,n2,n3,n4,n5}
+c-senators5-deadlock               none               Spec               DEADLOCK  TypeOK                       HOLDS          Senators={n1,n2,n3,n4,n5}
+c-senators4-safety                 none               Spec               INVARIANT Safety                       HOLDS          Senators={n1,n2,n3,n4}
+c-senators4-deadlock               none               Spec               DEADLOCK  TypeOK                       HOLDS          Senators={n1,n2,n3,n4}
+c-ineligible-safety                none               Spec               INVARIANT Safety                       HOLDS          Eligible={a,c,sp}
+c-ineligible-deadlock              none               Spec               DEADLOCK  TypeOK                       HOLDS          Eligible={a,c,sp}
+c-disabled-safety                  none               Spec               INVARIANT Safety                       HOLDS          Disabled={b}
+c-disabled-deadlock                none               Spec               DEADLOCK  TypeOK                       HOLDS          Disabled={b}
+c-mortal-safety                    none               Spec               INVARIANT Safety                       HOLDS          Electors={e1} Binding={e1} Mortal={a,b}
+c-mortal-deadlock                  none               Spec               DEADLOCK  TypeOK                       HOLDS          Electors={e1} Binding={e1} Mortal={a,b}
+c-mortal3-safety                   none               Spec               INVARIANT Safety                       HOLDS          Mortal={a}
+c-mortal3-deadlock                 none               Spec               DEADLOCK  TypeOK                       HOLDS          Mortal={a}
+c-contestfree-safety               none               Spec               INVARIANT Safety                       HOLDS          Electors={e1,e2} Binding={} Contestable={e1,e2}
+c-contestfree-deadlock             none               Spec               DEADLOCK  TypeOK                       HOLDS          Electors={e1,e2} Binding={} Contestable={e1,e2}
+c-xxiiservice-safety               none               Spec               INVARIANT Safety                       HOLDS          Electors={e1} Binding={e1} Mortal={b}
+c-xxiiservice-deadlock             none               Spec               DEADLOCK  TypeOK                       HOLDS          Electors={e1} Binding={e1} Mortal={b}
+c-four2-safety                     none               Spec               INVARIANT Safety                       HOLDS          Electors={e1,e2,e3,e4} Binding={e1,e2,e3,e4}
+c-four2-deadlock                   none               Spec               DEADLOCK  TypeOK                       HOLDS          Electors={e1,e2,e3,e4} Binding={e1,e2,e3,e4}
+# --- Safety unmutated at larger constants: three candidates; the constants of Elections.cfg
+c-three-safety                     none               Spec               INVARIANT Safety                       HOLDS          Candidates={a,b,c}
+c-cfg-safety                       none               Spec               INVARIANT Safety                       HOLDS          Mortal={a,b} Inhabitants={{e1,a},{e2,b}} Binding={e1,e2} Contestable={e1,e2,e3}
+# --- M_OFFICER_ELECTOR: breaks ElectorsHoldNoOffice; Officers={e3}
+m-officer-typeok                   M_OFFICER_ELECTOR  Spec               INVARIANT TypeOK                       HOLDS          Officers={e3}
+m-officer-nooffice                 M_OFFICER_ELECTOR  Spec               INVARIANT ElectorsHoldNoOffice         COUNTEREXAMPLE Officers={e3}
+m-officer-electionday              M_OFFICER_ELECTOR  Spec               INVARIANT AppointedOnElectionDay       HOLDS          Officers={e3}
+m-officer-sameday                  M_OFFICER_ELECTOR  Spec               INVARIANT SameDay                      HOLDS          Officers={e3}
+m-officer-inhabitant               M_OFFICER_ELECTOR  Spec               INVARIANT OneNotAnInhabitant           HOLDS          Officers={e3}
+m-officer-pledge                   M_OFFICER_ELECTOR  Spec               INVARIANT PledgesBind                  HOLDS          Officers={e3}
+m-officer-newcongress              M_OFFICER_ELECTOR  Spec               INVARIANT NewCongressCounts            HOLDS          Officers={e3}
+m-officer-congress                 M_OFFICER_ELECTOR  Spec               INVARIANT CountIsCongress              HOLDS          Officers={e3}
+m-officer-choose                   M_OFFICER_ELECTOR  Spec               INVARIANT ElectorsChoose               HOLDS          Officers={e3}
+m-officer-devolve                  M_OFFICER_ELECTOR  Spec               INVARIANT DevolvesOnlyWithoutMajority  HOLDS          Officers={e3}
+m-officer-canclose                 M_OFFICER_ELECTOR  Spec               INVARIANT CountCanClose                HOLDS          Officers={e3}
+m-officer-list                     M_OFFICER_ELECTOR  Spec               INVARIANT ChoiceFromTheList            HOLDS          Officers={e3}
+m-officer-house                    M_OFFICER_ELECTOR  Spec               INVARIANT HouseVote                    HOLDS          Officers={e3}
+m-officer-senate                   M_OFFICER_ELECTOR  Spec               INVARIANT SenateVote                   HOLDS          Officers={e3}
+m-officer-twopersons               M_OFFICER_ELECTOR  Spec               INVARIANT PresidentNotVP               HOLDS          Officers={e3}
+m-officer-qualif                   M_OFFICER_ELECTOR  Spec               INVARIANT Qualifications               HOLDS          Officers={e3}
+m-officer-disability               M_OFFICER_ELECTOR  Spec               INVARIANT Disability                   HOLDS          Officers={e3}
+m-officer-xxii                     M_OFFICER_ELECTOR  Spec               INVARIANT TwoTermLimit                 HOLDS          Officers={e3}
+m-officer-becomes                  M_OFFICER_ELECTOR  Spec               INVARIANT VPElectBecomesOnlyOnDeath    HOLDS          Officers={e3}
+m-officer-acting                   M_OFFICER_ELECTOR  Spec               INVARIANT ActingOrder                  HOLDS          Officers={e3}
+# --- M_FAILED_CHOICE: breaks AppointedOnElectionDay
+m-failedchoice-typeok              M_FAILED_CHOICE    Spec               INVARIANT TypeOK                       HOLDS
+m-failedchoice-nooffice            M_FAILED_CHOICE    Spec               INVARIANT ElectorsHoldNoOffice         HOLDS
+m-failedchoice-electionday         M_FAILED_CHOICE    Spec               INVARIANT AppointedOnElectionDay       COUNTEREXAMPLE
+m-failedchoice-sameday             M_FAILED_CHOICE    Spec               INVARIANT SameDay                      HOLDS
+m-failedchoice-inhabitant          M_FAILED_CHOICE    Spec               INVARIANT OneNotAnInhabitant           HOLDS
+m-failedchoice-pledge              M_FAILED_CHOICE    Spec               INVARIANT PledgesBind                  HOLDS
+m-failedchoice-newcongress         M_FAILED_CHOICE    Spec               INVARIANT NewCongressCounts            HOLDS
+m-failedchoice-congress            M_FAILED_CHOICE    Spec               INVARIANT CountIsCongress              HOLDS
+m-failedchoice-choose              M_FAILED_CHOICE    Spec               INVARIANT ElectorsChoose               HOLDS
+m-failedchoice-devolve             M_FAILED_CHOICE    Spec               INVARIANT DevolvesOnlyWithoutMajority  HOLDS
+m-failedchoice-canclose            M_FAILED_CHOICE    Spec               INVARIANT CountCanClose                HOLDS
+m-failedchoice-list                M_FAILED_CHOICE    Spec               INVARIANT ChoiceFromTheList            HOLDS
+m-failedchoice-house               M_FAILED_CHOICE    Spec               INVARIANT HouseVote                    HOLDS
+m-failedchoice-senate              M_FAILED_CHOICE    Spec               INVARIANT SenateVote                   HOLDS
+m-failedchoice-twopersons          M_FAILED_CHOICE    Spec               INVARIANT PresidentNotVP               HOLDS
+m-failedchoice-qualif              M_FAILED_CHOICE    Spec               INVARIANT Qualifications               HOLDS
+m-failedchoice-disability          M_FAILED_CHOICE    Spec               INVARIANT Disability                   HOLDS
+m-failedchoice-xxii                M_FAILED_CHOICE    Spec               INVARIANT TwoTermLimit                 HOLDS
+m-failedchoice-becomes             M_FAILED_CHOICE    Spec               INVARIANT VPElectBecomesOnlyOnDeath    HOLDS
+m-failedchoice-acting              M_FAILED_CHOICE    Spec               INVARIANT ActingOrder                  HOLDS
+# --- M_LATE_VOTE: breaks SameDay
+m-latevote-typeok                  M_LATE_VOTE        Spec               INVARIANT TypeOK                       HOLDS
+m-latevote-nooffice                M_LATE_VOTE        Spec               INVARIANT ElectorsHoldNoOffice         HOLDS
+m-latevote-electionday             M_LATE_VOTE        Spec               INVARIANT AppointedOnElectionDay       HOLDS
+m-latevote-sameday                 M_LATE_VOTE        Spec               INVARIANT SameDay                      COUNTEREXAMPLE
+m-latevote-inhabitant              M_LATE_VOTE        Spec               INVARIANT OneNotAnInhabitant           HOLDS
+m-latevote-pledge                  M_LATE_VOTE        Spec               INVARIANT PledgesBind                  HOLDS
+m-latevote-newcongress             M_LATE_VOTE        Spec               INVARIANT NewCongressCounts            HOLDS
+m-latevote-congress                M_LATE_VOTE        Spec               INVARIANT CountIsCongress              HOLDS
+m-latevote-choose                  M_LATE_VOTE        Spec               INVARIANT ElectorsChoose               HOLDS
+m-latevote-devolve                 M_LATE_VOTE        Spec               INVARIANT DevolvesOnlyWithoutMajority  HOLDS
+m-latevote-canclose                M_LATE_VOTE        Spec               INVARIANT CountCanClose                HOLDS
+m-latevote-list                    M_LATE_VOTE        Spec               INVARIANT ChoiceFromTheList            HOLDS
+m-latevote-house                   M_LATE_VOTE        Spec               INVARIANT HouseVote                    HOLDS
+m-latevote-senate                  M_LATE_VOTE        Spec               INVARIANT SenateVote                   HOLDS
+m-latevote-twopersons              M_LATE_VOTE        Spec               INVARIANT PresidentNotVP               HOLDS
+m-latevote-qualif                  M_LATE_VOTE        Spec               INVARIANT Qualifications               HOLDS
+m-latevote-disability              M_LATE_VOTE        Spec               INVARIANT Disability                   HOLDS
+m-latevote-xxii                    M_LATE_VOTE        Spec               INVARIANT TwoTermLimit                 HOLDS
+m-latevote-becomes                 M_LATE_VOTE        Spec               INVARIANT VPElectBecomesOnlyOnDeath    HOLDS
+m-latevote-acting                  M_LATE_VOTE        Spec               INVARIANT ActingOrder                  HOLDS
+# --- M_HABITATION: breaks OneNotAnInhabitant; Inhabitants={{e1,a,b}}
+m-habitation-typeok                M_HABITATION       Spec               INVARIANT TypeOK                       HOLDS          Inhabitants={{e1,a,b}}
+m-habitation-nooffice              M_HABITATION       Spec               INVARIANT ElectorsHoldNoOffice         HOLDS          Inhabitants={{e1,a,b}}
+m-habitation-electionday           M_HABITATION       Spec               INVARIANT AppointedOnElectionDay       HOLDS          Inhabitants={{e1,a,b}}
+m-habitation-sameday               M_HABITATION       Spec               INVARIANT SameDay                      HOLDS          Inhabitants={{e1,a,b}}
+m-habitation-inhabitant            M_HABITATION       Spec               INVARIANT OneNotAnInhabitant           COUNTEREXAMPLE Inhabitants={{e1,a,b}}
+m-habitation-pledge                M_HABITATION       Spec               INVARIANT PledgesBind                  HOLDS          Inhabitants={{e1,a,b}}
+m-habitation-newcongress           M_HABITATION       Spec               INVARIANT NewCongressCounts            HOLDS          Inhabitants={{e1,a,b}}
+m-habitation-congress              M_HABITATION       Spec               INVARIANT CountIsCongress              HOLDS          Inhabitants={{e1,a,b}}
+m-habitation-choose                M_HABITATION       Spec               INVARIANT ElectorsChoose               HOLDS          Inhabitants={{e1,a,b}}
+m-habitation-devolve               M_HABITATION       Spec               INVARIANT DevolvesOnlyWithoutMajority  HOLDS          Inhabitants={{e1,a,b}}
+m-habitation-canclose              M_HABITATION       Spec               INVARIANT CountCanClose                HOLDS          Inhabitants={{e1,a,b}}
+m-habitation-list                  M_HABITATION       Spec               INVARIANT ChoiceFromTheList            HOLDS          Inhabitants={{e1,a,b}}
+m-habitation-house                 M_HABITATION       Spec               INVARIANT HouseVote                    HOLDS          Inhabitants={{e1,a,b}}
+m-habitation-senate                M_HABITATION       Spec               INVARIANT SenateVote                   HOLDS          Inhabitants={{e1,a,b}}
+m-habitation-twopersons            M_HABITATION       Spec               INVARIANT PresidentNotVP               HOLDS          Inhabitants={{e1,a,b}}
+m-habitation-qualif                M_HABITATION       Spec               INVARIANT Qualifications               HOLDS          Inhabitants={{e1,a,b}}
+m-habitation-disability            M_HABITATION       Spec               INVARIANT Disability                   HOLDS          Inhabitants={{e1,a,b}}
+m-habitation-xxii                  M_HABITATION       Spec               INVARIANT TwoTermLimit                 HOLDS          Inhabitants={{e1,a,b}}
+m-habitation-becomes               M_HABITATION       Spec               INVARIANT VPElectBecomesOnlyOnDeath    HOLDS          Inhabitants={{e1,a,b}}
+m-habitation-acting                M_HABITATION       Spec               INVARIANT ActingOrder                  HOLDS          Inhabitants={{e1,a,b}}
+# --- M_SAME_NAME: breaks CountCanClose
+m-samename-typeok                  M_SAME_NAME        Spec               INVARIANT TypeOK                       HOLDS
+m-samename-nooffice                M_SAME_NAME        Spec               INVARIANT ElectorsHoldNoOffice         HOLDS
+m-samename-electionday             M_SAME_NAME        Spec               INVARIANT AppointedOnElectionDay       HOLDS
+m-samename-sameday                 M_SAME_NAME        Spec               INVARIANT SameDay                      HOLDS
+m-samename-inhabitant              M_SAME_NAME        Spec               INVARIANT OneNotAnInhabitant           HOLDS
+m-samename-pledge                  M_SAME_NAME        Spec               INVARIANT PledgesBind                  HOLDS
+m-samename-newcongress             M_SAME_NAME        Spec               INVARIANT NewCongressCounts            HOLDS
+m-samename-congress                M_SAME_NAME        Spec               INVARIANT CountIsCongress              HOLDS
+m-samename-choose                  M_SAME_NAME        Spec               INVARIANT ElectorsChoose               HOLDS
+m-samename-devolve                 M_SAME_NAME        Spec               INVARIANT DevolvesOnlyWithoutMajority  HOLDS
+m-samename-canclose                M_SAME_NAME        Spec               INVARIANT CountCanClose                COUNTEREXAMPLE
+m-samename-list                    M_SAME_NAME        Spec               INVARIANT ChoiceFromTheList            HOLDS
+m-samename-house                   M_SAME_NAME        Spec               INVARIANT HouseVote                    HOLDS
+m-samename-senate                  M_SAME_NAME        Spec               INVARIANT SenateVote                   HOLDS
+m-samename-twopersons              M_SAME_NAME        Spec               INVARIANT PresidentNotVP               HOLDS
+m-samename-qualif                  M_SAME_NAME        Spec               INVARIANT Qualifications               HOLDS
+m-samename-disability              M_SAME_NAME        Spec               INVARIANT Disability                   HOLDS
+m-samename-xxii                    M_SAME_NAME        Spec               INVARIANT TwoTermLimit                 HOLDS
+m-samename-becomes                 M_SAME_NAME        Spec               INVARIANT VPElectBecomesOnlyOnDeath    HOLDS
+m-samename-acting                  M_SAME_NAME        Spec               INVARIANT ActingOrder                  HOLDS
+# --- M_FAITHLESS: breaks PledgesBind
+m-faithless-typeok                 M_FAITHLESS        Spec               INVARIANT TypeOK                       HOLDS
+m-faithless-nooffice               M_FAITHLESS        Spec               INVARIANT ElectorsHoldNoOffice         HOLDS
+m-faithless-electionday            M_FAITHLESS        Spec               INVARIANT AppointedOnElectionDay       HOLDS
+m-faithless-sameday                M_FAITHLESS        Spec               INVARIANT SameDay                      HOLDS
+m-faithless-inhabitant             M_FAITHLESS        Spec               INVARIANT OneNotAnInhabitant           HOLDS
+m-faithless-pledge                 M_FAITHLESS        Spec               INVARIANT PledgesBind                  COUNTEREXAMPLE
+m-faithless-newcongress            M_FAITHLESS        Spec               INVARIANT NewCongressCounts            HOLDS
+m-faithless-congress               M_FAITHLESS        Spec               INVARIANT CountIsCongress              HOLDS
+m-faithless-choose                 M_FAITHLESS        Spec               INVARIANT ElectorsChoose               HOLDS
+m-faithless-devolve                M_FAITHLESS        Spec               INVARIANT DevolvesOnlyWithoutMajority  HOLDS
+m-faithless-canclose               M_FAITHLESS        Spec               INVARIANT CountCanClose                HOLDS
+m-faithless-list                   M_FAITHLESS        Spec               INVARIANT ChoiceFromTheList            HOLDS
+m-faithless-house                  M_FAITHLESS        Spec               INVARIANT HouseVote                    HOLDS
+m-faithless-senate                 M_FAITHLESS        Spec               INVARIANT SenateVote                   HOLDS
+m-faithless-twopersons             M_FAITHLESS        Spec               INVARIANT PresidentNotVP               HOLDS
+m-faithless-qualif                 M_FAITHLESS        Spec               INVARIANT Qualifications               HOLDS
+m-faithless-disability             M_FAITHLESS        Spec               INVARIANT Disability                   HOLDS
+m-faithless-xxii                   M_FAITHLESS        Spec               INVARIANT TwoTermLimit                 HOLDS
+m-faithless-becomes                M_FAITHLESS        Spec               INVARIANT VPElectBecomesOnlyOnDeath    HOLDS
+m-faithless-acting                 M_FAITHLESS        Spec               INVARIANT ActingOrder                  HOLDS
+# --- M_PRE_XX: breaks NewCongressCounts
+m-prexx-typeok                     M_PRE_XX           Spec               INVARIANT TypeOK                       HOLDS
+m-prexx-nooffice                   M_PRE_XX           Spec               INVARIANT ElectorsHoldNoOffice         HOLDS
+m-prexx-electionday                M_PRE_XX           Spec               INVARIANT AppointedOnElectionDay       HOLDS
+m-prexx-sameday                    M_PRE_XX           Spec               INVARIANT SameDay                      HOLDS
+m-prexx-inhabitant                 M_PRE_XX           Spec               INVARIANT OneNotAnInhabitant           HOLDS
+m-prexx-pledge                     M_PRE_XX           Spec               INVARIANT PledgesBind                  HOLDS
+m-prexx-newcongress                M_PRE_XX           Spec               INVARIANT NewCongressCounts            COUNTEREXAMPLE
+m-prexx-congress                   M_PRE_XX           Spec               INVARIANT CountIsCongress              HOLDS
+m-prexx-choose                     M_PRE_XX           Spec               INVARIANT ElectorsChoose               HOLDS
+m-prexx-devolve                    M_PRE_XX           Spec               INVARIANT DevolvesOnlyWithoutMajority  HOLDS
+m-prexx-canclose                   M_PRE_XX           Spec               INVARIANT CountCanClose                HOLDS
+m-prexx-list                       M_PRE_XX           Spec               INVARIANT ChoiceFromTheList            HOLDS
+m-prexx-house                      M_PRE_XX           Spec               INVARIANT HouseVote                    HOLDS
+m-prexx-senate                     M_PRE_XX           Spec               INVARIANT SenateVote                   HOLDS
+m-prexx-twopersons                 M_PRE_XX           Spec               INVARIANT PresidentNotVP               HOLDS
+m-prexx-qualif                     M_PRE_XX           Spec               INVARIANT Qualifications               HOLDS
+m-prexx-disability                 M_PRE_XX           Spec               INVARIANT Disability                   HOLDS
+m-prexx-xxii                       M_PRE_XX           Spec               INVARIANT TwoTermLimit                 HOLDS
+m-prexx-becomes                    M_PRE_XX           Spec               INVARIANT VPElectBecomesOnlyOnDeath    HOLDS
+m-prexx-acting                     M_PRE_XX           Spec               INVARIANT ActingOrder                  HOLDS
+# --- M_PRESIDING: breaks CountIsCongress; Contestable={e1}
+m-presiding-typeok                 M_PRESIDING        Spec               INVARIANT TypeOK                       HOLDS          Contestable={e1}
+m-presiding-nooffice               M_PRESIDING        Spec               INVARIANT ElectorsHoldNoOffice         HOLDS          Contestable={e1}
+m-presiding-electionday            M_PRESIDING        Spec               INVARIANT AppointedOnElectionDay       HOLDS          Contestable={e1}
+m-presiding-sameday                M_PRESIDING        Spec               INVARIANT SameDay                      HOLDS          Contestable={e1}
+m-presiding-inhabitant             M_PRESIDING        Spec               INVARIANT OneNotAnInhabitant           HOLDS          Contestable={e1}
+m-presiding-pledge                 M_PRESIDING        Spec               INVARIANT PledgesBind                  HOLDS          Contestable={e1}
+m-presiding-newcongress            M_PRESIDING        Spec               INVARIANT NewCongressCounts            HOLDS          Contestable={e1}
+m-presiding-congress               M_PRESIDING        Spec               INVARIANT CountIsCongress              COUNTEREXAMPLE Contestable={e1}
+m-presiding-choose                 M_PRESIDING        Spec               INVARIANT ElectorsChoose               HOLDS          Contestable={e1}
+m-presiding-devolve                M_PRESIDING        Spec               INVARIANT DevolvesOnlyWithoutMajority  HOLDS          Contestable={e1}
+m-presiding-canclose               M_PRESIDING        Spec               INVARIANT CountCanClose                HOLDS          Contestable={e1}
+m-presiding-list                   M_PRESIDING        Spec               INVARIANT ChoiceFromTheList            HOLDS          Contestable={e1}
+m-presiding-house                  M_PRESIDING        Spec               INVARIANT HouseVote                    HOLDS          Contestable={e1}
+m-presiding-senate                 M_PRESIDING        Spec               INVARIANT SenateVote                   HOLDS          Contestable={e1}
+m-presiding-twopersons             M_PRESIDING        Spec               INVARIANT PresidentNotVP               HOLDS          Contestable={e1}
+m-presiding-qualif                 M_PRESIDING        Spec               INVARIANT Qualifications               HOLDS          Contestable={e1}
+m-presiding-disability             M_PRESIDING        Spec               INVARIANT Disability                   HOLDS          Contestable={e1}
+m-presiding-xxii                   M_PRESIDING        Spec               INVARIANT TwoTermLimit                 HOLDS          Contestable={e1}
+m-presiding-becomes                M_PRESIDING        Spec               INVARIANT VPElectBecomesOnlyOnDeath    HOLDS          Contestable={e1}
+m-presiding-acting                 M_PRESIDING        Spec               INVARIANT ActingOrder                  HOLDS          Contestable={e1}
+# --- M_PRE_XII: breaks ElectorsChoose
+m-prexii-typeok                    M_PRE_XII          Spec               INVARIANT TypeOK                       HOLDS
+m-prexii-nooffice                  M_PRE_XII          Spec               INVARIANT ElectorsHoldNoOffice         HOLDS
+m-prexii-electionday               M_PRE_XII          Spec               INVARIANT AppointedOnElectionDay       HOLDS
+m-prexii-sameday                   M_PRE_XII          Spec               INVARIANT SameDay                      HOLDS
+m-prexii-inhabitant                M_PRE_XII          Spec               INVARIANT OneNotAnInhabitant           HOLDS
+m-prexii-pledge                    M_PRE_XII          Spec               INVARIANT PledgesBind                  HOLDS
+m-prexii-newcongress               M_PRE_XII          Spec               INVARIANT NewCongressCounts            HOLDS
+m-prexii-congress                  M_PRE_XII          Spec               INVARIANT CountIsCongress              HOLDS
+m-prexii-choose                    M_PRE_XII          Spec               INVARIANT ElectorsChoose               COUNTEREXAMPLE
+m-prexii-devolve                   M_PRE_XII          Spec               INVARIANT DevolvesOnlyWithoutMajority  HOLDS
+m-prexii-canclose                  M_PRE_XII          Spec               INVARIANT CountCanClose                HOLDS
+m-prexii-list                      M_PRE_XII          Spec               INVARIANT ChoiceFromTheList            HOLDS
+m-prexii-house                     M_PRE_XII          Spec               INVARIANT HouseVote                    HOLDS
+m-prexii-senate                    M_PRE_XII          Spec               INVARIANT SenateVote                   HOLDS
+m-prexii-twopersons                M_PRE_XII          Spec               INVARIANT PresidentNotVP               HOLDS
+m-prexii-qualif                    M_PRE_XII          Spec               INVARIANT Qualifications               HOLDS
+m-prexii-disability                M_PRE_XII          Spec               INVARIANT Disability                   HOLDS
+m-prexii-xxii                      M_PRE_XII          Spec               INVARIANT TwoTermLimit                 HOLDS
+m-prexii-becomes                   M_PRE_XII          Spec               INVARIANT VPElectBecomesOnlyOnDeath    HOLDS
+m-prexii-acting                    M_PRE_XII          Spec               INVARIANT ActingOrder                  HOLDS
+# --- M_PLURALITY: breaks ElectorsChoose
+m-plurality-typeok                 M_PLURALITY        Spec               INVARIANT TypeOK                       HOLDS
+m-plurality-nooffice               M_PLURALITY        Spec               INVARIANT ElectorsHoldNoOffice         HOLDS
+m-plurality-electionday            M_PLURALITY        Spec               INVARIANT AppointedOnElectionDay       HOLDS
+m-plurality-sameday                M_PLURALITY        Spec               INVARIANT SameDay                      HOLDS
+m-plurality-inhabitant             M_PLURALITY        Spec               INVARIANT OneNotAnInhabitant           HOLDS
+m-plurality-pledge                 M_PLURALITY        Spec               INVARIANT PledgesBind                  HOLDS
+m-plurality-newcongress            M_PLURALITY        Spec               INVARIANT NewCongressCounts            HOLDS
+m-plurality-congress               M_PLURALITY        Spec               INVARIANT CountIsCongress              HOLDS
+m-plurality-choose                 M_PLURALITY        Spec               INVARIANT ElectorsChoose               COUNTEREXAMPLE
+m-plurality-devolve                M_PLURALITY        Spec               INVARIANT DevolvesOnlyWithoutMajority  HOLDS
+m-plurality-canclose               M_PLURALITY        Spec               INVARIANT CountCanClose                HOLDS
+m-plurality-list                   M_PLURALITY        Spec               INVARIANT ChoiceFromTheList            HOLDS
+m-plurality-house                  M_PLURALITY        Spec               INVARIANT HouseVote                    HOLDS
+m-plurality-senate                 M_PLURALITY        Spec               INVARIANT SenateVote                   HOLDS
+m-plurality-twopersons             M_PLURALITY        Spec               INVARIANT PresidentNotVP               HOLDS
+m-plurality-qualif                 M_PLURALITY        Spec               INVARIANT Qualifications               HOLDS
+m-plurality-disability             M_PLURALITY        Spec               INVARIANT Disability                   HOLDS
+m-plurality-xxii                   M_PLURALITY        Spec               INVARIANT TwoTermLimit                 HOLDS
+m-plurality-becomes                M_PLURALITY        Spec               INVARIANT VPElectBecomesOnlyOnDeath    HOLDS
+m-plurality-acting                 M_PLURALITY        Spec               INVARIANT ActingOrder                  HOLDS
+# --- M_ENTITLED: breaks DevolvesOnlyWithoutMajority
+m-entitled-typeok                  M_ENTITLED         Spec               INVARIANT TypeOK                       HOLDS
+m-entitled-nooffice                M_ENTITLED         Spec               INVARIANT ElectorsHoldNoOffice         HOLDS
+m-entitled-electionday             M_ENTITLED         Spec               INVARIANT AppointedOnElectionDay       HOLDS
+m-entitled-sameday                 M_ENTITLED         Spec               INVARIANT SameDay                      HOLDS
+m-entitled-inhabitant              M_ENTITLED         Spec               INVARIANT OneNotAnInhabitant           HOLDS
+m-entitled-pledge                  M_ENTITLED         Spec               INVARIANT PledgesBind                  HOLDS
+m-entitled-newcongress             M_ENTITLED         Spec               INVARIANT NewCongressCounts            HOLDS
+m-entitled-congress                M_ENTITLED         Spec               INVARIANT CountIsCongress              HOLDS
+m-entitled-choose                  M_ENTITLED         Spec               INVARIANT ElectorsChoose               HOLDS
+m-entitled-devolve                 M_ENTITLED         Spec               INVARIANT DevolvesOnlyWithoutMajority  COUNTEREXAMPLE
+m-entitled-canclose                M_ENTITLED         Spec               INVARIANT CountCanClose                HOLDS
+m-entitled-list                    M_ENTITLED         Spec               INVARIANT ChoiceFromTheList            HOLDS
+m-entitled-house                   M_ENTITLED         Spec               INVARIANT HouseVote                    HOLDS
+m-entitled-senate                  M_ENTITLED         Spec               INVARIANT SenateVote                   HOLDS
+m-entitled-twopersons              M_ENTITLED         Spec               INVARIANT PresidentNotVP               HOLDS
+m-entitled-qualif                  M_ENTITLED         Spec               INVARIANT Qualifications               HOLDS
+m-entitled-disability              M_ENTITLED         Spec               INVARIANT Disability                   HOLDS
+m-entitled-xxii                    M_ENTITLED         Spec               INVARIANT TwoTermLimit                 HOLDS
+m-entitled-becomes                 M_ENTITLED         Spec               INVARIANT VPElectBecomesOnlyOnDeath    HOLDS
+m-entitled-acting                  M_ENTITLED         Spec               INVARIANT ActingOrder                  HOLDS
+# --- M_OFF_LIST: breaks ChoiceFromTheList
+m-offlist-typeok                   M_OFF_LIST         Spec               INVARIANT TypeOK                       HOLDS
+m-offlist-nooffice                 M_OFF_LIST         Spec               INVARIANT ElectorsHoldNoOffice         HOLDS
+m-offlist-electionday              M_OFF_LIST         Spec               INVARIANT AppointedOnElectionDay       HOLDS
+m-offlist-sameday                  M_OFF_LIST         Spec               INVARIANT SameDay                      HOLDS
+m-offlist-inhabitant               M_OFF_LIST         Spec               INVARIANT OneNotAnInhabitant           HOLDS
+m-offlist-pledge                   M_OFF_LIST         Spec               INVARIANT PledgesBind                  HOLDS
+m-offlist-newcongress              M_OFF_LIST         Spec               INVARIANT NewCongressCounts            HOLDS
+m-offlist-congress                 M_OFF_LIST         Spec               INVARIANT CountIsCongress              HOLDS
+m-offlist-choose                   M_OFF_LIST         Spec               INVARIANT ElectorsChoose               HOLDS
+m-offlist-devolve                  M_OFF_LIST         Spec               INVARIANT DevolvesOnlyWithoutMajority  HOLDS
+m-offlist-canclose                 M_OFF_LIST         Spec               INVARIANT CountCanClose                HOLDS
+m-offlist-list                     M_OFF_LIST         Spec               INVARIANT ChoiceFromTheList            COUNTEREXAMPLE
+m-offlist-house                    M_OFF_LIST         Spec               INVARIANT HouseVote                    HOLDS
+m-offlist-senate                   M_OFF_LIST         Spec               INVARIANT SenateVote                   HOLDS
+m-offlist-twopersons               M_OFF_LIST         Spec               INVARIANT PresidentNotVP               HOLDS
+m-offlist-qualif                   M_OFF_LIST         Spec               INVARIANT Qualifications               HOLDS
+m-offlist-disability               M_OFF_LIST         Spec               INVARIANT Disability                   HOLDS
+m-offlist-xxii                     M_OFF_LIST         Spec               INVARIANT TwoTermLimit                 HOLDS
+m-offlist-becomes                  M_OFF_LIST         Spec               INVARIANT VPElectBecomesOnlyOnDeath    HOLDS
+m-offlist-acting                   M_OFF_LIST         Spec               INVARIANT ActingOrder                  HOLDS
+# --- M_HOUSE_QUORUM: breaks HouseVote; States={t1,t2,t3,t4,t5}
+m-housequorum-typeok               M_HOUSE_QUORUM     Spec               INVARIANT TypeOK                       HOLDS          States={t1,t2,t3,t4,t5}
+m-housequorum-nooffice             M_HOUSE_QUORUM     Spec               INVARIANT ElectorsHoldNoOffice         HOLDS          States={t1,t2,t3,t4,t5}
+m-housequorum-electionday          M_HOUSE_QUORUM     Spec               INVARIANT AppointedOnElectionDay       HOLDS          States={t1,t2,t3,t4,t5}
+m-housequorum-sameday              M_HOUSE_QUORUM     Spec               INVARIANT SameDay                      HOLDS          States={t1,t2,t3,t4,t5}
+m-housequorum-inhabitant           M_HOUSE_QUORUM     Spec               INVARIANT OneNotAnInhabitant           HOLDS          States={t1,t2,t3,t4,t5}
+m-housequorum-pledge               M_HOUSE_QUORUM     Spec               INVARIANT PledgesBind                  HOLDS          States={t1,t2,t3,t4,t5}
+m-housequorum-newcongress          M_HOUSE_QUORUM     Spec               INVARIANT NewCongressCounts            HOLDS          States={t1,t2,t3,t4,t5}
+m-housequorum-congress             M_HOUSE_QUORUM     Spec               INVARIANT CountIsCongress              HOLDS          States={t1,t2,t3,t4,t5}
+m-housequorum-choose               M_HOUSE_QUORUM     Spec               INVARIANT ElectorsChoose               HOLDS          States={t1,t2,t3,t4,t5}
+m-housequorum-devolve              M_HOUSE_QUORUM     Spec               INVARIANT DevolvesOnlyWithoutMajority  HOLDS          States={t1,t2,t3,t4,t5}
+m-housequorum-canclose             M_HOUSE_QUORUM     Spec               INVARIANT CountCanClose                HOLDS          States={t1,t2,t3,t4,t5}
+m-housequorum-list                 M_HOUSE_QUORUM     Spec               INVARIANT ChoiceFromTheList            HOLDS          States={t1,t2,t3,t4,t5}
+m-housequorum-house                M_HOUSE_QUORUM     Spec               INVARIANT HouseVote                    COUNTEREXAMPLE States={t1,t2,t3,t4,t5}
+m-housequorum-senate               M_HOUSE_QUORUM     Spec               INVARIANT SenateVote                   HOLDS          States={t1,t2,t3,t4,t5}
+m-housequorum-twopersons           M_HOUSE_QUORUM     Spec               INVARIANT PresidentNotVP               HOLDS          States={t1,t2,t3,t4,t5}
+m-housequorum-qualif               M_HOUSE_QUORUM     Spec               INVARIANT Qualifications               HOLDS          States={t1,t2,t3,t4,t5}
+m-housequorum-disability           M_HOUSE_QUORUM     Spec               INVARIANT Disability                   HOLDS          States={t1,t2,t3,t4,t5}
+m-housequorum-xxii                 M_HOUSE_QUORUM     Spec               INVARIANT TwoTermLimit                 HOLDS          States={t1,t2,t3,t4,t5}
+m-housequorum-becomes              M_HOUSE_QUORUM     Spec               INVARIANT VPElectBecomesOnlyOnDeath    HOLDS          States={t1,t2,t3,t4,t5}
+m-housequorum-acting               M_HOUSE_QUORUM     Spec               INVARIANT ActingOrder                  HOLDS          States={t1,t2,t3,t4,t5}
+# --- M_HOUSE_PRESENT: breaks HouseVote; States={t1,t2,t3,t4}
+m-housepresent-typeok              M_HOUSE_PRESENT    Spec               INVARIANT TypeOK                       HOLDS          States={t1,t2,t3,t4}
+m-housepresent-nooffice            M_HOUSE_PRESENT    Spec               INVARIANT ElectorsHoldNoOffice         HOLDS          States={t1,t2,t3,t4}
+m-housepresent-electionday         M_HOUSE_PRESENT    Spec               INVARIANT AppointedOnElectionDay       HOLDS          States={t1,t2,t3,t4}
+m-housepresent-sameday             M_HOUSE_PRESENT    Spec               INVARIANT SameDay                      HOLDS          States={t1,t2,t3,t4}
+m-housepresent-inhabitant          M_HOUSE_PRESENT    Spec               INVARIANT OneNotAnInhabitant           HOLDS          States={t1,t2,t3,t4}
+m-housepresent-pledge              M_HOUSE_PRESENT    Spec               INVARIANT PledgesBind                  HOLDS          States={t1,t2,t3,t4}
+m-housepresent-newcongress         M_HOUSE_PRESENT    Spec               INVARIANT NewCongressCounts            HOLDS          States={t1,t2,t3,t4}
+m-housepresent-congress            M_HOUSE_PRESENT    Spec               INVARIANT CountIsCongress              HOLDS          States={t1,t2,t3,t4}
+m-housepresent-choose              M_HOUSE_PRESENT    Spec               INVARIANT ElectorsChoose               HOLDS          States={t1,t2,t3,t4}
+m-housepresent-devolve             M_HOUSE_PRESENT    Spec               INVARIANT DevolvesOnlyWithoutMajority  HOLDS          States={t1,t2,t3,t4}
+m-housepresent-canclose            M_HOUSE_PRESENT    Spec               INVARIANT CountCanClose                HOLDS          States={t1,t2,t3,t4}
+m-housepresent-list                M_HOUSE_PRESENT    Spec               INVARIANT ChoiceFromTheList            HOLDS          States={t1,t2,t3,t4}
+m-housepresent-house               M_HOUSE_PRESENT    Spec               INVARIANT HouseVote                    COUNTEREXAMPLE States={t1,t2,t3,t4}
+m-housepresent-senate              M_HOUSE_PRESENT    Spec               INVARIANT SenateVote                   HOLDS          States={t1,t2,t3,t4}
+m-housepresent-twopersons          M_HOUSE_PRESENT    Spec               INVARIANT PresidentNotVP               HOLDS          States={t1,t2,t3,t4}
+m-housepresent-qualif              M_HOUSE_PRESENT    Spec               INVARIANT Qualifications               HOLDS          States={t1,t2,t3,t4}
+m-housepresent-disability          M_HOUSE_PRESENT    Spec               INVARIANT Disability                   HOLDS          States={t1,t2,t3,t4}
+m-housepresent-xxii                M_HOUSE_PRESENT    Spec               INVARIANT TwoTermLimit                 HOLDS          States={t1,t2,t3,t4}
+m-housepresent-becomes             M_HOUSE_PRESENT    Spec               INVARIANT VPElectBecomesOnlyOnDeath    HOLDS          States={t1,t2,t3,t4}
+m-housepresent-acting              M_HOUSE_PRESENT    Spec               INVARIANT ActingOrder                  HOLDS          States={t1,t2,t3,t4}
+# --- M_SENATE_QUORUM: breaks SenateVote; Senators={n1,n2,n3,n4,n5}
+m-senatequorum-typeok              M_SENATE_QUORUM    Spec               INVARIANT TypeOK                       HOLDS          Senators={n1,n2,n3,n4,n5}
+m-senatequorum-nooffice            M_SENATE_QUORUM    Spec               INVARIANT ElectorsHoldNoOffice         HOLDS          Senators={n1,n2,n3,n4,n5}
+m-senatequorum-electionday         M_SENATE_QUORUM    Spec               INVARIANT AppointedOnElectionDay       HOLDS          Senators={n1,n2,n3,n4,n5}
+m-senatequorum-sameday             M_SENATE_QUORUM    Spec               INVARIANT SameDay                      HOLDS          Senators={n1,n2,n3,n4,n5}
+m-senatequorum-inhabitant          M_SENATE_QUORUM    Spec               INVARIANT OneNotAnInhabitant           HOLDS          Senators={n1,n2,n3,n4,n5}
+m-senatequorum-pledge              M_SENATE_QUORUM    Spec               INVARIANT PledgesBind                  HOLDS          Senators={n1,n2,n3,n4,n5}
+m-senatequorum-newcongress         M_SENATE_QUORUM    Spec               INVARIANT NewCongressCounts            HOLDS          Senators={n1,n2,n3,n4,n5}
+m-senatequorum-congress            M_SENATE_QUORUM    Spec               INVARIANT CountIsCongress              HOLDS          Senators={n1,n2,n3,n4,n5}
+m-senatequorum-choose              M_SENATE_QUORUM    Spec               INVARIANT ElectorsChoose               HOLDS          Senators={n1,n2,n3,n4,n5}
+m-senatequorum-devolve             M_SENATE_QUORUM    Spec               INVARIANT DevolvesOnlyWithoutMajority  HOLDS          Senators={n1,n2,n3,n4,n5}
+m-senatequorum-canclose            M_SENATE_QUORUM    Spec               INVARIANT CountCanClose                HOLDS          Senators={n1,n2,n3,n4,n5}
+m-senatequorum-list                M_SENATE_QUORUM    Spec               INVARIANT ChoiceFromTheList            HOLDS          Senators={n1,n2,n3,n4,n5}
+m-senatequorum-house               M_SENATE_QUORUM    Spec               INVARIANT HouseVote                    HOLDS          Senators={n1,n2,n3,n4,n5}
+m-senatequorum-senate              M_SENATE_QUORUM    Spec               INVARIANT SenateVote                   COUNTEREXAMPLE Senators={n1,n2,n3,n4,n5}
+m-senatequorum-twopersons          M_SENATE_QUORUM    Spec               INVARIANT PresidentNotVP               HOLDS          Senators={n1,n2,n3,n4,n5}
+m-senatequorum-qualif              M_SENATE_QUORUM    Spec               INVARIANT Qualifications               HOLDS          Senators={n1,n2,n3,n4,n5}
+m-senatequorum-disability          M_SENATE_QUORUM    Spec               INVARIANT Disability                   HOLDS          Senators={n1,n2,n3,n4,n5}
+m-senatequorum-xxii                M_SENATE_QUORUM    Spec               INVARIANT TwoTermLimit                 HOLDS          Senators={n1,n2,n3,n4,n5}
+m-senatequorum-becomes             M_SENATE_QUORUM    Spec               INVARIANT VPElectBecomesOnlyOnDeath    HOLDS          Senators={n1,n2,n3,n4,n5}
+m-senatequorum-acting              M_SENATE_QUORUM    Spec               INVARIANT ActingOrder                  HOLDS          Senators={n1,n2,n3,n4,n5}
+# --- M_SENATE_PRESENT: breaks SenateVote; Senators={n1,n2,n3,n4}
+m-senatepresent-typeok             M_SENATE_PRESENT   Spec               INVARIANT TypeOK                       HOLDS          Senators={n1,n2,n3,n4}
+m-senatepresent-nooffice           M_SENATE_PRESENT   Spec               INVARIANT ElectorsHoldNoOffice         HOLDS          Senators={n1,n2,n3,n4}
+m-senatepresent-electionday        M_SENATE_PRESENT   Spec               INVARIANT AppointedOnElectionDay       HOLDS          Senators={n1,n2,n3,n4}
+m-senatepresent-sameday            M_SENATE_PRESENT   Spec               INVARIANT SameDay                      HOLDS          Senators={n1,n2,n3,n4}
+m-senatepresent-inhabitant         M_SENATE_PRESENT   Spec               INVARIANT OneNotAnInhabitant           HOLDS          Senators={n1,n2,n3,n4}
+m-senatepresent-pledge             M_SENATE_PRESENT   Spec               INVARIANT PledgesBind                  HOLDS          Senators={n1,n2,n3,n4}
+m-senatepresent-newcongress        M_SENATE_PRESENT   Spec               INVARIANT NewCongressCounts            HOLDS          Senators={n1,n2,n3,n4}
+m-senatepresent-congress           M_SENATE_PRESENT   Spec               INVARIANT CountIsCongress              HOLDS          Senators={n1,n2,n3,n4}
+m-senatepresent-choose             M_SENATE_PRESENT   Spec               INVARIANT ElectorsChoose               HOLDS          Senators={n1,n2,n3,n4}
+m-senatepresent-devolve            M_SENATE_PRESENT   Spec               INVARIANT DevolvesOnlyWithoutMajority  HOLDS          Senators={n1,n2,n3,n4}
+m-senatepresent-canclose           M_SENATE_PRESENT   Spec               INVARIANT CountCanClose                HOLDS          Senators={n1,n2,n3,n4}
+m-senatepresent-list               M_SENATE_PRESENT   Spec               INVARIANT ChoiceFromTheList            HOLDS          Senators={n1,n2,n3,n4}
+m-senatepresent-house              M_SENATE_PRESENT   Spec               INVARIANT HouseVote                    HOLDS          Senators={n1,n2,n3,n4}
+m-senatepresent-senate             M_SENATE_PRESENT   Spec               INVARIANT SenateVote                   COUNTEREXAMPLE Senators={n1,n2,n3,n4}
+m-senatepresent-twopersons         M_SENATE_PRESENT   Spec               INVARIANT PresidentNotVP               HOLDS          Senators={n1,n2,n3,n4}
+m-senatepresent-qualif             M_SENATE_PRESENT   Spec               INVARIANT Qualifications               HOLDS          Senators={n1,n2,n3,n4}
+m-senatepresent-disability         M_SENATE_PRESENT   Spec               INVARIANT Disability                   HOLDS          Senators={n1,n2,n3,n4}
+m-senatepresent-xxii               M_SENATE_PRESENT   Spec               INVARIANT TwoTermLimit                 HOLDS          Senators={n1,n2,n3,n4}
+m-senatepresent-becomes            M_SENATE_PRESENT   Spec               INVARIANT VPElectBecomesOnlyOnDeath    HOLDS          Senators={n1,n2,n3,n4}
+m-senatepresent-acting             M_SENATE_PRESENT   Spec               INVARIANT ActingOrder                  HOLDS          Senators={n1,n2,n3,n4}
+# --- M_ONE_PERSON: breaks PresidentNotVP
+m-oneperson-typeok                 M_ONE_PERSON       Spec               INVARIANT TypeOK                       HOLDS
+m-oneperson-nooffice               M_ONE_PERSON       Spec               INVARIANT ElectorsHoldNoOffice         HOLDS
+m-oneperson-electionday            M_ONE_PERSON       Spec               INVARIANT AppointedOnElectionDay       HOLDS
+m-oneperson-sameday                M_ONE_PERSON       Spec               INVARIANT SameDay                      HOLDS
+m-oneperson-inhabitant             M_ONE_PERSON       Spec               INVARIANT OneNotAnInhabitant           HOLDS
+m-oneperson-pledge                 M_ONE_PERSON       Spec               INVARIANT PledgesBind                  HOLDS
+m-oneperson-newcongress            M_ONE_PERSON       Spec               INVARIANT NewCongressCounts            HOLDS
+m-oneperson-congress               M_ONE_PERSON       Spec               INVARIANT CountIsCongress              HOLDS
+m-oneperson-choose                 M_ONE_PERSON       Spec               INVARIANT ElectorsChoose               HOLDS
+m-oneperson-devolve                M_ONE_PERSON       Spec               INVARIANT DevolvesOnlyWithoutMajority  HOLDS
+m-oneperson-canclose               M_ONE_PERSON       Spec               INVARIANT CountCanClose                HOLDS
+m-oneperson-list                   M_ONE_PERSON       Spec               INVARIANT ChoiceFromTheList            HOLDS
+m-oneperson-house                  M_ONE_PERSON       Spec               INVARIANT HouseVote                    HOLDS
+m-oneperson-senate                 M_ONE_PERSON       Spec               INVARIANT SenateVote                   HOLDS
+m-oneperson-twopersons             M_ONE_PERSON       Spec               INVARIANT PresidentNotVP               COUNTEREXAMPLE
+m-oneperson-qualif                 M_ONE_PERSON       Spec               INVARIANT Qualifications               HOLDS
+m-oneperson-disability             M_ONE_PERSON       Spec               INVARIANT Disability                   HOLDS
+m-oneperson-xxii                   M_ONE_PERSON       Spec               INVARIANT TwoTermLimit                 HOLDS
+m-oneperson-becomes                M_ONE_PERSON       Spec               INVARIANT VPElectBecomesOnlyOnDeath    HOLDS
+m-oneperson-acting                 M_ONE_PERSON       Spec               INVARIANT ActingOrder                  HOLDS
+# --- M_UNQUALIFIED: breaks Qualifications; Eligible={a,c,sp}
+m-unqualified-typeok               M_UNQUALIFIED      Spec               INVARIANT TypeOK                       HOLDS          Eligible={a,c,sp}
+m-unqualified-nooffice             M_UNQUALIFIED      Spec               INVARIANT ElectorsHoldNoOffice         HOLDS          Eligible={a,c,sp}
+m-unqualified-electionday          M_UNQUALIFIED      Spec               INVARIANT AppointedOnElectionDay       HOLDS          Eligible={a,c,sp}
+m-unqualified-sameday              M_UNQUALIFIED      Spec               INVARIANT SameDay                      HOLDS          Eligible={a,c,sp}
+m-unqualified-inhabitant           M_UNQUALIFIED      Spec               INVARIANT OneNotAnInhabitant           HOLDS          Eligible={a,c,sp}
+m-unqualified-pledge               M_UNQUALIFIED      Spec               INVARIANT PledgesBind                  HOLDS          Eligible={a,c,sp}
+m-unqualified-newcongress          M_UNQUALIFIED      Spec               INVARIANT NewCongressCounts            HOLDS          Eligible={a,c,sp}
+m-unqualified-congress             M_UNQUALIFIED      Spec               INVARIANT CountIsCongress              HOLDS          Eligible={a,c,sp}
+m-unqualified-choose               M_UNQUALIFIED      Spec               INVARIANT ElectorsChoose               HOLDS          Eligible={a,c,sp}
+m-unqualified-devolve              M_UNQUALIFIED      Spec               INVARIANT DevolvesOnlyWithoutMajority  HOLDS          Eligible={a,c,sp}
+m-unqualified-canclose             M_UNQUALIFIED      Spec               INVARIANT CountCanClose                HOLDS          Eligible={a,c,sp}
+m-unqualified-list                 M_UNQUALIFIED      Spec               INVARIANT ChoiceFromTheList            HOLDS          Eligible={a,c,sp}
+m-unqualified-house                M_UNQUALIFIED      Spec               INVARIANT HouseVote                    HOLDS          Eligible={a,c,sp}
+m-unqualified-senate               M_UNQUALIFIED      Spec               INVARIANT SenateVote                   HOLDS          Eligible={a,c,sp}
+m-unqualified-twopersons           M_UNQUALIFIED      Spec               INVARIANT PresidentNotVP               HOLDS          Eligible={a,c,sp}
+m-unqualified-qualif               M_UNQUALIFIED      Spec               INVARIANT Qualifications               COUNTEREXAMPLE Eligible={a,c,sp}
+m-unqualified-disability           M_UNQUALIFIED      Spec               INVARIANT Disability                   HOLDS          Eligible={a,c,sp}
+m-unqualified-xxii                 M_UNQUALIFIED      Spec               INVARIANT TwoTermLimit                 HOLDS          Eligible={a,c,sp}
+m-unqualified-becomes              M_UNQUALIFIED      Spec               INVARIANT VPElectBecomesOnlyOnDeath    HOLDS          Eligible={a,c,sp}
+m-unqualified-acting               M_UNQUALIFIED      Spec               INVARIANT ActingOrder                  HOLDS          Eligible={a,c,sp}
+# --- M_XIV3: breaks Disability; Disabled={b}
+m-xiv3-typeok                      M_XIV3             Spec               INVARIANT TypeOK                       HOLDS          Disabled={b}
+m-xiv3-nooffice                    M_XIV3             Spec               INVARIANT ElectorsHoldNoOffice         HOLDS          Disabled={b}
+m-xiv3-electionday                 M_XIV3             Spec               INVARIANT AppointedOnElectionDay       HOLDS          Disabled={b}
+m-xiv3-sameday                     M_XIV3             Spec               INVARIANT SameDay                      HOLDS          Disabled={b}
+m-xiv3-inhabitant                  M_XIV3             Spec               INVARIANT OneNotAnInhabitant           HOLDS          Disabled={b}
+m-xiv3-pledge                      M_XIV3             Spec               INVARIANT PledgesBind                  HOLDS          Disabled={b}
+m-xiv3-newcongress                 M_XIV3             Spec               INVARIANT NewCongressCounts            HOLDS          Disabled={b}
+m-xiv3-congress                    M_XIV3             Spec               INVARIANT CountIsCongress              HOLDS          Disabled={b}
+m-xiv3-choose                      M_XIV3             Spec               INVARIANT ElectorsChoose               HOLDS          Disabled={b}
+m-xiv3-devolve                     M_XIV3             Spec               INVARIANT DevolvesOnlyWithoutMajority  HOLDS          Disabled={b}
+m-xiv3-canclose                    M_XIV3             Spec               INVARIANT CountCanClose                HOLDS          Disabled={b}
+m-xiv3-list                        M_XIV3             Spec               INVARIANT ChoiceFromTheList            HOLDS          Disabled={b}
+m-xiv3-house                       M_XIV3             Spec               INVARIANT HouseVote                    HOLDS          Disabled={b}
+m-xiv3-senate                      M_XIV3             Spec               INVARIANT SenateVote                   HOLDS          Disabled={b}
+m-xiv3-twopersons                  M_XIV3             Spec               INVARIANT PresidentNotVP               HOLDS          Disabled={b}
+m-xiv3-qualif                      M_XIV3             Spec               INVARIANT Qualifications               HOLDS          Disabled={b}
+m-xiv3-disability                  M_XIV3             Spec               INVARIANT Disability                   COUNTEREXAMPLE Disabled={b}
+m-xiv3-xxii                        M_XIV3             Spec               INVARIANT TwoTermLimit                 HOLDS          Disabled={b}
+m-xiv3-becomes                     M_XIV3             Spec               INVARIANT VPElectBecomesOnlyOnDeath    HOLDS          Disabled={b}
+m-xiv3-acting                      M_XIV3             Spec               INVARIANT ActingOrder                  HOLDS          Disabled={b}
+# --- M_XXII: breaks TwoTermLimit; constraint=ElectionsBound
+m-xxii-typeok                      M_XXII             Spec               INVARIANT TypeOK                       HOLDS          constraint=ElectionsBound
+m-xxii-nooffice                    M_XXII             Spec               INVARIANT ElectorsHoldNoOffice         HOLDS          constraint=ElectionsBound
+m-xxii-electionday                 M_XXII             Spec               INVARIANT AppointedOnElectionDay       HOLDS          constraint=ElectionsBound
+m-xxii-sameday                     M_XXII             Spec               INVARIANT SameDay                      HOLDS          constraint=ElectionsBound
+m-xxii-inhabitant                  M_XXII             Spec               INVARIANT OneNotAnInhabitant           HOLDS          constraint=ElectionsBound
+m-xxii-pledge                      M_XXII             Spec               INVARIANT PledgesBind                  HOLDS          constraint=ElectionsBound
+m-xxii-newcongress                 M_XXII             Spec               INVARIANT NewCongressCounts            HOLDS          constraint=ElectionsBound
+m-xxii-congress                    M_XXII             Spec               INVARIANT CountIsCongress              HOLDS          constraint=ElectionsBound
+m-xxii-choose                      M_XXII             Spec               INVARIANT ElectorsChoose               HOLDS          constraint=ElectionsBound
+m-xxii-devolve                     M_XXII             Spec               INVARIANT DevolvesOnlyWithoutMajority  HOLDS          constraint=ElectionsBound
+m-xxii-canclose                    M_XXII             Spec               INVARIANT CountCanClose                HOLDS          constraint=ElectionsBound
+m-xxii-list                        M_XXII             Spec               INVARIANT ChoiceFromTheList            HOLDS          constraint=ElectionsBound
+m-xxii-house                       M_XXII             Spec               INVARIANT HouseVote                    HOLDS          constraint=ElectionsBound
+m-xxii-senate                      M_XXII             Spec               INVARIANT SenateVote                   HOLDS          constraint=ElectionsBound
+m-xxii-twopersons                  M_XXII             Spec               INVARIANT PresidentNotVP               HOLDS          constraint=ElectionsBound
+m-xxii-qualif                      M_XXII             Spec               INVARIANT Qualifications               HOLDS          constraint=ElectionsBound
+m-xxii-disability                  M_XXII             Spec               INVARIANT Disability                   HOLDS          constraint=ElectionsBound
+m-xxii-xxii                        M_XXII             Spec               INVARIANT TwoTermLimit                 COUNTEREXAMPLE constraint=ElectionsBound
+m-xxii-becomes                     M_XXII             Spec               INVARIANT VPElectBecomesOnlyOnDeath    HOLDS          constraint=ElectionsBound
+m-xxii-acting                      M_XXII             Spec               INVARIANT ActingOrder                  HOLDS          constraint=ElectionsBound
+# --- M_XXII_SERVICE: breaks TwoTermLimit; Electors={e1} Binding={e1} Mortal={b}
+m-xxiiservice-typeok               M_XXII_SERVICE     Spec               INVARIANT TypeOK                       HOLDS          Electors={e1} Binding={e1} Mortal={b}
+m-xxiiservice-nooffice             M_XXII_SERVICE     Spec               INVARIANT ElectorsHoldNoOffice         HOLDS          Electors={e1} Binding={e1} Mortal={b}
+m-xxiiservice-electionday          M_XXII_SERVICE     Spec               INVARIANT AppointedOnElectionDay       HOLDS          Electors={e1} Binding={e1} Mortal={b}
+m-xxiiservice-sameday              M_XXII_SERVICE     Spec               INVARIANT SameDay                      HOLDS          Electors={e1} Binding={e1} Mortal={b}
+m-xxiiservice-inhabitant           M_XXII_SERVICE     Spec               INVARIANT OneNotAnInhabitant           HOLDS          Electors={e1} Binding={e1} Mortal={b}
+m-xxiiservice-pledge               M_XXII_SERVICE     Spec               INVARIANT PledgesBind                  HOLDS          Electors={e1} Binding={e1} Mortal={b}
+m-xxiiservice-newcongress          M_XXII_SERVICE     Spec               INVARIANT NewCongressCounts            HOLDS          Electors={e1} Binding={e1} Mortal={b}
+m-xxiiservice-congress             M_XXII_SERVICE     Spec               INVARIANT CountIsCongress              HOLDS          Electors={e1} Binding={e1} Mortal={b}
+m-xxiiservice-choose               M_XXII_SERVICE     Spec               INVARIANT ElectorsChoose               HOLDS          Electors={e1} Binding={e1} Mortal={b}
+m-xxiiservice-devolve              M_XXII_SERVICE     Spec               INVARIANT DevolvesOnlyWithoutMajority  HOLDS          Electors={e1} Binding={e1} Mortal={b}
+m-xxiiservice-canclose             M_XXII_SERVICE     Spec               INVARIANT CountCanClose                HOLDS          Electors={e1} Binding={e1} Mortal={b}
+m-xxiiservice-list                 M_XXII_SERVICE     Spec               INVARIANT ChoiceFromTheList            HOLDS          Electors={e1} Binding={e1} Mortal={b}
+m-xxiiservice-house                M_XXII_SERVICE     Spec               INVARIANT HouseVote                    HOLDS          Electors={e1} Binding={e1} Mortal={b}
+m-xxiiservice-senate               M_XXII_SERVICE     Spec               INVARIANT SenateVote                   HOLDS          Electors={e1} Binding={e1} Mortal={b}
+m-xxiiservice-twopersons           M_XXII_SERVICE     Spec               INVARIANT PresidentNotVP               HOLDS          Electors={e1} Binding={e1} Mortal={b}
+m-xxiiservice-qualif               M_XXII_SERVICE     Spec               INVARIANT Qualifications               HOLDS          Electors={e1} Binding={e1} Mortal={b}
+m-xxiiservice-disability           M_XXII_SERVICE     Spec               INVARIANT Disability                   HOLDS          Electors={e1} Binding={e1} Mortal={b}
+m-xxiiservice-xxii                 M_XXII_SERVICE     Spec               INVARIANT TwoTermLimit                 COUNTEREXAMPLE Electors={e1} Binding={e1} Mortal={b}
+m-xxiiservice-becomes              M_XXII_SERVICE     Spec               INVARIANT VPElectBecomesOnlyOnDeath    HOLDS          Electors={e1} Binding={e1} Mortal={b}
+m-xxiiservice-acting               M_XXII_SERVICE     Spec               INVARIANT ActingOrder                  HOLDS          Electors={e1} Binding={e1} Mortal={b}
+# --- M_XX3_BECOMES: breaks VPElectBecomesOnlyOnDeath; Eligible={a,c,sp}
+m-xx3becomes-typeok                M_XX3_BECOMES      Spec               INVARIANT TypeOK                       HOLDS          Eligible={a,c,sp}
+m-xx3becomes-nooffice              M_XX3_BECOMES      Spec               INVARIANT ElectorsHoldNoOffice         HOLDS          Eligible={a,c,sp}
+m-xx3becomes-electionday           M_XX3_BECOMES      Spec               INVARIANT AppointedOnElectionDay       HOLDS          Eligible={a,c,sp}
+m-xx3becomes-sameday               M_XX3_BECOMES      Spec               INVARIANT SameDay                      HOLDS          Eligible={a,c,sp}
+m-xx3becomes-inhabitant            M_XX3_BECOMES      Spec               INVARIANT OneNotAnInhabitant           HOLDS          Eligible={a,c,sp}
+m-xx3becomes-pledge                M_XX3_BECOMES      Spec               INVARIANT PledgesBind                  HOLDS          Eligible={a,c,sp}
+m-xx3becomes-newcongress           M_XX3_BECOMES      Spec               INVARIANT NewCongressCounts            HOLDS          Eligible={a,c,sp}
+m-xx3becomes-congress              M_XX3_BECOMES      Spec               INVARIANT CountIsCongress              HOLDS          Eligible={a,c,sp}
+m-xx3becomes-choose                M_XX3_BECOMES      Spec               INVARIANT ElectorsChoose               HOLDS          Eligible={a,c,sp}
+m-xx3becomes-devolve               M_XX3_BECOMES      Spec               INVARIANT DevolvesOnlyWithoutMajority  HOLDS          Eligible={a,c,sp}
+m-xx3becomes-canclose              M_XX3_BECOMES      Spec               INVARIANT CountCanClose                HOLDS          Eligible={a,c,sp}
+m-xx3becomes-list                  M_XX3_BECOMES      Spec               INVARIANT ChoiceFromTheList            HOLDS          Eligible={a,c,sp}
+m-xx3becomes-house                 M_XX3_BECOMES      Spec               INVARIANT HouseVote                    HOLDS          Eligible={a,c,sp}
+m-xx3becomes-senate                M_XX3_BECOMES      Spec               INVARIANT SenateVote                   HOLDS          Eligible={a,c,sp}
+m-xx3becomes-twopersons            M_XX3_BECOMES      Spec               INVARIANT PresidentNotVP               HOLDS          Eligible={a,c,sp}
+m-xx3becomes-qualif                M_XX3_BECOMES      Spec               INVARIANT Qualifications               HOLDS          Eligible={a,c,sp}
+m-xx3becomes-disability            M_XX3_BECOMES      Spec               INVARIANT Disability                   HOLDS          Eligible={a,c,sp}
+m-xx3becomes-xxii                  M_XX3_BECOMES      Spec               INVARIANT TwoTermLimit                 HOLDS          Eligible={a,c,sp}
+m-xx3becomes-becomes               M_XX3_BECOMES      Spec               INVARIANT VPElectBecomesOnlyOnDeath    COUNTEREXAMPLE Eligible={a,c,sp}
+m-xx3becomes-acting                M_XX3_BECOMES      Spec               INVARIANT ActingOrder                  HOLDS          Eligible={a,c,sp}
+# --- M_SPEAKER_FIRST: breaks ActingOrder; Eligible={a,c,sp}
+m-speakerfirst-typeok              M_SPEAKER_FIRST    Spec               INVARIANT TypeOK                       HOLDS          Eligible={a,c,sp}
+m-speakerfirst-nooffice            M_SPEAKER_FIRST    Spec               INVARIANT ElectorsHoldNoOffice         HOLDS          Eligible={a,c,sp}
+m-speakerfirst-electionday         M_SPEAKER_FIRST    Spec               INVARIANT AppointedOnElectionDay       HOLDS          Eligible={a,c,sp}
+m-speakerfirst-sameday             M_SPEAKER_FIRST    Spec               INVARIANT SameDay                      HOLDS          Eligible={a,c,sp}
+m-speakerfirst-inhabitant          M_SPEAKER_FIRST    Spec               INVARIANT OneNotAnInhabitant           HOLDS          Eligible={a,c,sp}
+m-speakerfirst-pledge              M_SPEAKER_FIRST    Spec               INVARIANT PledgesBind                  HOLDS          Eligible={a,c,sp}
+m-speakerfirst-newcongress         M_SPEAKER_FIRST    Spec               INVARIANT NewCongressCounts            HOLDS          Eligible={a,c,sp}
+m-speakerfirst-congress            M_SPEAKER_FIRST    Spec               INVARIANT CountIsCongress              HOLDS          Eligible={a,c,sp}
+m-speakerfirst-choose              M_SPEAKER_FIRST    Spec               INVARIANT ElectorsChoose               HOLDS          Eligible={a,c,sp}
+m-speakerfirst-devolve             M_SPEAKER_FIRST    Spec               INVARIANT DevolvesOnlyWithoutMajority  HOLDS          Eligible={a,c,sp}
+m-speakerfirst-canclose            M_SPEAKER_FIRST    Spec               INVARIANT CountCanClose                HOLDS          Eligible={a,c,sp}
+m-speakerfirst-list                M_SPEAKER_FIRST    Spec               INVARIANT ChoiceFromTheList            HOLDS          Eligible={a,c,sp}
+m-speakerfirst-house               M_SPEAKER_FIRST    Spec               INVARIANT HouseVote                    HOLDS          Eligible={a,c,sp}
+m-speakerfirst-senate              M_SPEAKER_FIRST    Spec               INVARIANT SenateVote                   HOLDS          Eligible={a,c,sp}
+m-speakerfirst-twopersons          M_SPEAKER_FIRST    Spec               INVARIANT PresidentNotVP               HOLDS          Eligible={a,c,sp}
+m-speakerfirst-qualif              M_SPEAKER_FIRST    Spec               INVARIANT Qualifications               HOLDS          Eligible={a,c,sp}
+m-speakerfirst-disability          M_SPEAKER_FIRST    Spec               INVARIANT Disability                   HOLDS          Eligible={a,c,sp}
+m-speakerfirst-xxii                M_SPEAKER_FIRST    Spec               INVARIANT TwoTermLimit                 HOLDS          Eligible={a,c,sp}
+m-speakerfirst-becomes             M_SPEAKER_FIRST    Spec               INVARIANT VPElectBecomesOnlyOnDeath    HOLDS          Eligible={a,c,sp}
+m-speakerfirst-acting              M_SPEAKER_FIRST    Spec               INVARIANT ActingOrder                  COUNTEREXAMPLE Eligible={a,c,sp}
+# --- M_NO_STATUTE: breaks no safety property (see the liveness rows)
+m-nostatute-typeok                 M_NO_STATUTE       Spec               INVARIANT TypeOK                       HOLDS
+m-nostatute-nooffice               M_NO_STATUTE       Spec               INVARIANT ElectorsHoldNoOffice         HOLDS
+m-nostatute-electionday            M_NO_STATUTE       Spec               INVARIANT AppointedOnElectionDay       HOLDS
+m-nostatute-sameday                M_NO_STATUTE       Spec               INVARIANT SameDay                      HOLDS
+m-nostatute-inhabitant             M_NO_STATUTE       Spec               INVARIANT OneNotAnInhabitant           HOLDS
+m-nostatute-pledge                 M_NO_STATUTE       Spec               INVARIANT PledgesBind                  HOLDS
+m-nostatute-newcongress            M_NO_STATUTE       Spec               INVARIANT NewCongressCounts            HOLDS
+m-nostatute-congress               M_NO_STATUTE       Spec               INVARIANT CountIsCongress              HOLDS
+m-nostatute-choose                 M_NO_STATUTE       Spec               INVARIANT ElectorsChoose               HOLDS
+m-nostatute-devolve                M_NO_STATUTE       Spec               INVARIANT DevolvesOnlyWithoutMajority  HOLDS
+m-nostatute-canclose               M_NO_STATUTE       Spec               INVARIANT CountCanClose                HOLDS
+m-nostatute-list                   M_NO_STATUTE       Spec               INVARIANT ChoiceFromTheList            HOLDS
+m-nostatute-house                  M_NO_STATUTE       Spec               INVARIANT HouseVote                    HOLDS
+m-nostatute-senate                 M_NO_STATUTE       Spec               INVARIANT SenateVote                   HOLDS
+m-nostatute-twopersons             M_NO_STATUTE       Spec               INVARIANT PresidentNotVP               HOLDS
+m-nostatute-qualif                 M_NO_STATUTE       Spec               INVARIANT Qualifications               HOLDS
+m-nostatute-disability             M_NO_STATUTE       Spec               INVARIANT Disability                   HOLDS
+m-nostatute-xxii                   M_NO_STATUTE       Spec               INVARIANT TwoTermLimit                 HOLDS
+m-nostatute-becomes                M_NO_STATUTE       Spec               INVARIANT VPElectBecomesOnlyOnDeath    HOLDS
+m-nostatute-acting                 M_NO_STATUTE       Spec               INVARIANT ActingOrder                  HOLDS
+# --- CountCanClose with three candidates: M_PRE_XII and M_PLURALITY break it there, and only there
+m-prexii-canclose-3                M_PRE_XII          Spec               INVARIANT CountCanClose                COUNTEREXAMPLE Candidates={a,b,c}
+m-plurality-canclose-3             M_PLURALITY        Spec               INVARIANT CountCanClose                COUNTEREXAMPLE Candidates={a,b,c} Electors={e1,e2,e3,e4} Binding={e1,e2,e3,e4}
+p-none-canclose-3                  none               Spec               INVARIANT CountCanClose                HOLDS          Candidates={a,b,c}
+# --- the quorum and majority rules at the sizes where they do not bind (see the note above)
+m-housequorum-house-3              M_HOUSE_QUORUM     Spec               INVARIANT HouseVote                    HOLDS          States={t1,t2,t3}
+m-housequorum-house-4              M_HOUSE_QUORUM     Spec               INVARIANT HouseVote                    HOLDS          States={t1,t2,t3,t4}
+m-housepresent-house-3             M_HOUSE_PRESENT    Spec               INVARIANT HouseVote                    HOLDS          States={t1,t2,t3}
+m-housepresent-house-5             M_HOUSE_PRESENT    Spec               INVARIANT HouseVote                    HOLDS          States={t1,t2,t3,t4,t5}
+m-senatequorum-senate-3            M_SENATE_QUORUM    Spec               INVARIANT SenateVote                   HOLDS          Senators={n1,n2,n3}
+m-senatequorum-senate-4            M_SENATE_QUORUM    Spec               INVARIANT SenateVote                   HOLDS          Senators={n1,n2,n3,n4}
+m-senatepresent-senate-3           M_SENATE_PRESENT   Spec               INVARIANT SenateVote                   HOLDS          Senators={n1,n2,n3}
+m-senatepresent-senate-5           M_SENATE_PRESENT   Spec               INVARIANT SenateVote                   HOLDS          Senators={n1,n2,n3,n4,n5}
+# --- witnesses: each must be violated, unmutated
+w-president                        none               Spec               INVARIANT NeverPresident               COUNTEREXAMPLE
+w-unfilledseat                     none               Spec               INVARIANT NeverUnfilledSeat            COUNTEREXAMPLE
+w-abstention                       none               Spec               INVARIANT NeverAbstention              COUNTEREXAMPLE
+w-departs                          none               Spec               INVARIANT NeverDepartsFromPledge       COUNTEREXAMPLE Binding={}
+w-rejected                         none               Spec               INVARIANT NeverRejected                COUNTEREXAMPLE Contestable={e1}
+w-byrejection                      none               Spec               PROPERTY  NeverElectedByRejection      COUNTEREXAMPLE Contestable={e2}
+w-offsenatelist                    none               Spec               PROPERTY  NeverOffTheSenateList        COUNTEREXAMPLE Candidates={a,b,c} Electors={e1,e2,e3,e4,e5} Binding={e1,e2,e3,e4,e5}
+w-house                            none               Spec               PROPERTY  NeverHouseChooses            COUNTEREXAMPLE
+w-senate                           none               Spec               PROPERTY  NeverSenateChooses           COUNTEREXAMPLE
+w-noonvacant                       none               Spec               PROPERTY  NeverNoonWithoutPresident    COUNTEREXAMPLE
+w-vpbecomes                        none               Spec               PROPERTY  NeverVPElectBecomes          COUNTEREXAMPLE Mortal={a}
+w-vpacts                           none               Spec               INVARIANT NeverVPActs                  COUNTEREXAMPLE
+w-successoracts                    none               Spec               INVARIANT NeverSuccessorActs           COUNTEREXAMPLE
+w-qualifieslate                    none               Spec               PROPERTY  NeverQualifiesLate           COUNTEREXAMPLE
+w-vpqualifieslate                  none               Spec               PROPERTY  NeverVPQualifiesLate         COUNTEREXAMPLE
+w-countafternoon                   none               Spec               PROPERTY  NeverCountAfterNoon          COUNTEREXAMPLE
+w-relieved                         none               Spec               INVARIANT NeverRelieved                COUNTEREXAMPLE Disabled={b}
+w-deadelect                        none               Spec               INVARIANT NeverDeadElect               COUNTEREXAMPLE Mortal={a}
+w-succession                       none               Spec               PROPERTY  NeverSuccession              COUNTEREXAMPLE Mortal={a}
+w-reelected                        none               Spec               INVARIANT NeverReelected               COUNTEREXAMPLE
+w-servedlong                       none               Spec               INVARIANT NeverServedLong              COUNTEREXAMPLE Mortal={a}
+w-termlimited                      none               Spec               PROPERTY  NeverTermLimited             COUNTEREXAMPLE
+w-thirdterm                        none               Spec               PROPERTY  NeverThirdTermBySuccession   COUNTEREXAMPLE Electors={e1} Binding={e1} Mortal={b}
+w-secondelection                   none               Spec               PROPERTY  NeverSecondElection          COUNTEREXAMPLE
+# --- M_NO_STATUTE adds no state: every witness it could reach is one none reaches, and it reaches no successor acting
+w-nostatute-successoracts          M_NO_STATUTE       Spec               INVARIANT NeverSuccessorActs           HOLDS
+# --- liveness
+l-fair-filled                      none               FairSpec           PROPERTY  ExecutiveIsFilled            HOLDS
+l-fair-filled-mortal               none               FairSpec           PROPERTY  ExecutiveIsFilled            HOLDS          Electors={e1} Binding={e1} Mortal={a,b}
+l-spec-filled                      none               Spec               PROPERTY  ExecutiveIsFilled            COUNTEREXAMPLE
+l-vponly-filled                    none               SpecVPOnly         PROPERTY  ExecutiveIsFilled            COUNTEREXAMPLE
+l-successoronly-filled             none               SpecSuccessorOnly  PROPERTY  ExecutiveIsFilled            COUNTEREXAMPLE
+l-eachalone-filled                 none               SpecEachAlone      PROPERTY  ExecutiveIsFilled            COUNTEREXAMPLE
+l-nostatute-filled                 M_NO_STATUTE       FairSpec           PROPERTY  ExecutiveIsFilled            COUNTEREXAMPLE
+l-fair-nobehaviour                 none               FairSpec           PROPERTY  NoBehaviour                  COUNTEREXAMPLE
+l-fair-nobehaviour-mortal          none               FairSpec           PROPERTY  NoBehaviour                  COUNTEREXAMPLE Electors={e1} Binding={e1} Mortal={a,b}
