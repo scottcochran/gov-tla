@@ -1,0 +1,91 @@
+# Rows for scripts/tlc_rows.py: name mut spec kind property expected [KEY=value ...]
+# module: AtcNetwork
+# title: AtcNetwork.tla - an abstract failover mechanism for a converged ATC network (not a model of any fielded network)
+# expected: Mut = "none" HOLDS on every safety property, on Safety and on TypeOK, on Settles under Spec and on Converges and NoSiteStranded under SpecLive,
+# expected: at the default constants and at three sites with four events and a backup for one or for two.
+# expected: Each mutation is COUNTEREXAMPLE on exactly the properties the module header says it breaks and HOLDS on every other:
+# expected: M_INBAND breaks NoFalseDown (so Safety), Settles, Converges and NoSiteStranded; M_NOADMIT breaks NoOverbooking and BackupWithinCapacity (so Safety);
+# expected: M_NONREVERT breaks StopsOnlyWhenQuiet, Converges and NoSiteStranded.
+# expected: The system terminates (the environment is finite), so the deadlock audit row reads DEADLOCK; StopsOnlyWhenQuiet says where it stops.
+# expected: Every Never... witness is COUNTEREXAMPLE under none (state witnesses as INVARIANT rows, the step witness as a PROPERTY row).
+# expected: Converges is COUNTEREXAMPLE under SpecNoDetect and under SpecNoSelect, so each fairness condition is needed;
+# expected: NoBehaviour is COUNTEREXAMPLE under SpecLive, so the fair spec has behaviours.
+# const: Sites = {s1, s2}
+# const: BakCap = 1
+# const: MaxEvents = 3
+
+# Mut = none: every property, then the deadlock audit
+n-none-typeok none Spec INVARIANT TypeOK HOLDS
+n-none-falsedown none Spec INVARIANT NoFalseDown HOLDS
+n-none-overbook none Spec INVARIANT NoOverbooking HOLDS
+n-none-capacity none Spec INVARIANT BackupWithinCapacity HOLDS
+n-none-stops none Spec INVARIANT StopsOnlyWhenQuiet HOLDS
+n-none-safety none Spec INVARIANT Safety HOLDS
+n-none-settles none Spec PROPERTY Settles HOLDS
+n-none-converges none SpecLive PROPERTY Converges HOLDS
+n-none-stranded none SpecLive PROPERTY NoSiteStranded HOLDS
+n-none-deadlock none Spec DEADLOCK Safety DEADLOCK
+
+# Mut = M_INBAND
+n-inband-typeok M_INBAND Spec INVARIANT TypeOK HOLDS
+n-inband-falsedown M_INBAND Spec INVARIANT NoFalseDown COUNTEREXAMPLE
+n-inband-overbook M_INBAND Spec INVARIANT NoOverbooking HOLDS
+n-inband-capacity M_INBAND Spec INVARIANT BackupWithinCapacity HOLDS
+n-inband-stops M_INBAND Spec INVARIANT StopsOnlyWhenQuiet HOLDS
+n-inband-safety M_INBAND Spec INVARIANT Safety COUNTEREXAMPLE
+n-inband-settles M_INBAND Spec PROPERTY Settles COUNTEREXAMPLE
+n-inband-converges M_INBAND SpecLive PROPERTY Converges COUNTEREXAMPLE
+n-inband-stranded M_INBAND SpecLive PROPERTY NoSiteStranded COUNTEREXAMPLE
+
+# Mut = M_NOADMIT
+n-noadmit-typeok M_NOADMIT Spec INVARIANT TypeOK HOLDS
+n-noadmit-falsedown M_NOADMIT Spec INVARIANT NoFalseDown HOLDS
+n-noadmit-overbook M_NOADMIT Spec INVARIANT NoOverbooking COUNTEREXAMPLE
+n-noadmit-capacity M_NOADMIT Spec INVARIANT BackupWithinCapacity COUNTEREXAMPLE
+n-noadmit-stops M_NOADMIT Spec INVARIANT StopsOnlyWhenQuiet HOLDS
+n-noadmit-safety M_NOADMIT Spec INVARIANT Safety COUNTEREXAMPLE
+n-noadmit-settles M_NOADMIT Spec PROPERTY Settles HOLDS
+n-noadmit-converges M_NOADMIT SpecLive PROPERTY Converges HOLDS
+n-noadmit-stranded M_NOADMIT SpecLive PROPERTY NoSiteStranded HOLDS
+
+# Mut = M_NONREVERT
+n-nonrevert-typeok M_NONREVERT Spec INVARIANT TypeOK HOLDS
+n-nonrevert-falsedown M_NONREVERT Spec INVARIANT NoFalseDown HOLDS
+n-nonrevert-overbook M_NONREVERT Spec INVARIANT NoOverbooking HOLDS
+n-nonrevert-capacity M_NONREVERT Spec INVARIANT BackupWithinCapacity HOLDS
+n-nonrevert-stops M_NONREVERT Spec INVARIANT StopsOnlyWhenQuiet COUNTEREXAMPLE
+n-nonrevert-safety M_NONREVERT Spec INVARIANT Safety HOLDS
+n-nonrevert-settles M_NONREVERT Spec PROPERTY Settles HOLDS
+n-nonrevert-converges M_NONREVERT SpecLive PROPERTY Converges COUNTEREXAMPLE
+n-nonrevert-stranded M_NONREVERT SpecLive PROPERTY NoSiteStranded COUNTEREXAMPLE
+
+# Mut = none at larger constants: three sites, four events, a backup for one and for two
+n-none-safety-s3 none Spec INVARIANT Safety HOLDS Sites={s1,s2,s3} MaxEvents=4
+n-none-stops-s3 none Spec INVARIANT StopsOnlyWhenQuiet HOLDS Sites={s1,s2,s3} MaxEvents=4
+n-none-typeok-s3 none Spec INVARIANT TypeOK HOLDS Sites={s1,s2,s3} MaxEvents=4
+n-none-settles-s3 none Spec PROPERTY Settles HOLDS Sites={s1,s2,s3} MaxEvents=4
+n-none-converges-s3 none SpecLive PROPERTY Converges HOLDS Sites={s1,s2,s3} MaxEvents=4
+n-none-stranded-s3 none SpecLive PROPERTY NoSiteStranded HOLDS Sites={s1,s2,s3} MaxEvents=4
+n-none-safety-s3c2 none Spec INVARIANT Safety HOLDS Sites={s1,s2,s3} MaxEvents=4 BakCap=2
+n-none-stops-s3c2 none Spec INVARIANT StopsOnlyWhenQuiet HOLDS Sites={s1,s2,s3} MaxEvents=4 BakCap=2
+n-none-typeok-s3c2 none Spec INVARIANT TypeOK HOLDS Sites={s1,s2,s3} MaxEvents=4 BakCap=2
+n-none-settles-s3c2 none Spec PROPERTY Settles HOLDS Sites={s1,s2,s3} MaxEvents=4 BakCap=2
+n-none-converges-s3c2 none SpecLive PROPERTY Converges HOLDS Sites={s1,s2,s3} MaxEvents=4 BakCap=2
+n-none-stranded-s3c2 none SpecLive PROPERTY NoSiteStranded HOLDS Sites={s1,s2,s3} MaxEvents=4 BakCap=2
+
+# Witnesses under none: each forbidden state or step is reached
+w-onbackup none Spec INVARIANT NeverOnBackup COUNTEREXAMPLE
+w-backupfull none Spec INVARIANT NeverBackupFull COUNTEREXAMPLE
+w-refused none Spec INVARIANT NeverRefused COUNTEREXAMPLE
+w-congested none Spec INVARIANT NeverCongested COUNTEREXAMPLE
+w-cutoff none Spec INVARIANT NeverCutOff COUNTEREXAMPLE
+w-quiet none Spec INVARIANT NeverQuiet COUNTEREXAMPLE
+w-reverts none Spec PROPERTY NeverReverts COUNTEREXAMPLE
+
+# Fairness: each condition dropped, and the fair spec has a behaviour
+l-nodetect-converges none SpecNoDetect PROPERTY Converges COUNTEREXAMPLE
+l-noselect-converges none SpecNoSelect PROPERTY Converges COUNTEREXAMPLE
+l-nodetect-stranded none SpecNoDetect PROPERTY NoSiteStranded COUNTEREXAMPLE
+l-noselect-stranded none SpecNoSelect PROPERTY NoSiteStranded COUNTEREXAMPLE
+l-live-nobehaviour none SpecLive PROPERTY NoBehaviour COUNTEREXAMPLE
+l-live-nobehaviour-s3 none SpecLive PROPERTY NoBehaviour COUNTEREXAMPLE Sites={s1,s2,s3} MaxEvents=4

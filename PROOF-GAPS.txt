@@ -1,3 +1,4 @@
 # Modules with no proof module, and why. One line each: <Module>: <reason>.
 # scripts/proof_sync.py prints the reason, and fails on a module with neither a proof nor a line here.
 Elections: not yet written; the module was added with its TLC rows only, so its properties are checked and not proved
+AtcNetwork: only TypeOK and its two flag invariants are within the prover's reach, and the pinned prover build could not be fetched when the module was added (the release tag had been rebuilt upstream); its liveness, ENABLED and Cardinality properties stay with TLC in any case

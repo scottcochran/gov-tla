@@ -7,6 +7,11 @@ state machines gated by supermajorities. These specs model those machines,
 check with TLC that every rule the text states is one the model actually
 depends on, and prove with TLAPS that the rules hold.
 
+One module is about something else. `AtcNetwork.tla` applies the same
+method to an abstract failover mechanism for an air traffic control
+network. It is in its own section [below](#atcnetworktla--a-different-subject),
+and no statement in this README about "the text" or "the law" covers it.
+
 ## How the specs are written and checked
 
 The modules follow the method in the `writing-tla-specs-and-proofs` skill:
@@ -69,6 +74,7 @@ practice.
 | `Executive.tla` | 208 | 14 | 19 | 814 |
 | `Government.tla` | 565 | 14 | 15 | 1,543 |
 | `Elections.tla` | 579 | 24 | 24 | none: checked only |
+| `AtcNetwork.tla` | 62 | 3 | 7 | none: checked only |
 
 Every flip test fails as required: with one mutation hypothesis flipped
 to `Mut = "M_X"`, each proof breaks in the lemma of the property that
@@ -80,6 +86,10 @@ What is **not** proved, and why:
   are checked by TLC at the constants in its row list and nothing more.
   [`PROOF-GAPS.txt`](PROOF-GAPS.txt) records the gap, which is where
   `scripts/proof_sync.py` looks for a module without a proof.
+- **`AtcNetwork.tla` has no proof module.** Its properties are checked
+  at the constants in its row list. Most are liveness properties or are
+  stated over `ENABLED` and `Cardinality`, and would stay with TLC in
+  any case; `PROOF-GAPS.txt` has the rest of the reason.
 
 - **Liveness properties** (`PresentedBillsResolve`, `ActingEventuallyEnds`,
   `UnconstitutionalEdgesAreStruck`) are checked by TLC, not proved. Each is
@@ -594,6 +604,26 @@ The original properties are kept, unchanged, as
 `GrantCyclesPassThroughPeopleOrStates` and `GrantFollowsChain`. The rows
 `r-o-none-acyclic` and `r-o-none-chain` expect, and get, a counterexample
 under `Mut = "none"`. They replace `Government_strict.cfg`.
+
+### `AtcNetwork.tla` — a different subject
+
+Not the Constitution, and not a model of any fielded network. It is an
+abstract failover mechanism for a converged air traffic control network:
+sites with a primary path each and a shared backup, keepalive sessions,
+and a rule for which path a site's traffic is on. It was written to test
+a claim about the method itself, that an abstract TLA+ specification of
+such an architecture would expose non-convergence, control-plane
+starvation and failover oscillation.
+
+| Mutation | The check it removes | Breaks |
+|---|---|---|
+| `M_INBAND` | control traffic has a queue of its own | `NoFalseDown`, `Settles`, `Converges`, `NoSiteStranded` |
+| `M_NOADMIT` | the backup admits a site only if it has room | `NoOverbooking`, `BackupWithinCapacity` |
+| `M_NONREVERT` | a site returns to a restored primary | `StopsOnlyWhenQuiet`, `Converges`, `NoSiteStranded` |
+
+Checked at two and three sites with three and four physical events. What
+the experiment shows, and the larger part that it does not, is in
+[`docs/ATC-NETWORK.md`](docs/ATC-NETWORK.md).
 
 ## Findings
 
