@@ -24,7 +24,11 @@ seed=S (SIMULATE rows), or constraint=Op (add CONSTRAINT Op for this row).
 
 Every row runs with -workers 1 so a counterexample row's state count is
 reproducible; PROPERTY rows add -fp 0 for the same reason; INVARIANT and
-PROPERTY rows pass -deadlock (DEADLOCK rows exist to audit that flag). The
+PROPERTY rows pass -deadlock (DEADLOCK rows exist to audit that flag). One
+count is not reproducible and is not printed: TLC checks temporal properties
+at intervals of the clock, so the number of states it has when it finds a
+violated PROPERTY differs with the machine and its load, and so does whether
+the search ended first. Such a row says "count not recorded". The
 results file names the checker and every repository module in the EXTENDS
 chain by sha256, prints the rows, and is written as
 results/<Module>-results-<YYYY.MM.DD>.txt. A file is never overwritten: a
@@ -200,6 +204,10 @@ def run_row(module, meta, row):
         if row["kind"] == "SIMULATE":
             m = re.findall(r"Progress: ([0-9,]+) states checked", out)
             states = m[-1].replace(",", "") if m else ""
+        if row["kind"] == "PROPERTY" and verdict == "COUNTEREXAMPLE":
+            # The count at which TLC finds a violated temporal property depends on
+            # when its clock-driven check runs, so it is left out (TOPAK 5ade81e).
+            states = ""
         ok = verdict == row["exp"]
         if ok and "states" in row["opts"] and states != row["opts"]["states"]:
             ok = False
@@ -215,7 +223,9 @@ def format_row(row, verdict, states, ok):
         what += f" (simulate depth={o.get('depth', '40')} traces={o.get('num', '10000')} seed={o.get('seed', '1')})"
     extra = "".join(f" {k}={v}" for k, v in row["consts"].items())
     count = (f"{states} states checked" if row["kind"] == "SIMULATE"
-             else f"{states} distinct states") if states else "no state count"
+             else f"{states} distinct states") if states else (
+        "count not recorded" if row["kind"] == "PROPERTY" and verdict == "COUNTEREXAMPLE"
+        else "no state count")
     mark = "as expected" if ok else f"UNEXPECTED (expected {row['exp']}" + (
         f", states={row['opts']['states']}" if "states" in row["opts"] else "") + ")"
     return (f"{row['name']} | Mut={row['mut']} | {row['spec']}{extra} | {what} | "
