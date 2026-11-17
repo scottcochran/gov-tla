@@ -18,7 +18,8 @@ import subprocess
 import tempfile
 from collections import deque
 
-ROOT = os.path.dirname(os.path.abspath(__file__))
+VISUALS = os.path.dirname(os.path.abspath(__file__))   # this directory: scripts and the pictures they draw
+ROOT = os.path.dirname(VISUALS)                        # the repo root: the modules, their .cfg files and tools/
 JAR = os.environ.get('TLA2TOOLS', os.path.join(ROOT, 'tools', 'tla2tools.jar'))
 MODULES = ['Constitution', 'Executive', 'Judiciary', 'Government']
 
