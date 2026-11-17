@@ -7,7 +7,6 @@ acted to reach it.
 """
 
 import argparse
-import os
 from collections import Counter, defaultdict
 
 import graphviz
@@ -136,8 +135,7 @@ def main():
     dot, nodes = create_visualization(module, states, edges, dist,
                                       merge=args.merge, all_edges=args.all_edges)
     output_file = f'{module}_depth{depth}'
-    dot.render(os.path.join(tlaviz.VISUALS, output_file), cleanup=True)
-    print(f'Generated visuals/{output_file}.png ({nodes} nodes)')
+    tlaviz.save(dot, output_file, f' ({nodes} nodes)')
 
     print('\nStates by depth:')
     print('Depth | States')

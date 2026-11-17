@@ -768,7 +768,13 @@ files are evidence. The `./tlc` and `./tlc-workers` wrappers run TLC in
 ## Visualization Tools
 
 Four scripts in [`visuals/`](visuals/), with their shared helper `tlaviz.py`
-and the pictures they draw, show what the specs do. A tic-tac-toe board has a few
+and the pictures they draw, show what the specs do. Each picture is written
+twice: as a PNG, and as an SVG that is light by default and dark when the
+viewer asks for it (`prefers-color-scheme: dark`, or `data-theme="dark"` on
+the root element), after the method of TOPAK's diagram family: every colour
+is a presentation attribute for the light theme and a CSS rule on that
+attribute for the dark one. An unchanged picture regenerates byte for byte,
+so `git status` after a rerun says whether the model moved under it. A tic-tac-toe board has a few
 thousand states, so its whole state graph can be dumped once and drawn;
 these specs have millions, so each script instead runs TLC on a small
 wrapper module that bounds the run (a depth `CONSTRAINT` for breadth-first
@@ -813,8 +819,15 @@ winget install graphviz
 
 The scripts run under [uv](https://docs.astral.sh/uv/), which installs the
 `graphviz` Python package from `pyproject.toml`. Each takes `--help`, and
-each can be run from any directory: it finds the modules at the repo root and
-writes its pictures beside itself in `visuals/`.
+each can be run from any directory: it finds the modules in `specs/` and
+writes its pictures beside itself in `visuals/`. To look at an SVG in both
+themes, `visuals/render.py` rasterizes it (light with `rsvg-convert`, dark
+with headless Chrome), whole or cropped at reading zoom:
+
+```bash
+uv run python visuals/render.py visuals/Government_authority.svg
+uv run python visuals/render.py visuals/Government_authority_poster_1789.svg --needle "Congress holds" --h 900 --width 1800
+```
 
 ---
 
@@ -846,7 +859,7 @@ uv run python visuals/visualize_states.py Executive 2 --merge 0   # all 43 state
 ```
 
 **Output:**
-- `visuals/{module}_depth{N}.png`, e.g. [`Constitution_depth2.png`](visuals/Constitution_depth2.png)
+- `visuals/{module}_depth{N}.png` and `.svg`, e.g. [`Constitution_depth2.png`](visuals/Constitution_depth2.png)
   and [`Government_depth1.png`](visuals/Government_depth1.png)
 - Console output: states by depth, and transitions by action
 
@@ -886,7 +899,8 @@ uv run python visuals/simulate_trace.py Government 3 --steps 40
 
 **Output:**
 - Console output showing each step, who acted, and what it changed
-- `visuals/{module}_trace.png` or `visuals/{module}_trace_seed{N}.png`, e.g.
+- `visuals/{module}_trace.png` or `visuals/{module}_trace_seed{N}.png`, and the
+  `.svg` beside it, e.g.
   [`Constitution_trace_seed42.png`](visuals/Constitution_trace_seed42.png): one
   node per state, the lines changed by that step in bold and marked `▸`
 
@@ -925,6 +939,7 @@ uv run python visuals/authority_graph.py [seed] [--steps N] [--layer grant|contr
 ```
 
 - No seed: the graph of 1789, [`visuals/Government_authority.png`](visuals/Government_authority.png)
+  (and `.svg`)
 - With a seed: simulate `--steps` steps (default 40) and draw the graph as
   it ends, marking edges added by amendment (bold), edges repealed (dotted
   gray), statutory edges under challenge (red, ⚖) and the edge that fired
@@ -942,7 +957,10 @@ any later year, in [`visuals/`](visuals/):
 [`Government_authority_poster_1789.pdf`](visuals/Government_authority_poster_1789.pdf)
 and [`Government_authority_poster_2026.pdf`](visuals/Government_authority_poster_2026.pdf)
 (previews: [1789](visuals/Government_authority_poster_1789.png),
-[2026](visuals/Government_authority_poster_2026.png)).
+[2026](visuals/Government_authority_poster_2026.png)), and the same poster as
+one themed SVG each:
+[`Government_authority_poster_1789.svg`](visuals/Government_authority_poster_1789.svg),
+[`Government_authority_poster_2026.svg`](visuals/Government_authority_poster_2026.svg).
 
 **Usage:**
 ```bash
@@ -969,9 +987,12 @@ are computed from the graph, and the edges come from TLC.
 The script stops if the model has an edge the poster's layout does not
 place.
 
-Writes `visuals/Government_authority_poster_YEAR.html`, then renders the PDF
-and PNG beside it if Node.js and Playwright are installed; otherwise print the
-HTML to PDF at 24 × 36 in from a browser.
+Writes `visuals/Government_authority_poster_YEAR.html` and `.svg` (the SVG
+lays the page's text out itself, wrapped with the font metrics in
+`visuals/metrics.py`, and shrinks the two main figures a little if a year's
+copy would otherwise run into the footer), then renders the PDF and PNG
+beside them if Node.js and Playwright are installed; otherwise print the HTML
+to PDF at 24 × 36 in from a browser.
 
 ---
 
