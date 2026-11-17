@@ -69,7 +69,7 @@ practice.
 | `Constitution.tla` | 302 | 19 | 14 | 1,092 |
 | `Judiciary.tla` | 451 | 23 | 12 | 2,150 |
 | `Executive.tla` | 208 | 14 | 19 | 814 |
-| `Government.tla` | 565 | 14 | 15 | 1,543 |
+| `Government.tla` | 565 | 14 | 15 | 1,563 |
 | `Elections.tla` | 579 | 24 | 24 | none: checked only |
 
 Every flip test fails as required: with one mutation hypothesis flipped
@@ -719,9 +719,10 @@ minutes and two hours at `-j 2`.
 **Pins.** `tools/tlapm` refuses a prover that is not the one pinned in
 `tools/TLAPS-PIN` unless `TLAPM_UNPINNED=1`, and `tlc_rows.py` does the
 same for TLC with `TLC_UNPINNED=1`. The 1.6.0-pre release tag is rebuilt
-upstream, so a fresh install may not match the pin. A results file made
-with another build names that build, and moving the pin is the record of
-the change.
+upstream, so `tools/install-tlaps.sh` fetches the pinned Linux tarball
+from tla-kit's kept copy, which never moves; a macOS install comes from
+upstream and may not match the pin. A results file made with another
+build names that build, and moving the pin is the record of the change.
 
 **CI, in the tla-kit image.** `.github/workflows/checks.yml` reruns the
 row lists and the proofs in the
@@ -735,11 +736,17 @@ release's attestation, checks the image's jar and prover against the pin,
 and checks that the jar is the one in `tools/TLC-PIN`.
 `scripts/ci_plan.py` runs only the modules a change can affect, because
 one row list can take two hours on a 2-CPU runner. A manual run checks
-every module. The image's prover (`ff40755`) is not the one in
-`tools/TLAPS-PIN` (`c8ddc44`, which upstream no longer serves). Until that
-pin moves, the proofs job runs with `TLAPM_UNPINNED=1` and compares
-obligation counts only. A proof results file written by an unpinned
-prover names the commit and backends that the binary reports, not the
+every module. The image's prover (`ff40755`) is the one in
+`tools/TLAPS-PIN`: the pin moved to it on 2026.11.17, when the earlier
+build (`c8ddc44`) was no longer served anywhere, and the four proof
+results files were regenerated in the image, so the proofs job compares
+them in full. The move needed one step of `Government_proof.tla` split
+(`ShapeNamedPaths` `<1>2`): the newer prover encodes `CASE` as a choice
+among every arm whose guard holds, so each node's case must cite
+`PoolsAreNew` to rule out the `n \in Agencies` arm. Should the two pins
+name different builds again, the proofs job runs with `TLAPM_UNPINNED=1`
+and compares obligation counts only, and a results file written by an
+unpinned prover names the commit and backends the binary reports, not the
 pin's.
 
 To run one module as CI does:

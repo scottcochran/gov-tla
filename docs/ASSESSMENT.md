@@ -48,7 +48,7 @@ is the most promising direction for further work.
 | `Constitution.tla`: Arts. I, II, V; Amends. XXII, XXV | 302 | 19 | 1,092 |
 | `Judiciary.tla`: Art. III | 451 | 23 | 2,150 |
 | `Executive.tla`: Art. II, the agencies | 208 | 14 | 814 |
-| `Government.tla`: the authority graph | 565 | 14 | 1,543 |
+| `Government.tla`: the authority graph | 565 | 14 | 1,563 |
 
 ## Strengths
 

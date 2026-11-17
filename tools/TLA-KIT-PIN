@@ -2,9 +2,10 @@
 # One line per field, `key value`, in the form of tools/TLAPS-PIN. Only a digest tla-kit's release workflow
 # published is pinned, never a local build. tools/check-kit-pin.sh, run by .github/workflows/checks.yml before any
 # job uses the image, checks: the release's attestation; the digests below against the image's own files; and
-# jar_sha256 against tools/TLC-PIN. tlapm_sha256 is compared with tools/TLAPS-PIN and reported, not failed: the two
-# name different builds until the prover pin moves to the image's (tla-kit PLAN.md D1, decided here). Until then the
-# proofs job compares obligation counts only. Moving this pin is one pull request, with the checks green on it.
+# jar_sha256 against tools/TLC-PIN. tlapm_sha256 is compared with tools/TLAPS-PIN and reported, not failed: while
+# the two name different builds the proofs job compares obligation counts only (tla-kit PLAN.md D1, decided here:
+# the prover pin moved to the image's build on 2026.11.17). Moving this pin is one pull request, with the checks
+# green on it.
 release v0.1.0
 image ghcr.io/scottcochran/tla-kit@sha256:454328cd7464efcf8a27a063c51c10086e09571c462c73d085b4a249e44950c6
 commit bfeecc8f0bf9ea9446488a03ebd92ccb574c421a
