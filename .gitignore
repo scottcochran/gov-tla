@@ -22,3 +22,6 @@ __pycache__/
 
 # Raw TLC dumps kept by visualize_states.py --keep-dot
 *_states_depth*.dot
+
+# Fresh results files CI writes with --out, compared with results/ and never committed
+out/

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Run a module's TLC row list and write its dated results file.
 
-usage: scripts/tlc_rows.py rows/<Module>-rows.txt [-j N] [--only a,b] [--dry-run]
+usage: scripts/tlc_rows.py rows/<Module>-rows.txt [-j N] [--only a,b] [--dry-run | --out PATH]
 
 The row list is the only input. Its header comments give the module, a title,
 the prose expectation, the default constants and any extra .cfg lines; each
@@ -37,7 +37,10 @@ written beside it with a letter suffix, and a run with any row not as
 expected writes nothing. The script exits non-zero if the
 list has no rows, if any row is ERROR or not as expected, or if the jar is
 not the pinned one (unless TLC_UNPINNED=1). --only and --dry-run run rows
-without writing a results file.
+without writing a results file. --out PATH writes the file to PATH instead
+of results/, whether or not every row is as expected, and touches nothing
+in results/: CI uses it to compare a fresh run with the committed file
+(scripts/compare_results.py).
 """
 import concurrent.futures as cf
 import datetime
@@ -236,12 +239,15 @@ def main(argv):
     args = [a for a in argv if not a.startswith("-")]
     jobs = 1
     only = None
+    out_path = None
     dry = "--dry-run" in argv
     for i, a in enumerate(argv):
         if a == "-j":
             jobs = int(argv[i + 1]); args.remove(argv[i + 1])
         if a == "--only":
             only = set(argv[i + 1].split(",")); args.remove(argv[i + 1])
+        if a == "--out":
+            out_path = os.path.abspath(argv[i + 1]); args.remove(argv[i + 1])
     if len(args) != 1:
         raise SystemExit(__doc__)
     rows_path = os.path.abspath(args[0])
@@ -297,7 +303,10 @@ def main(argv):
               + (f" ({', '.join(bad)})" if bad else "") + f", {len(errors)} ERROR"]
     text = "\n".join(lines) + "\n"
 
-    if dry or bad:
+    if out_path and not dry:
+        open(out_path, "w").write(text)
+        print(f"\nwrote {out_path} (not in results/)")
+    elif dry or bad:
         print("\n(no results file written: " + ("dry run" if dry else "rows not as expected") + ")")
     else:
         os.makedirs(os.path.join(ROOT, "results"), exist_ok=True)
