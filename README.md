@@ -719,6 +719,33 @@ upstream, so a fresh install may not match the pin. A results file made
 with another build names that build, and moving the pin is the record of
 the change.
 
+**CI, in the tla-kit image.** `.github/workflows/checks.yml` reruns the
+row lists and the proofs in the
+[tla-kit](https://github.com/scottcochran/tla-kit) image named by digest
+in `tools/TLA-KIT-PIN`, and compares each fresh file with the newest
+committed one (`scripts/compare_results.py`). CI never writes to
+`results/`: the generators' `--out PATH` writes the fresh file elsewhere,
+and a difference fails the job, with the fresh file kept as an artifact.
+Before any job uses the image, `tools/check-kit-pin.sh` verifies the
+release's attestation, checks the image's jar and prover against the pin,
+and checks that the jar is the one in `tools/TLC-PIN`.
+`scripts/ci_plan.py` runs only the modules a change can affect, because
+one row list can take two hours on a 2-CPU runner. A manual run checks
+every module. The image's prover (`ff40755`) is not the one in
+`tools/TLAPS-PIN` (`c8ddc44`, which upstream no longer serves). Until that
+pin moves, the proofs job runs with `TLAPM_UNPINNED=1` and compares
+obligation counts only. A proof results file written by an unpinned
+prover names the commit and backends that the binary reports, not the
+pin's.
+
+To run one module as CI does:
+
+```bash
+IMAGE=$(tools/check-kit-pin.sh | tail -1)
+docker run --rm -v "$PWD:/work" -w /work "$IMAGE" python3 scripts/tlc_rows.py rows/Executive-rows.txt -j 2 --out out/Executive-results.txt
+python3 scripts/compare_results.py tlc Executive out/Executive-results.txt
+```
+
 **Configs.** The `.cfg` files describe a larger model: three
 Representatives, two Senators, two agencies, every amendment. They exist
 for the visualization tools and ad hoc runs, and set `Mut = "none"`.
