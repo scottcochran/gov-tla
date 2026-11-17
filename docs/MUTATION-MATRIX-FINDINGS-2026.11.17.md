@@ -37,8 +37,10 @@ laptop and compare with each other, not with CI.
 
 Nothing here decides anything. §4 is a change the maintainer may want; §5
 is one they probably do not; §6 is the larger change neither experiment
-touches; §7 says what the findings mean for the proof module Elections
-does not yet have.
+touches; §7 says what the findings meant for the proof module Elections
+did not yet have, and what the proof then showed; §8 says what the proof
+means for the matrix; §9 answers three questions the maintainer asked
+afterwards.
 
 ---
 
@@ -291,7 +293,7 @@ and the liveness row.
 ### 7.2 The breadth/depth argument is a proof obligation in disguise
 
 §4.2 claims no property reads the college variables and the dead set
-together, and §8 admits that was argued from the text, not checked.
+together, and §10 admits that was argued from the text, not checked.
 Writing the per-property inductive invariants would check it. If every
 invariant mentions one side only, the split is sound at all constants. If
 some property needs an invariant spanning both, §4.2 was wrong and the
@@ -372,7 +374,197 @@ above:
 
 ---
 
-## 8. What was not checked
+## 8. What the proof means for the matrix
+
+> How does finding the proof inform the MutationMatrix issue?
+
+The proof changes what the matrix's HOLDS cells are for, and that is what
+opens the door to cutting them.
+
+**What the HOLDS cells were.** Each mutation's block has one
+COUNTEREXAMPLE row and eighteen or nineteen HOLDS rows. The HOLDS rows
+carried two claims: the mutation leaves that property alone, and it does
+so at these constants. The method describes those rows as the "Breaks
+under" column that the proof's hypotheses will later restate. Elections
+now has that restatement: each theorem cites exactly the mutations that
+break its property, and the 25 flip tests show every cited hypothesis is
+load-bearing. The proof says, for every finite college and any number of
+candidates, what 440 rows said at three electors and two candidates.
+
+**What the matrix still does that the proof cannot.** The COUNTEREXAMPLE
+rows are existential and stay with TLC, as the method insists. So do the
+witnesses, the deadlock audits and the liveness rows that show the weaker
+fairness conditions fail and `FairSpec` has a behaviour. None of that is
+in the 103 minutes the HOLDS cells cost.
+
+**Where the proof corrected the matrix.** Two HOLDS cells were artefacts
+of constants: `M_PRE_XII` and `M_PLURALITY` hold `CountCanClose` at two
+candidates and break it at three. The rows file already patches this with
+the three-candidate rows, but the proof's hypothesis list is the honest
+column, and nothing in the matrix could have told you that `CollegeWF`,
+Binding within Electors, is load-bearing. A HOLDS at small constants is
+weaker evidence than it looks, and that weakens the case for paying for
+440 of them.
+
+**What the HOLDS cells become: a cross-check.** The pinned prover has two
+known unsound translation cases, and these proofs are written to the
+method's rules but unscanned. TLC agreeing with the prover at small
+constants is a second route, and worth keeping. But a cross-check does not
+need per-cell attribution, since the proof already attributes. That is
+exactly the case for the consolidation of §6: one TLC run per mutation and
+constant set, listing every property the proof says holds, in place of
+nineteen launches.
+
+**What the Elections rows could become.**
+
+| Row group | Today | With the proof |
+|---|---|---|
+| HOLDS cells (`m-`, TypeOK plus 18 properties per block) | 440 rows, ~95 min | one combined run per block, ~25 rows, ~6 min |
+| COUNTEREXAMPLE rows, witnesses, liveness, deadlock audits | ~80 rows, ~12 min | unchanged |
+| Unmutated `p-` rows and small `c-` Safety rows | ~40 rows, ~15 min | unchanged, as the cross-check |
+| `c-cfg-safety` at 2.06M states | 1 row, 9 min | drop: Safety is proved at those constants |
+| Three-candidate rows | 3 rows, 9 min | keep: they check the pigeonhole at the constant where it bites |
+
+Roughly 140 minutes of slot time becomes about 45, with every claim the
+results file makes still backed by either a check or a proof. The other
+four modules have the same shape, proof and full matrix both, so this is a
+repository-wide policy choice rather than an Elections tweak. The rows are
+unchanged as of this note.
+
+---
+
+## 9. Three questions
+
+### 9.1 How the matrix investigation informed the proof
+
+- **It set the goal.** Once §3 showed the cost was the grid and not the
+  state space, the proof's job was clear: restate the HOLDS column as
+  hypotheses, with each theorem citing only the mutations that break it.
+  That is why `DevolvesOnlyWithoutMajority` is proved under `M_PLURALITY`
+  with the extra lemma `MajorityCarries` instead of taking the easier
+  hypothesis; the weakest hypothesis is what makes the proof a replacement
+  for the cells and not a parallel claim.
+- **It gave the inventory.** The identical state count down every block
+  was the symptom of locality, and §7.3's sorting of the properties, eleven
+  flags, seven state predicates, one valid-not-inductive, became the
+  proof's layout: `FlagFrame` for the flags, `CollegeFrame` and
+  `OfficeFrame` for the predicates, `ClosesUnderInv` for `CountCanClose`.
+  The sort was right in every case.
+- **It chose the frames.** §4.2's argument that no property reads both the
+  college and the dead set said which variables each invariant should
+  mention, and the frame lemmas were grouped on the module's own variable
+  tuples accordingly. The proof confirmed the partition.
+- **It wrote the hard lemma in advance.** The pigeonhole in §7.3 was
+  transcribed into `Pigeonhole` and `ClosesUnderInv` almost line for line,
+  and the first thing run in the prover was a six-line smoke test of that
+  argument over `FiniteSetTheorems`. The riskiest step was settled before
+  the module existed.
+- **It warned about the HOLDS column.** The two-candidate artefact told
+  the proof to take hypotheses from the definitions a property reads, not
+  from the rows' verdicts, and to let the flip test arbitrate.
+- **It said what not to prove.** The witnesses and counterexamples stay
+  TLC's, and the liveness rows are what make `ExecutiveIsFilledAlways`
+  non-vacuous: `FairSpec` has a behaviour, and each weaker fairness fails.
+- **It got one thing wrong usefully.** §5's finding that deaths interleave
+  with everything predicted a `Die` case in every office-side lemma, which
+  is there; stating `Die`'s primed values once per lemma and never
+  expanding it again kept those cases to one step each.
+
+### 9.2 How the proof informed the two options
+
+- **The breadth/depth split (§4).** Its soundness rested on §4.2, argued
+  from the text. The proof settles it: every inductive invariant mentions
+  one side only, so the split loses nothing a property can see. But the
+  proof also supersedes it. The product row's remaining claim, Safety at
+  the constants of `Elections.cfg`, is now proved outright at those
+  constants and every other, so the row can be dropped rather than split.
+  What survives of the idea is the cross-check at small constants, which
+  the existing small `c-` rows already give.
+- **The one-death constraint (§5).** The proof shows deaths matter only
+  through the office variables and `relieved`, which is why bounding their
+  number cut a quarter of the states and none of the interleavings a
+  property reads. With the proof covering any number of deaths the
+  constraint is moot, and the module edit it needed would now also stale
+  the proof's digest. The recommendation against it stands, for a stronger
+  reason.
+- **Both options were about one row.** They addressed 7% of the slot
+  time; the proof reframes the 74%. The next change to the rows should be
+  the one in §8, not either of these.
+
+### 9.3 What could go upstream to the writing-tla-specs-and-proofs skill
+
+Each item names the reference it would change.
+
+- **The role of HOLDS cells after a proof** (`model-checking.md`,
+  `anti-patterns.md`). The skill says the HOLDS rows are what the proof's
+  hypotheses will restate, and its rationalisation table rightly rejects
+  "no need for the mutation rows now that the invariant is proved". It
+  should say which rows that sentence protects: the COUNTEREXAMPLE rows,
+  the witnesses, the liveness rows. The HOLDS rows change role once the
+  proof exists, from evidence to cross-check, and a cross-check can be one
+  combined run per block. That needs a row kind that lists several
+  invariants, which the bundled `tlc_rows.py` does not have.
+- **A cost model for row lists** (`model-checking.md`). Cost scales with
+  launches, not states: about four seconds of JVM and parse per launch,
+  and TLC explores the whole space whichever invariant it checks. The
+  skill has a cost model for proofs ("actions times invariant clauses")
+  and none for row lists; this is the matching one.
+- **A step-hygiene rule for `CASE` steps** (`proof-style.md`,
+  `prover-habits.md`). The first prover run failed 41 obligations, every
+  one a `CASE` step inside a lemma whose goal was `Inv'`, so the step's
+  goal was `TypeOK' /\ P'` while the `BY` proved `P'`. Either give the
+  `Next` lemma the bare property as its goal, as the Executive proof does,
+  or state `<1> SUFFICES P'` once `TypeOK'` is established. One sentence
+  in "Steps that fail for want of scope" would have saved the run.
+- **`Cardinality` in an invariant, done once** (`prover-habits.md`). The
+  skill lists "`Cardinality` in an invariant" under what the SMT backend
+  handles "not well" and says to design it out. Elections could not: the
+  majority rule is a count. What worked is stating the finiteness and
+  ordering facts once (`Sizes`, `VoteSizes`, `DisjointVotes`,
+  `Pigeonhole`) and letting every property step use the counts as terms
+  in `Nat`. That is the liveness-measure exception generalised, and the
+  entry should say so.
+- **The measureless leads-to** (`proof-style.md`). The skill's liveness
+  shape is a measure, one WF1 step and `Nat` induction. `ExecutiveIsFilled`
+  is the degenerate case: one fair step reaches the goal, so the proof is
+  three state lemmas and one `PTL` step with no measure. Worth recording
+  as the first shape to try, since it is the one many "someone acts"
+  obligations have.
+- **Hypotheses against constant-size artefacts** (`proof-style.md`,
+  "weakest hypothesis"). Add the Elections example: a HOLDS at two
+  candidates that is a COUNTEREXAMPLE at three. The rule is to take the
+  hypothesis list from the definitions the property reads, verify it by
+  flip, and then read the rows file's expected clauses against the theorem
+  list, because the rows may be the ones that are wrong.
+- **A mutation that breaks only liveness** (`evidence.md`, the flip test).
+  `flip_test.py` exits non-zero for a mutation with no `Mut #` hypothesis
+  in the module, which `M_NO_STATUTE` was until the liveness theorem
+  existed. Say that such a mutation is covered by the liveness theorem's
+  flip, or by its mutation lemma alone, and that the flip list is the
+  theorems' hypotheses, not the mutation list.
+- **Running the pinned prover in a container** (`evidence.md`, pins). The
+  skill's scripts assume a native `tlapm` matching the pin. On a platform
+  the pin does not cover, the route is the pinned image with the prover's
+  digest in the image pin, `--user` for file ownership and the scripts run
+  unchanged inside it. Nothing in the method changes; the wrapper's
+  override is never needed.
+- **Frames first, grouped on the module's tuples** (`proof-style.md`).
+  After `TypeOK`, write one frame lemma per variable group the module
+  already declares, with the actions that touch it as the disjuncts.
+  Every `Next` lemma then has one case per touching action and one for
+  "unchanged", and the obligation count stays near actions times
+  properties rather than actions times properties times clauses.
+- **A pre-proof note as an artefact** (`proof-style.md`, "write the prose
+  first"). §7 was that prose at module scale: each property's rung on the
+  ladder, its expected hypotheses, the one hard argument. It was right
+  often enough to be worth the hour, and wrong in two places (§7.6) that
+  the proof then corrected on the record. The skill asks for the header's
+  prose before the definitions; a dated note like this one, kept beside the
+  proof, is the same discipline with a place to record what changed.
+
+---
+
+## 10. What was not checked
 
 - The §3 timings assume the pool dispatches rows strictly in file order,
   which is what `ThreadPoolExecutor` does; the sum matching two workers'
