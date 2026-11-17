@@ -6,7 +6,7 @@ usage: git diff --name-only <base> <head> | scripts/ci_plan.py
 
 Prints two lines for $GITHUB_OUTPUT, each a JSON list for a job matrix:
   tlc=[...]     modules whose row list runs (rows/<Module>-rows.txt)
-  proofs=[...]  modules whose proof runs (<Module>_proof.tla)
+  proofs=[...]  modules whose proof runs (specs/<Module>_proof.tla)
 
 A module is chosen when any of its inputs changed: a repository module in
 its EXTENDS chain, its row list or its committed results, the generator
@@ -20,7 +20,7 @@ import os
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from tlc_rows import ROOT, extends_chain  # noqa: E402
+from tlc_rows import ROOT, SPECS, extends_chain  # noqa: E402
 
 COMMON = {".github/workflows/checks.yml", "tools/TLA-KIT-PIN", "tools/check-kit-pin.sh",
           "scripts/compare_results.py", "scripts/tlc_rows.py"}
@@ -34,12 +34,12 @@ def main(argv):
     tlc, proofs = [], []
     for rows in sorted(glob.glob(os.path.join(ROOT, "rows", "*-rows.txt"))):
         m = os.path.basename(rows)[:-len("-rows.txt")]
-        inputs = TLC | {f"{x}.tla" for x in extends_chain(m)} | {f"rows/{m}-rows.txt"}
+        inputs = TLC | {f"specs/{x}.tla" for x in extends_chain(m)} | {f"rows/{m}-rows.txt"}
         if everything or changed & inputs or any(c.startswith(f"results/{m}-results-") for c in changed):
             tlc.append(m)
-    for proof in sorted(glob.glob(os.path.join(ROOT, "*_proof.tla"))):
+    for proof in sorted(glob.glob(os.path.join(SPECS, "*_proof.tla"))):
         m = os.path.basename(proof)[:-len("_proof.tla")]
-        inputs = PROOF | {f"{x}.tla" for x in extends_chain(f"{m}_proof")}
+        inputs = PROOF | {f"specs/{x}.tla" for x in extends_chain(f"{m}_proof")}
         if everything or changed & inputs or any(c.startswith(f"results/{m}-proof-results-") for c in changed):
             proofs.append(m)
     print(f"tlc={json.dumps(tlc)}")

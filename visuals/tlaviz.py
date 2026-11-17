@@ -19,7 +19,8 @@ import tempfile
 from collections import deque
 
 VISUALS = os.path.dirname(os.path.abspath(__file__))   # this directory: scripts and the pictures they draw
-ROOT = os.path.dirname(VISUALS)                        # the repo root: the modules, their .cfg files and tools/
+ROOT = os.path.dirname(VISUALS)                        # the repo root: tools/, rows/, results/
+SPECS = os.path.join(ROOT, 'specs')                    # the modules and their .cfg files
 JAR = os.environ.get('TLA2TOOLS', os.path.join(ROOT, 'tools', 'tla2tools.jar'))
 MODULES = ['Constitution', 'Executive', 'Judiciary', 'Government']
 
@@ -340,7 +341,7 @@ def _base_config(module):
     """The module's own .cfg with only SPECIFICATION and CONSTANTS kept:
     the visualizers explore behaviour, they do not re-check properties."""
     keep, out = False, []
-    with open(os.path.join(ROOT, f'{module}.cfg')) as f:
+    with open(os.path.join(SPECS, f'{module}.cfg')) as f:
         for line in f:
             word = line.split('\\*')[0].strip().split(' ')[0]
             if word.isupper() and word:
@@ -360,7 +361,7 @@ def _run_tlc(module, extra_defs, extra_cfg, args, workdir):
         f.write(f'---- MODULE {viz} ----\nEXTENDS {module}, TLC\n{extra_defs}\n====\n')
     with open(os.path.join(workdir, f'{viz}.cfg'), 'w') as f:
         f.write(_base_config(module) + '\n' + extra_cfg + '\n')
-    cmd = ['java', '-XX:+UseParallelGC', f'-DTLA-Library={ROOT}', '-jar', JAR,
+    cmd = ['java', '-XX:+UseParallelGC', f'-DTLA-Library={SPECS}', '-jar', JAR,
            '-nowarning', '-metadir', os.path.join(workdir, 'meta'),
            *args, '-config', f'{viz}.cfg', f'{viz}.tla']
     proc = subprocess.run(cmd, cwd=workdir, capture_output=True, text=True)

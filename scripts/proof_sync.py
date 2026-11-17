@@ -3,7 +3,7 @@
 
 usage: scripts/proof_sync.py [--run [--threads N]]
 
-For every base module (a .tla at the top level that is not a proof module):
+For every base module (a .tla in specs/ that is not a proof module):
 
   - TLC: the newest results/<M>-results-*.txt; each digest on its Modules:
     line is compared with the tree and the Checker: digest with
@@ -28,7 +28,7 @@ import sys
 import tempfile
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from tlc_rows import ROOT, pin, run_group, sha256  # noqa: E402
+from tlc_rows import ROOT, SPECS, pin, run_group, sha256  # noqa: E402
 
 
 def newest(pattern):
@@ -49,7 +49,7 @@ def check_modules(path):
     if not pairs:
         return ["no Modules: line"]
     for name, digest in pairs:
-        p = os.path.join(ROOT, name)
+        p = os.path.join(SPECS, name)
         if not os.path.exists(p):
             moved.append(f"{name} (gone)")
         elif sha256(p) != digest:
@@ -75,7 +75,7 @@ def main(argv):
     tlc_pin = pin("TLC-PIN", "jar_sha256")
     tlaps_pin = pin("TLAPS-PIN", "binary_sha256")
     reasons = gaps()
-    bases = sorted(os.path.basename(p)[:-4] for p in glob.glob(os.path.join(ROOT, "*.tla"))
+    bases = sorted(os.path.basename(p)[:-4] for p in glob.glob(os.path.join(SPECS, "*.tla"))
                    if not p.endswith("_proof.tla") and "_TTrace_" not in p)
     for m in bases:
         r = newest(f"{m}-results-*.txt")
@@ -89,7 +89,7 @@ def main(argv):
                 status += "; checker is not the pin"
             bad += bool(moved or unpinned)
             print(f"{m:14} TLC    {status}  ({os.path.basename(r)})")
-        proof = os.path.join(ROOT, f"{m}_proof.tla")
+        proof = os.path.join(SPECS, f"{m}_proof.tla")
         if not os.path.exists(proof):
             if m in reasons:
                 print(f"{m:14} PROOF  none: {reasons[m]}")
@@ -112,7 +112,7 @@ def main(argv):
             try:
                 cmd = [os.path.join(ROOT, "tools", "tlapm"), "--cleanfp", "--strict",
                        "--cache-dir", cache] + (["--threads", threads] if threads else [])
-                code, out = run_group(cmd + [f"{m}_proof.tla"], ROOT)
+                code, out = run_group(cmd + [f"{m}_proof.tla"], SPECS)
             finally:
                 shutil.rmtree(cache, ignore_errors=True)
             mm = re.search(r"All \d+ obligations? proved|\d+/\d+ obligations? failed", out)

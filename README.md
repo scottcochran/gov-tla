@@ -98,6 +98,10 @@ are not, good for, see [`docs/ASSESSMENT.md`](docs/ASSESSMENT.md).
 
 ## Modules
 
+The modules, their `.cfg` files and the proof modules are in
+[`specs/`](specs/); their row lists are in `rows/` and the results files
+they produce in `results/`.
+
 ### `Constitution.tla` — Articles I, II and V, Amendments XXII and XXV
 
 The module is three machines over one Executive and one sitting of
@@ -746,7 +750,7 @@ docker run --rm -v "$PWD:/work" -w /work "$IMAGE" python3 scripts/tlc_rows.py ro
 python3 scripts/compare_results.py tlc Executive out/Executive-results.txt
 ```
 
-**Configs.** The `.cfg` files describe a larger model: three
+**Configs.** The `.cfg` files in [`specs/`](specs/) describe a larger model: three
 Representatives, two Senators, two agencies, every amendment. They exist
 for the visualization tools and ad hoc runs, and set `Mut = "none"`.
 Exhaustive runs at those constants are very large (`Elections.cfg` is
@@ -754,11 +758,12 @@ the exception: the row `c-cfg-safety` checks its constants). To sample
 them:
 
 ```
-java -cp tools/tla2tools.jar tlc2.TLC -simulate num=100000 -depth 40 -workers auto -config Judiciary.cfg Judiciary.tla
+./tlc -simulate num=100000 -depth 40 -workers auto -config Judiciary.cfg Judiciary.tla
 ```
 
 A run like this is **sampled**, not checked. Only the row lists' results
-files are evidence.
+files are evidence. The `./tlc` and `./tlc-workers` wrappers run TLC in
+`specs/`, so modules and configs are named without a path.
 
 ## Visualization Tools
 
@@ -788,7 +793,7 @@ records and functions flattened to paths such as `bill.b1.status` or
 ### Setup (Required Once)
 
 Install TLC (into `tools/`; the jar is not tracked, its pin is) and the
-`./tlc` and `./tlc-workers` wrappers:
+`./tlc` and `./tlc-workers` wrappers, which run TLC in `specs/`:
 
 ```bash
 ./install-tla.sh

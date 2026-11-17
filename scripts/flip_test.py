@@ -26,7 +26,7 @@ import sys
 import tempfile
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from tlc_rows import ROOT, extends_chain, run_group  # noqa: E402
+from tlc_rows import ROOT, SPECS, extends_chain, run_group  # noqa: E402
 
 
 def statement_spans(text):
@@ -72,7 +72,7 @@ def main(argv):
         tmp = tempfile.mkdtemp(prefix=f"flip_{module}_{mut}_")
         try:
             for m in extends_chain(proof):
-                shutil.copy(os.path.join(ROOT, m + ".tla"), tmp)
+                shutil.copy(os.path.join(SPECS, m + ".tla"), tmp)
             path = os.path.join(tmp, proof + ".tla")
             text = open(path).read()
             pat = re.compile(r'Mut\s*#\s*"' + re.escape(mut) + '"')
