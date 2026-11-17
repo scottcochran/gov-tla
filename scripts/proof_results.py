@@ -3,7 +3,7 @@
 
 usage: scripts/proof_results.py <Module> [--threads N] [--dry-run | --out PATH]
 
-Runs tools/tlapm --cleanfp --strict on <Module>_proof.tla with a throwaway
+Runs tools/tlapm --cleanfp --strict on specs/<Module>_proof.tla with a throwaway
 cache directory, so nothing is taken from an earlier run and nothing is
 written beside the module. Only the final obligation count and the exit
 status are read; a backend's failure line is noise when another backend
@@ -39,7 +39,7 @@ import sys
 import tempfile
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from tlc_rows import ROOT, extends_chain, pin, run_group, sha256  # noqa: E402
+from tlc_rows import ROOT, SPECS, extends_chain, pin, run_group, sha256  # noqa: E402
 
 
 def prover_binary():
@@ -101,9 +101,9 @@ def main(argv):
         raise SystemExit(__doc__)
     module = args[0].removesuffix(".tla").removesuffix("_proof")
     proof = module + "_proof"
-    proof_path = os.path.join(ROOT, proof + ".tla")
+    proof_path = os.path.join(SPECS, proof + ".tla")
     if not os.path.exists(proof_path):
-        raise SystemExit(f"{proof}.tla not found")
+        raise SystemExit(f"specs/{proof}.tla not found")
     binary = prover_binary()
     prover_sha = sha256(binary)
     pinned = prover_sha == pin("TLAPS-PIN", "binary_sha256")
@@ -114,7 +114,7 @@ def main(argv):
     # Read what the results file will describe before the prover runs, so an
     # edit made during the run cannot make the file describe text it did not prove.
     chain = extends_chain(proof)
-    digests = [(m, sha256(os.path.join(ROOT, m + ".tla"))) for m in chain]
+    digests = [(m, sha256(os.path.join(SPECS, m + ".tla"))) for m in chain]
     text = open(proof_path).read()
     tlc = sorted(glob.glob(os.path.join(ROOT, "results", f"{module}-results-*.txt")))
     tlc_line = (f"results/{os.path.basename(tlc[-1])} sha256 {sha256(tlc[-1])}" if tlc else "none")
@@ -126,10 +126,10 @@ def main(argv):
         if threads:
             cmd += ["--threads", threads]
         cmd.append(proof + ".tla")
-        code, out = run_group(cmd, ROOT, env=dict(os.environ, TLAPM=binary))
+        code, out = run_group(cmd, SPECS, env=dict(os.environ, TLAPM=binary))
     finally:
         shutil.rmtree(cache, ignore_errors=True)
-    if any(sha256(os.path.join(ROOT, m + ".tla")) != d for m, d in digests):
+    if any(sha256(os.path.join(SPECS, m + ".tla")) != d for m, d in digests):
         print(f"{proof}.tla or a module it extends changed during the run; no results file written.")
         return 1
     ok_m = re.search(r"All (\d+) obligations? proved", out)

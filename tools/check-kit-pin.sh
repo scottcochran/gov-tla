@@ -5,8 +5,8 @@
 #      scottcochran/tla-kit (gh attestation verify).
 #   3. The image is what the pin says: its revision label is `commit`, and its jar, tlapm binary and tlapm's
 #      reported commit are jar_sha256, tlapm_sha256 and tlapm_commit.
-#   4. Reported, not failed: whether tlapm_sha256 is tools/TLAPS-PIN's binary_sha256. They differ until the
-#      prover pin moves to the image's build, and while they do, CI's proofs job compares counts only.
+#   4. Reported, not failed: whether tlapm_sha256 is tools/TLAPS-PIN's binary_sha256. While they differ (as they
+#      did before the prover pin moved to the image's build, 2026.11.17), CI's proofs job compares counts only.
 # Prints the image reference as its last line. Exits non-zero on the first failed check.
 set -euo pipefail
 here="$(cd "$(dirname "$0")" && pwd)"

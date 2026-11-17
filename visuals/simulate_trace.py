@@ -7,7 +7,6 @@ differs from the initial state; the lines that changed in that step are bold.
 """
 
 import argparse
-import os
 import random
 
 import graphviz
@@ -93,8 +92,7 @@ def main():
     output_file = f'{module}_trace'
     if args.seed is not None:
         output_file += f'_seed{args.seed}'
-    dot.render(os.path.join(tlaviz.VISUALS, output_file), cleanup=True)
-    print(f'Generated visuals/{output_file}.png')
+    tlaviz.save(dot, output_file)
     if args.seed is None:
         print(f'Re-run with seed {seed} to get the same behaviour again.')
 

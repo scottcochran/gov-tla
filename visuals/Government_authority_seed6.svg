@@ -1,0 +1,429 @@
+<svg width="6080pt" height="1679pt"
+ viewBox="0.00 0.00 6080.00 1679.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<style>svg{--white:white;--black:black;--lightyellow:lightyellow;--lightblue:lightblue;--lightsalmon:lightsalmon;--lightgreen:lightgreen;--lightcoral:lightcoral;--plum:plum;--lightgray:lightgray;--peachpuff:peachpuff;--royalblue3:#3a5fcd;--forestgreen:forestgreen;--darkorchid:darkorchid;--gray35:#595959;--red3:#cd0000;--gray70:#b3b3b3;--gray60:#999999;--bg:white;}@media (prefers-color-scheme: dark){svg:not([data-theme=light]){--white:#1a1e26;--black:#e6e9ef;--lightyellow:#3b3614;--lightblue:#1b3550;--lightsalmon:#4b2a1b;--lightgreen:#1d3b22;--lightcoral:#4b2024;--plum:#3a2342;--lightgray:#2b3038;--peachpuff:#40301c;--royalblue3:#8fb0ec;--forestgreen:#7ad28a;--darkorchid:#cf9cf0;--gray35:#b0b8c6;--red3:#f08a8f;--gray70:#5a6270;--gray60:#8a93a3;--bg:#12151b;}}svg[data-theme=dark]{--white:#1a1e26;--black:#e6e9ef;--lightyellow:#3b3614;--lightblue:#1b3550;--lightsalmon:#4b2a1b;--lightgreen:#1d3b22;--lightcoral:#4b2024;--plum:#3a2342;--lightgray:#2b3038;--peachpuff:#40301c;--royalblue3:#8fb0ec;--forestgreen:#7ad28a;--darkorchid:#cf9cf0;--gray35:#b0b8c6;--red3:#f08a8f;--gray70:#5a6270;--gray60:#8a93a3;--bg:#12151b;}@media print{svg:not([data-theme=dark]){--white:white;--black:black;--lightyellow:lightyellow;--lightblue:lightblue;--lightsalmon:lightsalmon;--lightgreen:lightgreen;--lightcoral:lightcoral;--plum:plum;--lightgray:lightgray;--peachpuff:peachpuff;--royalblue3:#3a5fcd;--forestgreen:forestgreen;--darkorchid:darkorchid;--gray35:#595959;--red3:#cd0000;--gray70:#b3b3b3;--gray60:#999999;--bg:white;}}[fill="white"]{fill:var(--white)}[stroke="white"]{stroke:var(--white)}[fill="black"]{fill:var(--black)}[stroke="black"]{stroke:var(--black)}[fill="lightyellow"]{fill:var(--lightyellow)}[stroke="lightyellow"]{stroke:var(--lightyellow)}[fill="lightblue"]{fill:var(--lightblue)}[stroke="lightblue"]{stroke:var(--lightblue)}[fill="lightsalmon"]{fill:var(--lightsalmon)}[stroke="lightsalmon"]{stroke:var(--lightsalmon)}[fill="lightgreen"]{fill:var(--lightgreen)}[stroke="lightgreen"]{stroke:var(--lightgreen)}[fill="lightcoral"]{fill:var(--lightcoral)}[stroke="lightcoral"]{stroke:var(--lightcoral)}[fill="plum"]{fill:var(--plum)}[stroke="plum"]{stroke:var(--plum)}[fill="lightgray"]{fill:var(--lightgray)}[stroke="lightgray"]{stroke:var(--lightgray)}[fill="peachpuff"]{fill:var(--peachpuff)}[stroke="peachpuff"]{stroke:var(--peachpuff)}[fill="#3a5fcd"]{fill:var(--royalblue3)}[stroke="#3a5fcd"]{stroke:var(--royalblue3)}[fill="forestgreen"]{fill:var(--forestgreen)}[stroke="forestgreen"]{stroke:var(--forestgreen)}[fill="darkorchid"]{fill:var(--darkorchid)}[stroke="darkorchid"]{stroke:var(--darkorchid)}[fill="#595959"]{fill:var(--gray35)}[stroke="#595959"]{stroke:var(--gray35)}[fill="#cd0000"]{fill:var(--red3)}[stroke="#cd0000"]{stroke:var(--red3)}[fill="#b3b3b3"]{fill:var(--gray70)}[stroke="#b3b3b3"]{stroke:var(--gray70)}[fill="#999999"]{fill:var(--gray60)}[stroke="#999999"]{stroke:var(--gray60)}.graph>polygon{fill:var(--bg)}text{fill:var(--black)}</style>
+<g id="graph0" class="graph" transform="scale(2.08333 2.08333) rotate(0) translate(4 801.75)">
+<title>Authority</title>
+<polygon fill="white" stroke="none" points="-4,4 -4,-801.75 2914.25,-801.75 2914.25,4 -4,4"/>
+<text xml:space="preserve" text-anchor="middle" x="1455.12" y="-780.45" font-family="Helvetica,sans-Serif" font-size="14.00">The authority graph after 40 random steps (seed 6) &#45; amendments ratified: XXV</text>
+<g id="clust2" class="cluster">
+<title>cluster_legend</title>
+<path fill="white" stroke="black" d="M1957,-588C1957,-588 2099,-588 2099,-588 2105,-588 2111,-594 2111,-600 2111,-600 2111,-754.75 2111,-754.75 2111,-760.75 2105,-766.75 2099,-766.75 2099,-766.75 1957,-766.75 1957,-766.75 1951,-766.75 1945,-760.75 1945,-754.75 1945,-754.75 1945,-600 1945,-600 1945,-594 1951,-588 1957,-588"/>
+<text xml:space="preserve" text-anchor="middle" x="2028" y="-752.3" font-family="Helvetica,sans-Serif" font-size="11.00">Edges</text>
+</g>
+<!-- People -->
+<g id="node1" class="node">
+<title>People</title>
+<ellipse fill="plum" stroke="black" cx="1877" cy="-667.38" rx="33.19" ry="18"/>
+<text xml:space="preserve" text-anchor="middle" x="1877" y="-662.35" font-family="Helvetica,sans-Serif" font-size="12.00">People</text>
+</g>
+<!-- Constitution -->
+<g id="node3" class="node">
+<title>Constitution</title>
+<polygon fill="lightyellow" stroke="black" points="1187.88,-515 1114.12,-515 1114.12,-479 1193.88,-479 1193.88,-509 1187.88,-515"/>
+<polyline fill="none" stroke="black" points="1187.88,-515 1187.88,-509"/>
+<polyline fill="none" stroke="black" points="1193.88,-509 1187.88,-509"/>
+<text xml:space="preserve" text-anchor="middle" x="1154" y="-491.98" font-family="Helvetica,sans-Serif" font-size="12.00">Constitution</text>
+</g>
+<!-- People&#45;&gt;Constitution -->
+<g id="edge41" class="edge">
+<title>People&#45;&gt;Constitution</title>
+<path fill="none" stroke="darkorchid" d="M1846.85,-659.35C1734.35,-633.15 1338.47,-540.96 1201.25,-509"/>
+<polygon fill="darkorchid" stroke="darkorchid" points="1201.93,-507.01 1195.61,-507.69 1200.98,-511.1 1201.93,-507.01"/>
+<text xml:space="preserve" text-anchor="middle" x="1420.5" y="-552.4" font-family="Helvetica,sans-Serif" font-size="8.00" fill="darkorchid">Ordain</text>
+</g>
+<!-- Congress -->
+<g id="node4" class="node">
+<title>Congress</title>
+<polygon fill="lightblue" stroke="black" points="1584.88,-398 1517.12,-398 1517.12,-362 1584.88,-362 1584.88,-398"/>
+<text xml:space="preserve" text-anchor="middle" x="1551" y="-374.98" font-family="Helvetica,sans-Serif" font-size="12.00">Congress</text>
+</g>
+<!-- People&#45;&gt;Congress -->
+<g id="edge40" class="edge">
+<title>People&#45;&gt;Congress</title>
+<path fill="none" stroke="forestgreen" d="M1874.04,-649.03C1865.15,-603.13 1833.9,-478.93 1750,-434 1699.45,-406.93 1634.14,-392.98 1592.4,-386.33"/>
+<polygon fill="forestgreen" stroke="forestgreen" points="1592.89,-384.28 1586.64,-385.44 1592.25,-388.43 1592.89,-384.28"/>
+<text xml:space="preserve" text-anchor="middle" x="1845.44" y="-493.9" font-family="Helvetica,sans-Serif" font-size="8.00" fill="forestgreen">ElectHouse</text>
+</g>
+<!-- Judiciary -->
+<g id="node7" class="node">
+<title>Judiciary</title>
+<polygon fill="lightgreen" stroke="black" points="2401,-163.25 2337,-163.25 2337,-127.25 2401,-127.25 2401,-163.25"/>
+<text xml:space="preserve" text-anchor="middle" x="2369" y="-140.22" font-family="Helvetica,sans-Serif" font-size="12.00">Judiciary</text>
+</g>
+<!-- People&#45;&gt;Judiciary -->
+<g id="edge42" class="edge">
+<title>People&#45;&gt;Judiciary</title>
+<path fill="none" stroke="#595959" d="M1884.23,-649.58C1893.2,-631.01 1910.38,-601.89 1935,-588 2028.41,-535.31 2896,-605.25 2896,-498 2896,-498 2896,-498 2896,-262 2896,-162.22 2531.04,-148.35 2408.54,-146.51"/>
+<polygon fill="#595959" stroke="#595959" points="2408.71,-144.41 2402.69,-146.43 2408.66,-148.61 2408.71,-144.41"/>
+<text xml:space="preserve" text-anchor="middle" x="2903.12" y="-376.9" font-family="Helvetica,sans-Serif" font-size="8.00" fill="#595959">Sue</text>
+</g>
+<!-- States -->
+<g id="node2" class="node">
+<title>States</title>
+<ellipse fill="plum" stroke="black" cx="775" cy="-667.38" rx="30.44" ry="18"/>
+<text xml:space="preserve" text-anchor="middle" x="775" y="-662.35" font-family="Helvetica,sans-Serif" font-size="12.00">States</text>
+</g>
+<!-- States&#45;&gt;Constitution -->
+<g id="edge45" class="edge">
+<title>States&#45;&gt;Constitution</title>
+<path fill="none" stroke="darkorchid" d="M799,-655.71C860.96,-628.19 1027.12,-554.37 1108.22,-518.34"/>
+<polygon fill="darkorchid" stroke="darkorchid" points="1108.84,-520.36 1113.47,-516.01 1107.13,-516.52 1108.84,-520.36"/>
+<text xml:space="preserve" text-anchor="middle" x="1041.54" y="-552.4" font-family="Helvetica,sans-Serif" font-size="8.00" fill="darkorchid">Ratify</text>
+</g>
+<!-- States&#45;&gt;Congress -->
+<g id="edge43" class="edge">
+<title>States&#45;&gt;Congress</title>
+<path fill="none" stroke="#595959" d="M805.29,-664.88C921.17,-658.65 1335.13,-631.71 1442,-560 1498.18,-522.31 1530.25,-444.95 1543.6,-405.42"/>
+<polygon fill="#595959" stroke="#595959" points="1545.52,-406.29 1545.4,-399.94 1541.53,-404.98 1545.52,-406.29"/>
+<text xml:space="preserve" text-anchor="middle" x="1547.23" y="-493.9" font-family="Helvetica,sans-Serif" font-size="8.00" fill="#595959">ApplyForConvention</text>
+</g>
+<!-- States&#45;&gt;Congress -->
+<g id="edge44" class="edge">
+<title>States&#45;&gt;Congress</title>
+<path fill="none" stroke="forestgreen" d="M791.28,-651.68C831.79,-615.99 941.69,-524.32 1050.25,-479 1211.5,-411.68 1421.55,-389.92 1509.46,-383.48"/>
+<polygon fill="forestgreen" stroke="forestgreen" points="1509.49,-385.58 1515.33,-383.06 1509.19,-381.39 1509.49,-385.58"/>
+<text xml:space="preserve" text-anchor="middle" x="1071.62" y="-493.9" font-family="Helvetica,sans-Serif" font-size="8.00" fill="forestgreen">ElectSenate</text>
+</g>
+<!-- Executive -->
+<g id="node5" class="node">
+<title>Executive</title>
+<polygon fill="lightsalmon" stroke="black" points="1257.25,-281 1188.75,-281 1188.75,-245 1257.25,-245 1257.25,-281"/>
+<text xml:space="preserve" text-anchor="middle" x="1223" y="-264.35" font-family="Helvetica,sans-Serif" font-size="12.00">Executive</text>
+<text xml:space="preserve" text-anchor="middle" x="1223" y="-251.6" font-family="Helvetica,sans-Serif" font-size="12.00">(seated)</text>
+</g>
+<!-- States&#45;&gt;Executive -->
+<g id="edge46" class="edge">
+<title>States&#45;&gt;Executive</title>
+<path fill="none" stroke="forestgreen" d="M765.5,-649.83C733.68,-592.14 638.57,-398.85 742,-317 776.13,-289.99 1070.22,-271.98 1181.01,-266.1"/>
+<polygon fill="forestgreen" stroke="forestgreen" points="1180.96,-268.2 1186.84,-265.79 1180.74,-264.01 1180.96,-268.2"/>
+<text xml:space="preserve" text-anchor="middle" x="723.29" y="-435.4" font-family="Helvetica,sans-Serif" font-size="8.00" fill="forestgreen">AppointElectors</text>
+</g>
+<!-- VicePresident -->
+<g id="node6" class="node">
+<title>VicePresident</title>
+<polygon fill="peachpuff" stroke="black" points="606.62,-163.25 513.38,-163.25 513.38,-127.25 606.62,-127.25 606.62,-163.25"/>
+<text xml:space="preserve" text-anchor="middle" x="560" y="-146.6" font-family="Helvetica,sans-Serif" font-size="12.00">Vice President</text>
+<text xml:space="preserve" text-anchor="middle" x="560" y="-133.85" font-family="Helvetica,sans-Serif" font-size="12.00">(seated)</text>
+</g>
+<!-- States&#45;&gt;VicePresident -->
+<g id="edge47" class="edge">
+<title>States&#45;&gt;VicePresident</title>
+<path fill="none" stroke="forestgreen" stroke-width="3" d="M744.14,-666.38C600,-665.61 0,-653.07 0,-498 0,-498 0,-498 0,-262 0,-160.06 360.37,-147.19 502.93,-146.08"/>
+<polygon fill="forestgreen" stroke="forestgreen" stroke-width="3" points="502.69,-148.18 508.68,-146.04 502.66,-143.98 502.69,-148.18"/>
+<text xml:space="preserve" text-anchor="middle" x="46.88" y="-376.9" font-family="Helvetica,sans-Serif" font-size="8.00" fill="forestgreen">AppointElectors (fired last)</text>
+</g>
+<!-- Constitution&#45;&gt;Congress -->
+<g id="edge22" class="edge">
+<title>Constitution&#45;&gt;Congress</title>
+<path fill="none" stroke="#3a5fcd" d="M1194.25,-484.34C1269.97,-462.41 1432.86,-415.22 1509.52,-393.02"/>
+<polygon fill="#3a5fcd" stroke="#3a5fcd" points="1510.03,-395.06 1515.21,-391.37 1508.86,-391.02 1510.03,-395.06"/>
+<text xml:space="preserve" text-anchor="middle" x="1370.78" y="-435.4" font-family="Helvetica,sans-Serif" font-size="8.00" fill="#3a5fcd">ArtI</text>
+</g>
+<!-- Constitution&#45;&gt;Executive -->
+<g id="edge23" class="edge">
+<title>Constitution&#45;&gt;Executive</title>
+<path fill="none" stroke="#3a5fcd" d="M1113.72,-492.61C992.98,-481.04 648.89,-436.95 756,-317 784.12,-285.5 1072.09,-270.29 1181.3,-265.62"/>
+<polygon fill="#3a5fcd" stroke="#3a5fcd" points="1181.13,-267.73 1187.03,-265.38 1180.95,-263.53 1181.13,-267.73"/>
+<text xml:space="preserve" text-anchor="middle" x="761.63" y="-376.9" font-family="Helvetica,sans-Serif" font-size="8.00" fill="#3a5fcd">ArtII</text>
+</g>
+<!-- Constitution&#45;&gt;VicePresident -->
+<g id="edge25" class="edge">
+<title>Constitution&#45;&gt;VicePresident</title>
+<path fill="none" stroke="#3a5fcd" d="M1113.87,-481.65C1110.23,-480.64 1106.56,-479.74 1103,-479 920.39,-441.26 866.32,-486.5 685,-443 550.35,-410.7 512.2,-401.69 396.25,-326 372.23,-310.32 361.16,-307.42 350,-281 334.88,-245.2 349.64,-222.19 381,-199.25 417.66,-172.43 467.83,-159.09 505.73,-152.51"/>
+<polygon fill="#3a5fcd" stroke="#3a5fcd" points="506.07,-154.58 511.65,-151.53 505.39,-150.44 506.07,-154.58"/>
+<text xml:space="preserve" text-anchor="middle" x="402.62" y="-318.4" font-family="Helvetica,sans-Serif" font-size="8.00" fill="#3a5fcd">ArtI</text>
+</g>
+<!-- Constitution&#45;&gt;Judiciary -->
+<g id="edge24" class="edge">
+<title>Constitution&#45;&gt;Judiciary</title>
+<path fill="none" stroke="#3a5fcd" d="M1194.29,-493.25C1414.99,-477.73 2470.19,-397.71 2548,-281 2588.62,-220.07 2472.71,-175.89 2408.51,-156.77"/>
+<polygon fill="#3a5fcd" stroke="#3a5fcd" points="2409.14,-154.76 2402.79,-155.09 2407.96,-158.79 2409.14,-154.76"/>
+<text xml:space="preserve" text-anchor="middle" x="2496.47" y="-318.4" font-family="Helvetica,sans-Serif" font-size="8.00" fill="#3a5fcd">ArtIII</text>
+</g>
+<!-- Congress&#45;&gt;States -->
+<g id="edge13" class="edge">
+<title>Congress&#45;&gt;States</title>
+<path fill="none" stroke="darkorchid" d="M1516.79,-380.54C1387.98,-379.25 932.83,-378.77 801,-434 773.12,-445.68 762.43,-451.45 750,-479 725.26,-533.83 748.76,-606.19 764.11,-642.88"/>
+<polygon fill="darkorchid" stroke="darkorchid" points="762.15,-643.65 766.45,-648.33 766.01,-641.99 762.15,-643.65"/>
+<text xml:space="preserve" text-anchor="middle" x="765" y="-493.9" font-family="Helvetica,sans-Serif" font-size="8.00" fill="darkorchid">Propose</text>
+</g>
+<!-- Congress&#45;&gt;Executive -->
+<g id="edge1" class="edge">
+<title>Congress&#45;&gt;Executive</title>
+<path fill="none" stroke="#595959" d="M1585.07,-371.22C1621.6,-361.35 1671.52,-342.5 1649,-317 1623.79,-288.46 1367.3,-271.71 1264.89,-266.11"/>
+<polygon fill="#595959" stroke="#595959" points="1265.12,-264.02 1259.01,-265.8 1264.89,-268.22 1265.12,-264.02"/>
+<text xml:space="preserve" text-anchor="middle" x="1679.65" y="-318.4" font-family="Helvetica,sans-Serif" font-size="8.00" fill="#595959">AdviseTreaties</text>
+</g>
+<!-- Congress&#45;&gt;Executive -->
+<g id="edge2" class="edge">
+<title>Congress&#45;&gt;Executive</title>
+<path fill="none" stroke="#595959" d="M1516.63,-379.35C1372.7,-380.46 823.42,-381.04 772,-326 715.05,-265.05 1058.63,-262.46 1180.96,-263.43"/>
+<polygon fill="#595959" stroke="#595959" points="1180.81,-265.53 1186.83,-263.48 1180.85,-261.33 1180.81,-265.53"/>
+<text xml:space="preserve" text-anchor="middle" x="793" y="-318.4" font-family="Helvetica,sans-Serif" font-size="8.00" fill="#595959">Appropriate</text>
+</g>
+<!-- Congress&#45;&gt;Executive -->
+<g id="edge3" class="edge">
+<title>Congress&#45;&gt;Executive</title>
+<path fill="none" stroke="forestgreen" d="M1516.63,-379.02C1383.51,-378.75 907.07,-374.4 862.25,-326 817.87,-278.07 1077.38,-267.14 1181.35,-264.69"/>
+<polygon fill="forestgreen" stroke="forestgreen" points="1181.09,-266.8 1187.04,-264.56 1181,-262.6 1181.09,-266.8"/>
+<text xml:space="preserve" text-anchor="middle" x="895.62" y="-318.4" font-family="Helvetica,sans-Serif" font-size="8.00" fill="forestgreen">ContingentElection</text>
+</g>
+<!-- Congress&#45;&gt;Executive -->
+<g id="edge4" class="edge">
+<title>Congress&#45;&gt;Executive</title>
+<path fill="none" stroke="#595959" stroke-width="2" d="M1516.83,-378.46C1398.8,-376.26 1013.5,-366.02 977,-326 948.46,-294.7 1101.67,-275.44 1179.63,-267.79"/>
+<polygon fill="#595959" stroke="#595959" stroke-width="2" points="1179.51,-269.91 1185.28,-267.25 1179.11,-265.73 1179.51,-269.91"/>
+<text xml:space="preserve" text-anchor="middle" x="1028" y="-318.4" font-family="Helvetica,sans-Serif" font-size="8.00" fill="#595959">DecideInability (amendment)</text>
+</g>
+<!-- Congress&#45;&gt;Executive -->
+<g id="edge5" class="edge">
+<title>Congress&#45;&gt;Executive</title>
+<path fill="none" stroke="#595959" d="M1516.68,-377.27C1420.38,-372.07 1152.95,-355.11 1127.25,-326 1106.73,-302.76 1147.12,-284.75 1181.6,-274.27"/>
+<polygon fill="#595959" stroke="#595959" points="1181.77,-276.41 1186.94,-272.71 1180.59,-272.38 1181.77,-276.41"/>
+<text xml:space="preserve" text-anchor="middle" x="1148.62" y="-318.4" font-family="Helvetica,sans-Serif" font-size="8.00" fill="#595959">DeclareWar</text>
+</g>
+<!-- Congress&#45;&gt;Executive -->
+<g id="edge6" class="edge">
+<title>Congress&#45;&gt;Executive</title>
+<path fill="none" stroke="#595959" d="M1516.81,-378.9C1439.78,-377.89 1256.41,-370.72 1218.25,-326 1209.58,-315.84 1210.4,-301.02 1213.56,-288.42"/>
+<polygon fill="#595959" stroke="#595959" points="1215.55,-289.11 1215.22,-282.76 1211.52,-287.93 1215.55,-289.11"/>
+<text xml:space="preserve" text-anchor="middle" x="1233.62" y="-318.4" font-family="Helvetica,sans-Serif" font-size="8.00" fill="#595959">Impeach</text>
+</g>
+<!-- Congress&#45;&gt;Executive -->
+<g id="edge7" class="edge">
+<title>Congress&#45;&gt;Executive</title>
+<path fill="none" stroke="#595959" d="M1516.88,-377.12C1466.53,-373.22 1370.37,-361.39 1297.25,-326 1277.23,-316.31 1258.06,-300.06 1244.21,-286.62"/>
+<polygon fill="#595959" stroke="#595959" points="1245.8,-285.24 1240.06,-282.51 1242.84,-288.22 1245.8,-285.24"/>
+<text xml:space="preserve" text-anchor="middle" x="1312.62" y="-318.4" font-family="Helvetica,sans-Serif" font-size="8.00" fill="#595959">Override</text>
+</g>
+<!-- Congress&#45;&gt;Executive -->
+<g id="edge8" class="edge">
+<title>Congress&#45;&gt;Executive</title>
+<path fill="none" stroke="#595959" d="M1516.88,-369.64C1481.44,-359.68 1424.53,-343.05 1376.25,-326 1337.88,-312.45 1295.01,-294.89 1264.39,-281.92"/>
+<polygon fill="#595959" stroke="#595959" points="1265.39,-280.07 1259.05,-279.65 1263.75,-283.93 1265.39,-280.07"/>
+<text xml:space="preserve" text-anchor="middle" x="1399.12" y="-318.4" font-family="Helvetica,sans-Serif" font-size="8.00" fill="#595959">Presentment</text>
+</g>
+<!-- Congress&#45;&gt;VicePresident -->
+<g id="edge14" class="edge">
+<title>Congress&#45;&gt;VicePresident</title>
+<path fill="none" stroke="forestgreen" stroke-width="2" d="M1516.68,-378.75C1361.27,-377.39 722.67,-369.22 528,-326 476.03,-314.46 446.74,-325.15 417,-281 385.46,-234.18 454.47,-191.58 507.2,-167.31"/>
+<polygon fill="forestgreen" stroke="forestgreen" stroke-width="2" points="507.81,-169.34 512.42,-164.96 506.08,-165.51 507.81,-169.34"/>
+<text xml:space="preserve" text-anchor="middle" x="462" y="-259.9" font-family="Helvetica,sans-Serif" font-size="8.00" fill="forestgreen">ConfirmVP (amendment)</text>
+</g>
+<!-- Congress&#45;&gt;VicePresident -->
+<g id="edge15" class="edge">
+<title>Congress&#45;&gt;VicePresident</title>
+<path fill="none" stroke="forestgreen" d="M1516.87,-378.93C1375.7,-378.34 837.27,-372.98 675,-326 635.16,-314.47 618.51,-313.9 593.25,-281 568.33,-248.54 561.84,-199.85 560.3,-170.74"/>
+<polygon fill="forestgreen" stroke="forestgreen" points="562.4,-170.86 560.05,-164.95 558.21,-171.03 562.4,-170.86"/>
+<text xml:space="preserve" text-anchor="middle" x="626.62" y="-259.9" font-family="Helvetica,sans-Serif" font-size="8.00" fill="forestgreen">ContingentElection</text>
+</g>
+<!-- Congress&#45;&gt;VicePresident -->
+<g id="edge16" class="edge">
+<title>Congress&#45;&gt;VicePresident</title>
+<path fill="none" stroke="#595959" d="M1516.76,-378.16C1343.14,-373.8 564.33,-352.89 460,-326 416.02,-314.66 392.28,-319.54 368.25,-281 330.07,-219.74 436.89,-178.67 506.08,-159.23"/>
+<polygon fill="#595959" stroke="#595959" points="506.39,-161.33 511.61,-157.71 505.27,-157.28 506.39,-161.33"/>
+<text xml:space="preserve" text-anchor="middle" x="383.62" y="-259.9" font-family="Helvetica,sans-Serif" font-size="8.00" fill="#595959">Impeach</text>
+</g>
+<!-- Congress&#45;&gt;Judiciary -->
+<g id="edge9" class="edge">
+<title>Congress&#45;&gt;Judiciary</title>
+<path fill="none" stroke="forestgreen" d="M1585.12,-378.32C1695.76,-375.77 2043.49,-364.77 2148,-326 2205.93,-304.51 2209.61,-279.31 2261,-245 2286.23,-228.15 2296.33,-229.16 2319,-209 2332.06,-197.39 2344.33,-182.08 2353.45,-169.5"/>
+<polygon fill="forestgreen" stroke="forestgreen" points="2355.02,-170.91 2356.78,-164.8 2351.6,-168.48 2355.02,-170.91"/>
+<text xml:space="preserve" text-anchor="middle" x="2276" y="-259.9" font-family="Helvetica,sans-Serif" font-size="8.00" fill="forestgreen">Consent</text>
+</g>
+<!-- Congress&#45;&gt;Judiciary -->
+<g id="edge10" class="edge">
+<title>Congress&#45;&gt;Judiciary</title>
+<path fill="none" stroke="#595959" d="M1585.17,-377.58C1700.33,-372.59 2073.5,-354.56 2190,-326 2277.67,-304.51 2317.11,-290.46 2356,-209 2361.62,-197.22 2364.82,-183.06 2366.64,-171.18"/>
+<polygon fill="#595959" stroke="#595959" points="2368.72,-171.47 2367.44,-165.24 2364.56,-170.91 2368.72,-171.47"/>
+<text xml:space="preserve" text-anchor="middle" x="2354.07" y="-259.9" font-family="Helvetica,sans-Serif" font-size="8.00" fill="#595959">Exceptions</text>
+</g>
+<!-- Congress&#45;&gt;Judiciary -->
+<g id="edge11" class="edge">
+<title>Congress&#45;&gt;Judiciary</title>
+<path fill="none" stroke="#595959" d="M1585.31,-379.05C1686.31,-378.63 1990.96,-373.24 2238,-326 2304.28,-313.33 2340.39,-333.32 2383,-281 2408.57,-249.59 2393.41,-199.47 2380.74,-170.02"/>
+<polygon fill="#595959" stroke="#595959" points="2382.75,-169.36 2378.38,-164.74 2378.91,-171.07 2382.75,-169.36"/>
+<text xml:space="preserve" text-anchor="middle" x="2411.94" y="-259.9" font-family="Helvetica,sans-Serif" font-size="8.00" fill="#595959">Impeach</text>
+</g>
+<!-- Congress&#45;&gt;Judiciary -->
+<g id="edge12" class="edge">
+<title>Congress&#45;&gt;Judiciary</title>
+<path fill="none" stroke="#595959" d="M1585.3,-377.9C1714.51,-373.55 2171.8,-356.32 2314,-326 2370.93,-313.86 2403.65,-328.71 2437,-281 2458.08,-250.85 2442.93,-230.8 2424,-199.25 2417.16,-187.84 2407.23,-177.24 2397.69,-168.56"/>
+<polygon fill="#595959" stroke="#595959" points="2399.17,-167.06 2393.28,-164.68 2396.4,-170.22 2399.17,-167.06"/>
+<text xml:space="preserve" text-anchor="middle" x="2463.34" y="-259.9" font-family="Helvetica,sans-Serif" font-size="8.00" fill="#595959">Organize</text>
+</g>
+<!-- ag1 -->
+<g id="node8" class="node">
+<title>ag1</title>
+<path fill="white" stroke="black" d="M1709.5,-46.25C1709.5,-46.25 1624.5,-46.25 1624.5,-46.25 1618.5,-46.25 1612.5,-40.25 1612.5,-34.25 1612.5,-34.25 1612.5,-12 1612.5,-12 1612.5,-6 1618.5,0 1624.5,0 1624.5,0 1709.5,0 1709.5,0 1715.5,0 1721.5,-6 1721.5,-12 1721.5,-12 1721.5,-34.25 1721.5,-34.25 1721.5,-40.25 1715.5,-46.25 1709.5,-46.25"/>
+<text xml:space="preserve" text-anchor="middle" x="1667" y="-30.85" font-family="Helvetica,sans-Serif" font-size="12.00">ag1</text>
+<text xml:space="preserve" text-anchor="middle" x="1667" y="-18.1" font-family="Helvetica,sans-Serif" font-size="12.00">(vacant)</text>
+<text xml:space="preserve" text-anchor="middle" x="1667" y="-5.35" font-family="Helvetica,sans-Serif" font-size="12.00">nominee pending</text>
+</g>
+<!-- Congress&#45;&gt;ag1 -->
+<g id="edge17" class="edge">
+<title>Congress&#45;&gt;ag1</title>
+<path fill="none" stroke="#595959" stroke-dasharray="5,2" d="M1585.33,-378.93C1624.04,-376.77 1685.42,-366.65 1715,-326 1717.35,-322.77 1716.45,-320.73 1715,-317 1709.1,-301.83 1621.9,-224.17 1616,-209 1595.06,-155.17 1625.92,-89.41 1647.99,-52.6"/>
+<polygon fill="#595959" stroke="#595959" points="1649.58,-54.01 1650.93,-47.8 1646,-51.82 1649.58,-54.01"/>
+<text xml:space="preserve" text-anchor="middle" x="1637" y="-201.03" font-family="Helvetica,sans-Serif" font-size="8.00" fill="#595959">Appropriate</text>
+</g>
+<!-- Congress&#45;&gt;ag1 -->
+<g id="edge18" class="edge">
+<title>Congress&#45;&gt;ag1</title>
+<path fill="none" stroke="forestgreen" stroke-dasharray="5,2" d="M1585.11,-374.8C1636.09,-367.75 1728.28,-351.72 1748,-326 1750.43,-322.83 1748.73,-320.93 1748,-317 1738.62,-266.44 1721.14,-258.29 1706.5,-209 1690.47,-155.02 1678.19,-90.36 1671.83,-53.58"/>
+<polygon fill="forestgreen" stroke="forestgreen" points="1673.97,-53.66 1670.89,-48.1 1669.83,-54.36 1673.97,-53.66"/>
+<text xml:space="preserve" text-anchor="middle" x="1731.25" y="-201.03" font-family="Helvetica,sans-Serif" font-size="8.00" fill="forestgreen">ConsentHead</text>
+</g>
+<!-- Congress&#45;&gt;ag1 -->
+<g id="edge19" class="edge">
+<title>Congress&#45;&gt;ag1</title>
+<path fill="none" stroke="#cd0000" stroke-dasharray="5,2" d="M1585.06,-376.24C1643.02,-370.75 1756.89,-356.3 1781,-326 1849.43,-240.01 1746.04,-108.54 1693.98,-51.79"/>
+<polygon fill="#cd0000" stroke="#cd0000" points="1695.76,-50.62 1690.14,-47.65 1692.68,-53.47 1695.76,-50.62"/>
+<text xml:space="preserve" text-anchor="middle" x="1830.77" y="-201.4" font-family="Helvetica,sans-Serif" font-size="8.00" fill="#cd0000">Enable ⚖ challenged</text>
+</g>
+<!-- Congress&#45;&gt;ag1 -->
+<g id="edge20" class="edge">
+<title>Congress&#45;&gt;ag1</title>
+<path fill="none" stroke="#595959" stroke-dasharray="5,2" d="M1585.16,-375.84C1648.24,-369.42 1779.88,-353.11 1816,-326 1862.9,-290.8 1863.04,-265.96 1877,-209 1896.64,-128.84 1797.7,-73.64 1728.93,-45.59"/>
+<polygon fill="#595959" stroke="#595959" points="1729.72,-43.64 1723.36,-43.36 1728.15,-47.54 1729.72,-43.64"/>
+<text xml:space="preserve" text-anchor="middle" x="1894" y="-201.03" font-family="Helvetica,sans-Serif" font-size="8.00" fill="#595959">Impeach</text>
+</g>
+<!-- Congress&#45;&gt;ag1 -->
+<g id="edge21" class="edge">
+<title>Congress&#45;&gt;ag1</title>
+<path fill="none" stroke="#595959" stroke-dasharray="5,2" d="M1585.04,-379.98C1643.54,-380.2 1765.31,-374.22 1853,-326 1905.31,-297.23 1909.07,-267.87 1919,-209 1930,-143.78 1899.06,-113.94 1841,-82.25 1805.9,-63.09 1763.37,-48.74 1729.14,-39.09"/>
+<polygon fill="#595959" stroke="#595959" points="1729.77,-37.09 1723.43,-37.51 1728.65,-41.14 1729.77,-37.09"/>
+<text xml:space="preserve" text-anchor="middle" x="1935.26" y="-201.03" font-family="Helvetica,sans-Serif" font-size="8.00" fill="#595959">Remove</text>
+</g>
+<!-- Executive&#45;&gt;Congress -->
+<g id="edge26" class="edge">
+<title>Executive&#45;&gt;Congress</title>
+<path fill="none" stroke="#595959" d="M1257.42,-270.55C1298.72,-278.93 1369.68,-295.05 1428,-317 1458.07,-328.32 1490.46,-344.84 1514.45,-357.98"/>
+<polygon fill="#595959" stroke="#595959" points="1513.39,-359.79 1519.66,-360.85 1515.42,-356.11 1513.39,-359.79"/>
+<text xml:space="preserve" text-anchor="middle" x="1462.74" y="-318.4" font-family="Helvetica,sans-Serif" font-size="8.00" fill="#595959">Adjourn</text>
+</g>
+<!-- Executive&#45;&gt;Congress -->
+<g id="edge27" class="edge">
+<title>Executive&#45;&gt;Congress</title>
+<path fill="none" stroke="#595959" d="M1257.54,-264.8C1310.02,-267.33 1411.68,-277.42 1487,-317 1505.09,-326.51 1521.56,-342.72 1533.26,-356.18"/>
+<polygon fill="#595959" stroke="#595959" points="1531.51,-357.37 1536.99,-360.59 1534.72,-354.66 1531.51,-357.37"/>
+<text xml:space="preserve" text-anchor="middle" x="1515.44" y="-318.4" font-family="Helvetica,sans-Serif" font-size="8.00" fill="#595959">Convene</text>
+</g>
+<!-- Executive&#45;&gt;Congress -->
+<g id="edge28" class="edge">
+<title>Executive&#45;&gt;Congress</title>
+<path fill="none" stroke="#595959" d="M1257.59,-264.78C1331.83,-267.21 1502.91,-277.1 1542,-317 1551.48,-326.68 1553.87,-341.61 1553.82,-354.4"/>
+<polygon fill="#595959" stroke="#595959" points="1551.73,-354.04 1553.6,-360.12 1555.93,-354.2 1551.73,-354.04"/>
+<text xml:space="preserve" text-anchor="middle" x="1556.04" y="-318.4" font-family="Helvetica,sans-Serif" font-size="8.00" fill="#595959">Veto</text>
+</g>
+<!-- Executive&#45;&gt;VicePresident -->
+<g id="edge31" class="edge">
+<title>Executive&#45;&gt;VicePresident</title>
+<path fill="none" stroke="forestgreen" stroke-width="2" d="M1188.39,-258.52C1119.34,-251.32 959.68,-233.41 827,-209 824.36,-208.51 693,-177.59 615.54,-159.34"/>
+<polygon fill="forestgreen" stroke="forestgreen" stroke-width="2" points="616.1,-157.31 609.78,-157.98 615.14,-161.4 616.1,-157.31"/>
+<text xml:space="preserve" text-anchor="middle" x="875" y="-201.03" font-family="Helvetica,sans-Serif" font-size="8.00" fill="forestgreen">NominateVP (amendment)</text>
+</g>
+<!-- Executive&#45;&gt;Judiciary -->
+<g id="edge29" class="edge">
+<title>Executive&#45;&gt;Judiciary</title>
+<path fill="none" stroke="forestgreen" d="M1257.6,-262.18C1377.03,-262.33 1782.79,-258.88 2113,-209 2123.76,-207.37 2260.01,-173.49 2329.21,-156.2"/>
+<polygon fill="forestgreen" stroke="forestgreen" points="2329.72,-158.24 2335.03,-154.75 2328.7,-154.16 2329.72,-158.24"/>
+<text xml:space="preserve" text-anchor="middle" x="2167.78" y="-201.03" font-family="Helvetica,sans-Serif" font-size="8.00" fill="forestgreen">Nominate</text>
+</g>
+<!-- Executive&#45;&gt;Judiciary -->
+<g id="edge30" class="edge">
+<title>Executive&#45;&gt;Judiciary</title>
+<path fill="none" stroke="#595959" d="M1257.58,-261.46C1408.49,-258.91 2010.12,-246.53 2195,-209 2242.94,-199.27 2295.45,-178.9 2330.1,-163.99"/>
+<polygon fill="#595959" stroke="#595959" points="2330.73,-166.01 2335.4,-161.7 2329.06,-162.16 2330.73,-166.01"/>
+<text xml:space="preserve" text-anchor="middle" x="2242.43" y="-201.03" font-family="Helvetica,sans-Serif" font-size="8.00" fill="#595959">Pardon</text>
+</g>
+<!-- Executive&#45;&gt;ag1 -->
+<g id="edge32" class="edge">
+<title>Executive&#45;&gt;ag1</title>
+<path fill="none" stroke="#cd0000" stroke-dasharray="5,2" d="M1239.54,-244.94C1267.37,-217.05 1326.31,-161.38 1385.25,-127.25 1456.07,-86.24 1546.09,-56.72 1605.06,-40.04"/>
+<polygon fill="#cd0000" stroke="#cd0000" points="1605.43,-42.12 1610.64,-38.48 1604.29,-38.08 1605.43,-42.12"/>
+<text xml:space="preserve" text-anchor="middle" x="1435.12" y="-142.53" font-family="Helvetica,sans-Serif" font-size="8.00" fill="#cd0000">AppointInferior ⚖ challenged</text>
+</g>
+<!-- Executive&#45;&gt;ag1 -->
+<g id="edge33" class="edge">
+<title>Executive&#45;&gt;ag1</title>
+<path fill="none" stroke="#595959" stroke-dasharray="5,2" d="M1257.54,-253.15C1310.12,-238.84 1412.44,-207.66 1491,-163.25 1541.09,-134.93 1546.81,-117.88 1592,-82.25 1605.01,-71.99 1619.38,-60.82 1632.03,-51.04"/>
+<polygon fill="#595959" stroke="#595959" points="1633.04,-52.9 1636.51,-47.57 1630.48,-49.58 1633.04,-52.9"/>
+<text xml:space="preserve" text-anchor="middle" x="1551.16" y="-142.15" font-family="Helvetica,sans-Serif" font-size="8.00" fill="#595959">Direct</text>
+</g>
+<!-- Executive&#45;&gt;ag1 -->
+<g id="edge34" class="edge">
+<title>Executive&#45;&gt;ag1</title>
+<path fill="none" stroke="#3a5fcd" stroke-dasharray="5,2" d="M1188.35,-245.59C1143.44,-221.93 1074.01,-175.71 1102,-127.25 1151.91,-40.83 1469.2,-26.51 1605.22,-24.37"/>
+<polygon fill="#3a5fcd" stroke="#3a5fcd" points="1604.87,-26.48 1610.83,-24.29 1604.8,-22.28 1604.87,-26.48"/>
+<text xml:space="preserve" text-anchor="middle" x="1130.5" y="-142.15" font-family="Helvetica,sans-Serif" font-size="8.00" fill="#3a5fcd">ExecutivePower</text>
+</g>
+<!-- Executive&#45;&gt;ag1 -->
+<g id="edge35" class="edge">
+<title>Executive&#45;&gt;ag1</title>
+<path fill="none" stroke="forestgreen" stroke-dasharray="5,2" d="M1223.7,-244.77C1225.81,-216.11 1234.28,-158.71 1268,-127.25 1316.68,-81.84 1505.43,-47.95 1604.88,-32.84"/>
+<polygon fill="forestgreen" stroke="forestgreen" points="1605.06,-34.93 1610.68,-31.96 1604.43,-30.78 1605.06,-34.93"/>
+<text xml:space="preserve" text-anchor="middle" x="1295" y="-142.15" font-family="Helvetica,sans-Serif" font-size="8.00" fill="forestgreen">NominateHead</text>
+</g>
+<!-- VicePresident&#45;&gt;Congress -->
+<g id="edge48" class="edge">
+<title>VicePresident&#45;&gt;Congress</title>
+<path fill="none" stroke="#595959" d="M578.54,-163.55C626.35,-208.14 750.52,-323.66 756,-326 825.49,-355.74 1355.79,-373.33 1509.42,-377.84"/>
+<polygon fill="#595959" stroke="#595959" points="1509.3,-379.94 1515.36,-378.01 1509.43,-375.74 1509.3,-379.94"/>
+<text xml:space="preserve" text-anchor="middle" x="731.3" y="-259.9" font-family="Helvetica,sans-Serif" font-size="8.00" fill="#595959">PresideSenate</text>
+</g>
+<!-- VicePresident&#45;&gt;Executive -->
+<g id="edge49" class="edge">
+<title>VicePresident&#45;&gt;Executive</title>
+<path fill="none" stroke="#595959" stroke-width="2" d="M607.1,-151.71C677.45,-160.15 814.02,-177.69 929,-199.25 947.83,-202.78 952.29,-204.86 971,-209 1044.09,-225.17 1129.38,-242.86 1179.64,-253.17"/>
+<polygon fill="#595959" stroke="#595959" stroke-width="2" points="1179.04,-255.19 1185.34,-254.33 1179.88,-251.07 1179.04,-255.19"/>
+<text xml:space="preserve" text-anchor="middle" x="1023.5" y="-201.03" font-family="Helvetica,sans-Serif" font-size="8.00" fill="#595959">DeclareInability (amendment)</text>
+</g>
+<!-- VicePresident&#45;&gt;Executive -->
+<g id="edge50" class="edge">
+<title>VicePresident&#45;&gt;Executive</title>
+<path fill="none" stroke="forestgreen" d="M600.74,-163.72C636.16,-178.17 689.19,-198.03 737.25,-209 898.61,-245.84 1096.17,-257.31 1181.02,-260.68"/>
+<polygon fill="forestgreen" stroke="forestgreen" points="1180.8,-262.78 1186.88,-260.91 1180.96,-258.58 1180.8,-262.78"/>
+<text xml:space="preserve" text-anchor="middle" x="757.12" y="-201.03" font-family="Helvetica,sans-Serif" font-size="8.00" fill="forestgreen">Succession</text>
+</g>
+<!-- Judiciary&#45;&gt;Congress -->
+<g id="edge36" class="edge">
+<title>Judiciary&#45;&gt;Congress</title>
+<path fill="none" stroke="#595959" d="M2401.21,-161.63C2446.63,-185.47 2520.63,-233.56 2489,-281 2460.16,-324.27 2431.64,-314.18 2381,-326 2228.38,-361.62 1737.76,-374.94 1592.13,-378.17"/>
+<polygon fill="#595959" stroke="#595959" points="1592.51,-376.06 1586.56,-378.29 1592.61,-380.26 1592.51,-376.06"/>
+<text xml:space="preserve" text-anchor="middle" x="2517.25" y="-259.9" font-family="Helvetica,sans-Serif" font-size="8.00" fill="#595959">PresideTrial</text>
+</g>
+<!-- Judiciary&#45;&gt;Congress -->
+<g id="edge37" class="edge">
+<title>Judiciary&#45;&gt;Congress</title>
+<path fill="none" stroke="#595959" d="M2342.92,-163.57C2322.45,-176.82 2292.99,-195.1 2266,-209 2229.8,-227.64 2218.21,-226.87 2181.75,-245 2116.78,-277.31 2109.02,-303.62 2040,-326 1956.99,-352.92 1694.83,-370.64 1592.5,-376.69"/>
+<polygon fill="#595959" stroke="#595959" points="1592.5,-374.58 1586.63,-377.03 1592.74,-378.78 1592.5,-374.58"/>
+<text xml:space="preserve" text-anchor="middle" x="2194.88" y="-259.9" font-family="Helvetica,sans-Serif" font-size="8.00" fill="#595959">Review</text>
+</g>
+<!-- Judiciary&#45;&gt;Executive -->
+<g id="edge38" class="edge">
+<title>Judiciary&#45;&gt;Executive</title>
+<path fill="none" stroke="#595959" d="M2336.85,-151.29C2282.86,-159.93 2170.68,-178.63 2076.75,-199.25 2059.82,-202.97 2056.11,-206.26 2039,-209 1745.17,-256.06 1385.45,-261.59 1264.73,-262.05"/>
+<polygon fill="#595959" stroke="#595959" points="1264.97,-259.94 1258.97,-262.06 1264.98,-264.14 1264.97,-259.94"/>
+<text xml:space="preserve" text-anchor="middle" x="2089.88" y="-201.03" font-family="Helvetica,sans-Serif" font-size="8.00" fill="#595959">Review</text>
+</g>
+<!-- Judiciary&#45;&gt;ag1 -->
+<g id="edge39" class="edge">
+<title>Judiciary&#45;&gt;ag1</title>
+<path fill="none" stroke="#595959" stroke-dasharray="5,2" d="M2336.84,-137.84C2278.02,-126.19 2149.12,-101.03 2040,-82.25 1930.66,-63.43 1802.82,-44.08 1728.76,-33.14"/>
+<polygon fill="#595959" stroke="#595959" points="1729.5,-31.12 1723.26,-32.32 1728.89,-35.28 1729.5,-31.12"/>
+<text xml:space="preserve" text-anchor="middle" x="2097.97" y="-83.65" font-family="Helvetica,sans-Serif" font-size="8.00" fill="#595959">Review</text>
+</g>
+<!-- legend -->
+<g id="node9" class="node">
+<title>legend</title>
+<text xml:space="preserve" text-anchor="start" x="1965" y="-719.35" font-family="Helvetica,sans-Serif" font-size="12.00" fill="#3a5fcd">━━ Power</text>
+<text xml:space="preserve" text-anchor="start" x="1965" y="-700.6" font-family="Helvetica,sans-Serif" font-size="12.00" fill="forestgreen">━━ Select</text>
+<text xml:space="preserve" text-anchor="start" x="1965" y="-681.85" font-family="Helvetica,sans-Serif" font-size="12.00" fill="darkorchid">━━ Amend</text>
+<text xml:space="preserve" text-anchor="start" x="1965" y="-663.1" font-family="Helvetica,sans-Serif" font-size="12.00" fill="#595959">━━ Control</text>
+<text xml:space="preserve" text-anchor="start" x="1965" y="-644.35" font-family="Helvetica,sans-Serif" font-size="12.00">&#45; &#45; &#45; by statute</text>
+<text xml:space="preserve" text-anchor="start" x="1965" y="-625.6" font-family="Helvetica,sans-Serif" font-size="12.00">━━ by the Constitution</text>
+<text xml:space="preserve" text-anchor="start" x="1965" y="-606.85" font-family="Helvetica,sans-Serif" font-size="12.00" fill="#cd0000">⚖ challenged in court</text>
+</g>
+</g>
+</svg>

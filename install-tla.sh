@@ -34,14 +34,16 @@ fi
 # Create convenience wrapper scripts
 cat > tlc << 'EOF'
 #!/bin/bash
-# TLC wrapper script
-java -XX:+UseParallelGC -jar "$(dirname "$0")/tools/tla2tools.jar" "$@"
+# TLC wrapper script. Runs in specs/, so module and .cfg names need no path.
+here="$(cd "$(dirname "$0")" && pwd)"
+cd "$here/specs" && exec java -XX:+UseParallelGC -jar "$here/tools/tla2tools.jar" "$@"
 EOF
 
 cat > tlc-workers << 'EOF'
 #!/bin/bash
-# TLC wrapper with auto workers (uses all CPU cores)
-java -XX:+UseParallelGC -jar "$(dirname "$0")/tools/tla2tools.jar" -workers auto "$@"
+# TLC wrapper with auto workers (uses all CPU cores). Runs in specs/, so module and .cfg names need no path.
+here="$(cd "$(dirname "$0")" && pwd)"
+cd "$here/specs" && exec java -XX:+UseParallelGC -jar "$here/tools/tla2tools.jar" -workers auto "$@"
 EOF
 
 chmod +x tlc tlc-workers

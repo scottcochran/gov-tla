@@ -8,7 +8,6 @@ statutory edges the courts struck, and the edge that fired last.
 """
 
 import argparse
-import os
 
 import graphviz
 
@@ -140,8 +139,7 @@ def main():
         output_file += f'_seed{args.seed}'
     if args.layer != 'all':
         output_file += f'_{args.layer}'
-    dot.render(os.path.join(tlaviz.VISUALS, output_file), cleanup=True)
-    print(f'Generated visuals/{output_file}.png')
+    tlaviz.save(dot, output_file)
 
 
 if __name__ == '__main__':

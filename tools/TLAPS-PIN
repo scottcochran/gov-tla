@@ -2,14 +2,17 @@
 # tools/tlapm refuses a binary whose sha256 is not binary_sha256 unless TLAPM_UNPINNED=1 is set;
 # tools/install-tlaps.sh compares what it installed with this file; scripts/proof_sync.py compares
 # the prover each proof results file prints with it.
-# The release tag floats: 1.6.0-pre is a pre-release that GitHub rebuilds under the same name, so a
-# fresh install may not yield this binary. A results file made by another build cites another prover,
-# and moving this pin is the record of that.
+# This is the build the tla-kit image carries (tools/TLA-KIT-PIN tlapm_sha256), so CI regenerates
+# the proof results files in the image and compares them in full. Upstream's 1.6.0-pre tag is
+# rebuilt under the same name, so the tarball is fetched from tla-kit's kept copy (url), a release
+# that is never moved. The pin came here from c8ddc44 on 2026.11.17, when that build was no longer
+# served anywhere; the move needed one step of Government_proof.tla split (ShapeNamedPaths <1>2).
 version 1.6.0-pre
-commit c8ddc44
-binary_sha256 81fd7bd59b64b3ceb1d8e3842bc2543dc76bff2537a8dd9898c105938c65a536
+commit ff40755
+binary_sha256 6182df63c4513b09c31c8de12c37f8045ace9cab2517c017a2fa75f466685bb2
 platform x86_64-linux-gnu
 tarball tlapm-1.6.0-pre-x86_64-linux-gnu.tar.gz
-tarball_sha256 fa6d537fb62f8526e7dd0d716c88e3d18931cc5c6b5d9ba1949afdb8096fb758
+tarball_sha256 99db29f119cb6f43ffed653b212ba2d005e5bf8e242c53468876cb0d08da6bcc
+url https://github.com/scottcochran/tla-kit/releases/download/tlapm-ff40755/tlapm-1.6.0-pre-x86_64-linux-gnu.tar.gz
 backends Z3 4.8.9; Zenon 0.8.4 [a268]; Isabelle2025; LS4
-pinned 2026.11.09
+pinned 2026.11.17

@@ -1,0 +1,738 @@
+<svg width="11362pt" height="1379pt"
+ viewBox="0.00 0.00 11362.00 1379.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<style>svg{--white:white;--black:black;--lightyellow:lightyellow;--lightblue:lightblue;--lightsalmon:lightsalmon;--lightgreen:lightgreen;--lightcoral:lightcoral;--plum:plum;--lightgray:lightgray;--peachpuff:peachpuff;--royalblue3:#3a5fcd;--forestgreen:forestgreen;--darkorchid:darkorchid;--gray35:#595959;--red3:#cd0000;--gray70:#b3b3b3;--gray60:#999999;--bg:white;}@media (prefers-color-scheme: dark){svg:not([data-theme=light]){--white:#1a1e26;--black:#e6e9ef;--lightyellow:#3b3614;--lightblue:#1b3550;--lightsalmon:#4b2a1b;--lightgreen:#1d3b22;--lightcoral:#4b2024;--plum:#3a2342;--lightgray:#2b3038;--peachpuff:#40301c;--royalblue3:#8fb0ec;--forestgreen:#7ad28a;--darkorchid:#cf9cf0;--gray35:#b0b8c6;--red3:#f08a8f;--gray70:#5a6270;--gray60:#8a93a3;--bg:#12151b;}}svg[data-theme=dark]{--white:#1a1e26;--black:#e6e9ef;--lightyellow:#3b3614;--lightblue:#1b3550;--lightsalmon:#4b2a1b;--lightgreen:#1d3b22;--lightcoral:#4b2024;--plum:#3a2342;--lightgray:#2b3038;--peachpuff:#40301c;--royalblue3:#8fb0ec;--forestgreen:#7ad28a;--darkorchid:#cf9cf0;--gray35:#b0b8c6;--red3:#f08a8f;--gray70:#5a6270;--gray60:#8a93a3;--bg:#12151b;}@media print{svg:not([data-theme=dark]){--white:white;--black:black;--lightyellow:lightyellow;--lightblue:lightblue;--lightsalmon:lightsalmon;--lightgreen:lightgreen;--lightcoral:lightcoral;--plum:plum;--lightgray:lightgray;--peachpuff:peachpuff;--royalblue3:#3a5fcd;--forestgreen:forestgreen;--darkorchid:darkorchid;--gray35:#595959;--red3:#cd0000;--gray70:#b3b3b3;--gray60:#999999;--bg:white;}}[fill="white"]{fill:var(--white)}[stroke="white"]{stroke:var(--white)}[fill="black"]{fill:var(--black)}[stroke="black"]{stroke:var(--black)}[fill="lightyellow"]{fill:var(--lightyellow)}[stroke="lightyellow"]{stroke:var(--lightyellow)}[fill="lightblue"]{fill:var(--lightblue)}[stroke="lightblue"]{stroke:var(--lightblue)}[fill="lightsalmon"]{fill:var(--lightsalmon)}[stroke="lightsalmon"]{stroke:var(--lightsalmon)}[fill="lightgreen"]{fill:var(--lightgreen)}[stroke="lightgreen"]{stroke:var(--lightgreen)}[fill="lightcoral"]{fill:var(--lightcoral)}[stroke="lightcoral"]{stroke:var(--lightcoral)}[fill="plum"]{fill:var(--plum)}[stroke="plum"]{stroke:var(--plum)}[fill="lightgray"]{fill:var(--lightgray)}[stroke="lightgray"]{stroke:var(--lightgray)}[fill="peachpuff"]{fill:var(--peachpuff)}[stroke="peachpuff"]{stroke:var(--peachpuff)}[fill="#3a5fcd"]{fill:var(--royalblue3)}[stroke="#3a5fcd"]{stroke:var(--royalblue3)}[fill="forestgreen"]{fill:var(--forestgreen)}[stroke="forestgreen"]{stroke:var(--forestgreen)}[fill="darkorchid"]{fill:var(--darkorchid)}[stroke="darkorchid"]{stroke:var(--darkorchid)}[fill="#595959"]{fill:var(--gray35)}[stroke="#595959"]{stroke:var(--gray35)}[fill="#cd0000"]{fill:var(--red3)}[stroke="#cd0000"]{stroke:var(--red3)}[fill="#b3b3b3"]{fill:var(--gray70)}[stroke="#b3b3b3"]{stroke:var(--gray70)}[fill="#999999"]{fill:var(--gray60)}[stroke="#999999"]{stroke:var(--gray60)}.graph>polygon{fill:var(--bg)}text{fill:var(--black)}</style>
+<g id="graph0" class="graph" transform="scale(2.08333 2.08333) rotate(0) translate(4 657.7)">
+<title>Constitution</title>
+<polygon fill="white" stroke="none" points="-4,4 -4,-657.7 5449.8,-657.7 5449.8,4 -4,4"/>
+<g id="clust4" class="cluster">
+<title>cluster_legend</title>
+<path fill="white" stroke="black" d="M5227.8,-8C5227.8,-8 5425.8,-8 5425.8,-8 5431.8,-8 5437.8,-14 5437.8,-20 5437.8,-20 5437.8,-633.7 5437.8,-633.7 5437.8,-639.7 5431.8,-645.7 5425.8,-645.7 5425.8,-645.7 5227.8,-645.7 5227.8,-645.7 5221.8,-645.7 5215.8,-639.7 5215.8,-633.7 5215.8,-633.7 5215.8,-20 5215.8,-20 5215.8,-14 5221.8,-8 5227.8,-8"/>
+<text xml:space="preserve" text-anchor="middle" x="5326.8" y="-631.25" font-family="Helvetica,sans-Serif" font-size="11.00">Who acted</text>
+</g>
+<!-- &#45;1583775751203048358 -->
+<g id="node1" class="node">
+<title>&#45;1583775751203048358</title>
+<polygon fill="lightyellow" stroke="black" points="2392.6,-617.7 2293,-617.7 2293,-581.7 2392.6,-581.7 2392.6,-617.7"/>
+<text xml:space="preserve" text-anchor="start" x="2303.8" y="-596.58" font-family="Courier,monospace" font-size="10.00">Initial state</text>
+</g>
+<!-- &#45;5996246192659757960 -->
+<g id="node2" class="node">
+<title>&#45;5996246192659757960</title>
+<polygon fill="lightblue" stroke="black" points="4497.6,-507.58 4326,-507.58 4326,-460.48 4497.6,-460.48 4497.6,-507.58"/>
+<text xml:space="preserve" text-anchor="start" x="4336.8" y="-487.28" font-family="Courier,monospace" font-size="10.00">amend.a1.status: Proposed</text>
+<text xml:space="preserve" text-anchor="start" x="4336.8" y="-474.53" font-family="Courier,monospace" font-size="10.00">amend.a1.route: Congress</text>
+</g>
+<!-- &#45;1583775751203048358&#45;&gt;&#45;5996246192659757960 -->
+<g id="edge1" class="edge">
+<title>&#45;1583775751203048358&#45;&gt;&#45;5996246192659757960</title>
+<path fill="none" stroke="black" d="M2392.92,-595.95C2663.94,-581.06 3955.38,-510.1 4317.32,-490.22"/>
+<polygon fill="black" stroke="black" points="4317.33,-492.67 4324.18,-489.84 4317.06,-487.78 4317.33,-492.67"/>
+<text xml:space="preserve" text-anchor="middle" x="3357.64" y="-544.15" font-family="Helvetica,sans-Serif" font-size="9.00">ProposeByCongress</text>
+</g>
+<!-- &#45;8018841846248180306 -->
+<g id="node3" class="node">
+<title>&#45;8018841846248180306</title>
+<polygon fill="plum" stroke="black" points="987.6,-513.95 864,-513.95 864,-454.1 987.6,-454.1 987.6,-513.95"/>
+<text xml:space="preserve" text-anchor="start" x="874.8" y="-493.65" font-family="Courier,monospace" font-size="10.00">president: p1</text>
+<text xml:space="preserve" text-anchor="start" x="874.8" y="-480.9" font-family="Courier,monospace" font-size="10.00">vicePresident: p2</text>
+<text xml:space="preserve" text-anchor="start" x="874.8" y="-468.15" font-family="Courier,monospace" font-size="10.00">terms.p1: 1</text>
+</g>
+<!-- &#45;1583775751203048358&#45;&gt;&#45;8018841846248180306 -->
+<g id="edge2" class="edge">
+<title>&#45;1583775751203048358&#45;&gt;&#45;8018841846248180306</title>
+<path fill="none" stroke="black" d="M2292.78,-594.69C2079.47,-577.58 1245.32,-510.66 996.34,-490.68"/>
+<polygon fill="black" stroke="black" points="996.77,-488.26 989.59,-490.14 996.38,-493.14 996.77,-488.26"/>
+<text xml:space="preserve" text-anchor="middle" x="1771.34" y="-544.15" font-family="Helvetica,sans-Serif" font-size="9.00">Elect</text>
+</g>
+<!-- 1342840409419403879 -->
+<g id="node4" class="node">
+<title>1342840409419403879</title>
+<polygon fill="lightblue" stroke="black" points="2347.6,-502.03 2230,-502.03 2230,-466.03 2347.6,-466.03 2347.6,-502.03"/>
+<text xml:space="preserve" text-anchor="start" x="2240.8" y="-480.9" font-family="Courier,monospace" font-size="10.00">inSession: FALSE</text>
+</g>
+<!-- &#45;1583775751203048358&#45;&gt;1342840409419403879 -->
+<g id="edge3" class="edge">
+<title>&#45;1583775751203048358&#45;&gt;1342840409419403879</title>
+<path fill="none" stroke="black" d="M2334.6,-581.44C2325.56,-562.41 2310.94,-531.63 2300.65,-509.98"/>
+<polygon fill="black" stroke="black" points="2302.94,-509.09 2297.73,-503.82 2298.52,-511.19 2302.94,-509.09"/>
+<text xml:space="preserve" text-anchor="middle" x="2336.76" y="-544.15" font-family="Helvetica,sans-Serif" font-size="9.00">Adjourn</text>
+</g>
+<!-- 4520768960728595054 -->
+<g id="node5" class="node">
+<title>4520768960728595054</title>
+<polygon fill="plum" stroke="black" points="3725.6,-513.95 3602,-513.95 3602,-454.1 3725.6,-454.1 3725.6,-513.95"/>
+<text xml:space="preserve" text-anchor="start" x="3612.8" y="-493.65" font-family="Courier,monospace" font-size="10.00">president: p2</text>
+<text xml:space="preserve" text-anchor="start" x="3612.8" y="-480.9" font-family="Courier,monospace" font-size="10.00">vicePresident: p1</text>
+<text xml:space="preserve" text-anchor="start" x="3612.8" y="-468.15" font-family="Courier,monospace" font-size="10.00">terms.p2: 1</text>
+</g>
+<!-- &#45;1583775751203048358&#45;&gt;4520768960728595054 -->
+<g id="edge4" class="edge">
+<title>&#45;1583775751203048358&#45;&gt;4520768960728595054</title>
+<path fill="none" stroke="black" d="M2392.97,-594.38C2596.04,-576.91 3357.39,-511.39 3593.52,-491.07"/>
+<polygon fill="black" stroke="black" points="3593.42,-493.54 3600.18,-490.5 3593,-488.66 3593.42,-493.54"/>
+<text xml:space="preserve" text-anchor="middle" x="2973.82" y="-544.15" font-family="Helvetica,sans-Serif" font-size="9.00">Elect</text>
+</g>
+<!-- 4940748351521896810 -->
+<g id="node6" class="node">
+<title>4940748351521896810</title>
+<polygon fill="plum" stroke="black" points="1980.6,-507.58 1803,-507.58 1803,-460.48 1980.6,-460.48 1980.6,-507.58"/>
+<text xml:space="preserve" text-anchor="start" x="1813.8" y="-487.28" font-family="Courier,monospace" font-size="10.00">amend.a1.status: Proposed</text>
+<text xml:space="preserve" text-anchor="start" x="1813.8" y="-474.53" font-family="Courier,monospace" font-size="10.00">amend.a1.route: Convention</text>
+</g>
+<!-- &#45;1583775751203048358&#45;&gt;4940748351521896810 -->
+<g id="edge5" class="edge">
+<title>&#45;1583775751203048358&#45;&gt;4940748351521896810</title>
+<path fill="none" stroke="black" d="M2292.81,-586.1C2219.72,-567.68 2082.24,-533.02 1988.85,-509.49"/>
+<polygon fill="black" stroke="black" points="1989.66,-507.16 1982.27,-507.83 1988.46,-511.91 1989.66,-507.16"/>
+<text xml:space="preserve" text-anchor="middle" x="2203.82" y="-544.15" font-family="Helvetica,sans-Serif" font-size="9.00">ProposeByConvention</text>
+</g>
+<!-- 5830231356793042701 -->
+<g id="node7" class="node">
+<title>5830231356793042701</title>
+<polygon fill="lightblue" stroke="black" points="2564.6,-507.58 2405,-507.58 2405,-460.48 2564.6,-460.48 2564.6,-507.58"/>
+<text xml:space="preserve" text-anchor="start" x="2415.8" y="-487.28" font-family="Courier,monospace" font-size="10.00">bill.b1.status: Pending</text>
+<text xml:space="preserve" text-anchor="start" x="2415.8" y="-474.53" font-family="Courier,monospace" font-size="10.00">bill.b1.origin: House</text>
+</g>
+<!-- &#45;1583775751203048358&#45;&gt;5830231356793042701 -->
+<g id="edge6" class="edge">
+<title>&#45;1583775751203048358&#45;&gt;5830231356793042701</title>
+<path fill="none" stroke="black" d="M2364.37,-581.44C2386.97,-563.34 2422.84,-534.63 2449.56,-513.23"/>
+<polygon fill="black" stroke="black" points="2451.03,-515.2 2454.96,-508.91 2447.97,-511.37 2451.03,-515.2"/>
+<text xml:space="preserve" text-anchor="middle" x="2428.67" y="-544.15" font-family="Helvetica,sans-Serif" font-size="9.00">Introduce</text>
+</g>
+<!-- &#45;2991770793143777908 -->
+<g id="node9" class="node">
+<title>&#45;2991770793143777908</title>
+<polygon fill="plum" stroke="black" points="3311.6,-386.35 3140,-386.35 3140,-301 3311.6,-301 3311.6,-386.35"/>
+<text xml:space="preserve" text-anchor="start" x="3150.8" y="-366.05" font-family="Courier,monospace" font-size="10.00">amend.a1.status: Proposed</text>
+<text xml:space="preserve" text-anchor="start" x="3150.8" y="-353.3" font-family="Courier,monospace" font-size="10.00">amend.a1.route: Congress</text>
+<text xml:space="preserve" text-anchor="start" x="3150.8" y="-340.55" font-family="Courier,monospace" font-size="10.00">president: p1</text>
+<text xml:space="preserve" text-anchor="start" x="3150.8" y="-327.8" font-family="Courier,monospace" font-size="10.00">vicePresident: p2</text>
+<text xml:space="preserve" text-anchor="start" x="3150.8" y="-315.05" font-family="Courier,monospace" font-size="10.00">terms.p1: 1</text>
+</g>
+<!-- &#45;5996246192659757960&#45;&gt;&#45;2991770793143777908 -->
+<g id="edge7" class="edge">
+<title>&#45;5996246192659757960&#45;&gt;&#45;2991770793143777908</title>
+<path fill="none" stroke="black" d="M4325.66,-478.92C4228.67,-472.85 4066.93,-458.37 3931.55,-425.1 3919.67,-422.18 3917.78,-417.85 3905.8,-415.35 3651.84,-362.33 3575.53,-444.93 3322.8,-386.35 3321.91,-386.14 3321.01,-385.93 3320.12,-385.71"/>
+<polygon fill="black" stroke="black" points="3320.87,-383.37 3313.47,-383.91 3319.59,-388.1 3320.87,-383.37"/>
+<text xml:space="preserve" text-anchor="middle" x="3941.68" y="-416.55" font-family="Helvetica,sans-Serif" font-size="9.00">Elect</text>
+</g>
+<!-- 1400481366380101325 -->
+<g id="node23" class="node">
+<title>1400481366380101325</title>
+<polygon fill="plum" stroke="black" points="5207.6,-373.6 5036,-373.6 5036,-313.75 5207.6,-313.75 5207.6,-373.6"/>
+<text xml:space="preserve" text-anchor="start" x="5046.8" y="-353.3" font-family="Courier,monospace" font-size="10.00">amend.a1.status: Ratified</text>
+<text xml:space="preserve" text-anchor="start" x="5046.8" y="-340.55" font-family="Courier,monospace" font-size="10.00">amend.a1.route: Congress</text>
+<text xml:space="preserve" text-anchor="start" x="5046.8" y="-327.8" font-family="Courier,monospace" font-size="10.00">amend.a1.ratifications: 4</text>
+</g>
+<!-- &#45;5996246192659757960&#45;&gt;1400481366380101325 -->
+<g id="edge8" class="edge">
+<title>&#45;5996246192659757960&#45;&gt;1400481366380101325</title>
+<path fill="none" stroke="black" d="M4497.95,-476.8C4618.07,-466.47 4841.75,-441.23 5024.8,-386.35 5033.56,-383.72 5042.59,-380.54 5051.45,-377.11"/>
+<polygon fill="black" stroke="black" points="5052.17,-379.46 5057.77,-374.61 5050.36,-374.91 5052.17,-379.46"/>
+<text xml:space="preserve" text-anchor="middle" x="4921.68" y="-416.55" font-family="Helvetica,sans-Serif" font-size="9.00">Ratify</text>
+</g>
+<!-- 6084076948079501893 -->
+<g id="node31" class="node">
+<title>6084076948079501893</title>
+<polygon fill="lightblue" stroke="black" points="4065.6,-373.6 3894,-373.6 3894,-313.75 4065.6,-313.75 4065.6,-373.6"/>
+<text xml:space="preserve" text-anchor="start" x="3904.8" y="-353.3" font-family="Courier,monospace" font-size="10.00">amend.a1.status: Proposed</text>
+<text xml:space="preserve" text-anchor="start" x="3904.8" y="-340.55" font-family="Courier,monospace" font-size="10.00">amend.a1.route: Congress</text>
+<text xml:space="preserve" text-anchor="start" x="3904.8" y="-327.8" font-family="Courier,monospace" font-size="10.00">inSession: FALSE</text>
+</g>
+<!-- &#45;5996246192659757960&#45;&gt;6084076948079501893 -->
+<g id="edge9" class="edge">
+<title>&#45;5996246192659757960&#45;&gt;6084076948079501893</title>
+<path fill="none" stroke="black" d="M4325.62,-477.99C4259.16,-471.65 4166.13,-457.35 4090.55,-425.1 4064.32,-413.91 4038.34,-395.54 4018.15,-379.17"/>
+<polygon fill="black" stroke="black" points="4019.93,-377.47 4012.97,-374.91 4016.81,-381.25 4019.93,-377.47"/>
+<text xml:space="preserve" text-anchor="middle" x="4106.68" y="-416.55" font-family="Helvetica,sans-Serif" font-size="9.00">Adjourn</text>
+</g>
+<!-- 6136202946090912521 -->
+<g id="node32" class="node">
+<title>6136202946090912521</title>
+<polygon fill="lightblue" stroke="black" points="4819.6,-379.98 4648,-379.98 4648,-307.38 4819.6,-307.38 4819.6,-379.98"/>
+<text xml:space="preserve" text-anchor="start" x="4658.8" y="-359.68" font-family="Courier,monospace" font-size="10.00">bill.b1.status: Pending</text>
+<text xml:space="preserve" text-anchor="start" x="4658.8" y="-346.93" font-family="Courier,monospace" font-size="10.00">bill.b1.origin: House</text>
+<text xml:space="preserve" text-anchor="start" x="4658.8" y="-334.18" font-family="Courier,monospace" font-size="10.00">amend.a1.status: Proposed</text>
+<text xml:space="preserve" text-anchor="start" x="4658.8" y="-321.43" font-family="Courier,monospace" font-size="10.00">amend.a1.route: Congress</text>
+</g>
+<!-- &#45;5996246192659757960&#45;&gt;6136202946090912521 -->
+<g id="edge10" class="edge">
+<title>&#45;5996246192659757960&#45;&gt;6136202946090912521</title>
+<path fill="none" stroke="black" d="M4498.03,-475.82C4574.01,-467.79 4677.25,-452.21 4707.8,-425.1 4718.44,-415.66 4724.76,-401.83 4728.49,-388.29"/>
+<polygon fill="black" stroke="black" points="4730.78,-389.24 4730.05,-381.86 4726.02,-388.09 4730.78,-389.24"/>
+<text xml:space="preserve" text-anchor="middle" x="4734.48" y="-416.55" font-family="Helvetica,sans-Serif" font-size="9.00">Introduce</text>
+</g>
+<!-- 8678646393818499660 -->
+<g id="node39" class="node">
+<title>8678646393818499660</title>
+<polygon fill="plum" stroke="black" points="5013.6,-386.35 4842,-386.35 4842,-301 5013.6,-301 5013.6,-386.35"/>
+<text xml:space="preserve" text-anchor="start" x="4852.8" y="-366.05" font-family="Courier,monospace" font-size="10.00">amend.a1.status: Proposed</text>
+<text xml:space="preserve" text-anchor="start" x="4852.8" y="-353.3" font-family="Courier,monospace" font-size="10.00">amend.a1.route: Congress</text>
+<text xml:space="preserve" text-anchor="start" x="4852.8" y="-340.55" font-family="Courier,monospace" font-size="10.00">president: p2</text>
+<text xml:space="preserve" text-anchor="start" x="4852.8" y="-327.8" font-family="Courier,monospace" font-size="10.00">vicePresident: p1</text>
+<text xml:space="preserve" text-anchor="start" x="4852.8" y="-315.05" font-family="Courier,monospace" font-size="10.00">terms.p2: 1</text>
+</g>
+<!-- &#45;5996246192659757960&#45;&gt;8678646393818499660 -->
+<g id="edge11" class="edge">
+<title>&#45;5996246192659757960&#45;&gt;8678646393818499660</title>
+<path fill="none" stroke="black" d="M4497.85,-475.4C4569.03,-467.5 4672.14,-452.36 4758.8,-425.1 4787.27,-416.14 4817.07,-403.26 4843.58,-390.42"/>
+<polygon fill="black" stroke="black" points="4844.4,-392.75 4849.61,-387.47 4842.24,-388.34 4844.4,-392.75"/>
+<text xml:space="preserve" text-anchor="middle" x="4792.94" y="-416.55" font-family="Helvetica,sans-Serif" font-size="9.00">Elect</text>
+</g>
+<!-- &#45;1295441177398270381 -->
+<g id="node8" class="node">
+<title>&#45;1295441177398270381</title>
+<polygon fill="plum" stroke="black" points="269.6,-379.98 146,-379.98 146,-307.38 269.6,-307.38 269.6,-379.98"/>
+<text xml:space="preserve" text-anchor="start" x="156.8" y="-359.68" font-family="Courier,monospace" font-size="10.00">president: p2</text>
+<text xml:space="preserve" text-anchor="start" x="156.8" y="-346.93" font-family="Courier,monospace" font-size="10.00">vicePresident: p1</text>
+<text xml:space="preserve" text-anchor="start" x="156.8" y="-334.18" font-family="Courier,monospace" font-size="10.00">terms.p1: 1</text>
+<text xml:space="preserve" text-anchor="start" x="156.8" y="-321.43" font-family="Courier,monospace" font-size="10.00">terms.p2: 1</text>
+</g>
+<!-- &#45;8018841846248180306&#45;&gt;&#45;1295441177398270381 -->
+<g id="edge12" class="edge">
+<title>&#45;8018841846248180306&#45;&gt;&#45;1295441177398270381</title>
+<path fill="none" stroke="black" d="M863.78,-481.89C746.42,-477.99 485.33,-460.88 280.8,-386.35 278.55,-385.53 276.29,-384.64 274.03,-383.7"/>
+<polygon fill="black" stroke="black" points="275.13,-381.51 267.73,-380.93 273.15,-385.99 275.13,-381.51"/>
+<text xml:space="preserve" text-anchor="middle" x="409.91" y="-416.55" font-family="Helvetica,sans-Serif" font-size="9.00">Elect</text>
+</g>
+<!-- &#45;8018841846248180306&#45;&gt;&#45;2991770793143777908 -->
+<g id="edge13" class="edge">
+<title>&#45;8018841846248180306&#45;&gt;&#45;2991770793143777908</title>
+<path fill="none" stroke="black" d="M988.01,-480.68C1130.31,-475.36 1490.48,-462.25 1791.8,-454.1 1830.68,-453.05 3159.6,-446.93 3191.8,-425.1 3202.5,-417.84 3209.85,-406.49 3214.89,-394.58"/>
+<polygon fill="black" stroke="black" points="3217.14,-395.54 3217.34,-388.12 3212.56,-393.8 3217.14,-395.54"/>
+<text xml:space="preserve" text-anchor="middle" x="3244.48" y="-416.55" font-family="Helvetica,sans-Serif" font-size="9.00">ProposeByCongress</text>
+</g>
+<!-- &#45;4131767388685832508 -->
+<g id="node10" class="node">
+<title>&#45;4131767388685832508</title>
+<polygon fill="lightcoral" stroke="black" points="415.6,-379.98 292,-379.98 292,-307.38 415.6,-307.38 415.6,-379.98"/>
+<text xml:space="preserve" text-anchor="start" x="302.8" y="-359.68" font-family="Courier,monospace" font-size="10.00">president: p1</text>
+<text xml:space="preserve" text-anchor="start" x="302.8" y="-346.93" font-family="Courier,monospace" font-size="10.00">vicePresident: p2</text>
+<text xml:space="preserve" text-anchor="start" x="302.8" y="-334.18" font-family="Courier,monospace" font-size="10.00">impeached: {p2}</text>
+<text xml:space="preserve" text-anchor="start" x="302.8" y="-321.43" font-family="Courier,monospace" font-size="10.00">terms.p1: 1</text>
+</g>
+<!-- &#45;8018841846248180306&#45;&gt;&#45;4131767388685832508 -->
+<g id="edge14" class="edge">
+<title>&#45;8018841846248180306&#45;&gt;&#45;4131767388685832508</title>
+<path fill="none" stroke="black" d="M863.69,-477.75C767.48,-468.09 577.75,-443.1 426.8,-386.35 424.62,-385.53 422.43,-384.65 420.24,-383.73"/>
+<polygon fill="black" stroke="black" points="421.57,-381.64 414.18,-381.02 419.57,-386.11 421.57,-381.64"/>
+<text xml:space="preserve" text-anchor="middle" x="563.89" y="-416.55" font-family="Helvetica,sans-Serif" font-size="9.00">Impeach</text>
+</g>
+<!-- &#45;4371425041843887036 -->
+<g id="node12" class="node">
+<title>&#45;4371425041843887036</title>
+<polygon fill="plum" stroke="black" points="561.6,-373.6 438,-373.6 438,-313.75 561.6,-313.75 561.6,-373.6"/>
+<text xml:space="preserve" text-anchor="start" x="448.8" y="-353.3" font-family="Courier,monospace" font-size="10.00">president: p1</text>
+<text xml:space="preserve" text-anchor="start" x="448.8" y="-340.55" font-family="Courier,monospace" font-size="10.00">vicePresident: p2</text>
+<text xml:space="preserve" text-anchor="start" x="448.8" y="-327.8" font-family="Courier,monospace" font-size="10.00">terms.p1: 2</text>
+</g>
+<!-- &#45;8018841846248180306&#45;&gt;&#45;4371425041843887036 -->
+<g id="edge15" class="edge">
+<title>&#45;8018841846248180306&#45;&gt;&#45;4371425041843887036</title>
+<path fill="none" stroke="black" d="M863.66,-470.97C791.9,-455.92 671.12,-427.11 572.8,-386.35 566.83,-383.87 560.74,-381.01 554.75,-377.96"/>
+<polygon fill="black" stroke="black" points="555.91,-375.8 548.57,-374.72 553.63,-380.14 555.91,-375.8"/>
+<text xml:space="preserve" text-anchor="middle" x="687" y="-416.55" font-family="Helvetica,sans-Serif" font-size="9.00">Elect</text>
+</g>
+<!-- &#45;539288352393075515 -->
+<g id="node15" class="node">
+<title>&#45;539288352393075515</title>
+<polygon fill="lightsalmon" stroke="black" points="707.6,-379.98 584,-379.98 584,-307.38 707.6,-307.38 707.6,-379.98"/>
+<text xml:space="preserve" text-anchor="start" x="594.8" y="-359.68" font-family="Courier,monospace" font-size="10.00">nominee.o1: p1</text>
+<text xml:space="preserve" text-anchor="start" x="594.8" y="-346.93" font-family="Courier,monospace" font-size="10.00">president: p1</text>
+<text xml:space="preserve" text-anchor="start" x="594.8" y="-334.18" font-family="Courier,monospace" font-size="10.00">vicePresident: p2</text>
+<text xml:space="preserve" text-anchor="start" x="594.8" y="-321.43" font-family="Courier,monospace" font-size="10.00">terms.p1: 1</text>
+</g>
+<!-- &#45;8018841846248180306&#45;&gt;&#45;539288352393075515 -->
+<g id="edge16" class="edge">
+<title>&#45;8018841846248180306&#45;&gt;&#45;539288352393075515</title>
+<path fill="none" stroke="black" d="M863.57,-455.56C822.13,-436.89 766.7,-411.16 718.8,-386.35 717.39,-385.62 715.97,-384.88 714.54,-384.12"/>
+<polygon fill="black" stroke="black" points="716,-382.13 708.67,-380.99 713.69,-386.45 716,-382.13"/>
+<text xml:space="preserve" text-anchor="middle" x="811.89" y="-416.55" font-family="Helvetica,sans-Serif" font-size="9.00">Nominate</text>
+</g>
+<!-- &#45;5437666073020288708 -->
+<g id="node16" class="node">
+<title>&#45;5437666073020288708</title>
+<polygon fill="lightsalmon" stroke="black" points="853.6,-379.98 730,-379.98 730,-307.38 853.6,-307.38 853.6,-379.98"/>
+<text xml:space="preserve" text-anchor="start" x="740.8" y="-359.68" font-family="Courier,monospace" font-size="10.00">nominee.o1: p2</text>
+<text xml:space="preserve" text-anchor="start" x="740.8" y="-346.93" font-family="Courier,monospace" font-size="10.00">president: p1</text>
+<text xml:space="preserve" text-anchor="start" x="740.8" y="-334.18" font-family="Courier,monospace" font-size="10.00">vicePresident: p2</text>
+<text xml:space="preserve" text-anchor="start" x="740.8" y="-321.43" font-family="Courier,monospace" font-size="10.00">terms.p1: 1</text>
+</g>
+<!-- &#45;8018841846248180306&#45;&gt;&#45;5437666073020288708 -->
+<g id="edge17" class="edge">
+<title>&#45;8018841846248180306&#45;&gt;&#45;5437666073020288708</title>
+<path fill="none" stroke="black" d="M897.38,-453.68C878.42,-434.11 853.21,-408.08 832.18,-386.36"/>
+<polygon fill="black" stroke="black" points="834.05,-384.77 827.42,-381.45 830.53,-388.18 834.05,-384.77"/>
+<text xml:space="preserve" text-anchor="middle" x="886.7" y="-416.55" font-family="Helvetica,sans-Serif" font-size="9.00">Nominate</text>
+</g>
+<!-- &#45;7168438679818300607 -->
+<g id="node19" class="node">
+<title>&#45;7168438679818300607</title>
+<polygon fill="lightcoral" stroke="black" points="123.6,-379.98 0,-379.98 0,-307.38 123.6,-307.38 123.6,-379.98"/>
+<text xml:space="preserve" text-anchor="start" x="10.8" y="-359.68" font-family="Courier,monospace" font-size="10.00">president: p1</text>
+<text xml:space="preserve" text-anchor="start" x="10.8" y="-346.93" font-family="Courier,monospace" font-size="10.00">vicePresident: p2</text>
+<text xml:space="preserve" text-anchor="start" x="10.8" y="-334.18" font-family="Courier,monospace" font-size="10.00">impeached: {p1}</text>
+<text xml:space="preserve" text-anchor="start" x="10.8" y="-321.43" font-family="Courier,monospace" font-size="10.00">terms.p1: 1</text>
+</g>
+<!-- &#45;8018841846248180306&#45;&gt;&#45;7168438679818300607 -->
+<g id="edge18" class="edge">
+<title>&#45;8018841846248180306&#45;&gt;&#45;7168438679818300607</title>
+<path fill="none" stroke="black" d="M863.87,-478.62C757.11,-470.64 531.68,-452.08 342.55,-425.1 249.57,-411.84 222.98,-418.7 134.8,-386.35 132.55,-385.53 130.29,-384.64 128.03,-383.69"/>
+<polygon fill="black" stroke="black" points="129.13,-381.5 121.74,-380.91 127.15,-385.98 129.13,-381.5"/>
+<text xml:space="preserve" text-anchor="middle" x="360.18" y="-416.55" font-family="Helvetica,sans-Serif" font-size="9.00">Impeach</text>
+</g>
+<!-- 3052087102599788281 -->
+<g id="node26" class="node">
+<title>3052087102599788281</title>
+<polygon fill="lightblue" stroke="black" points="2025.6,-386.35 1866,-386.35 1866,-301 2025.6,-301 2025.6,-386.35"/>
+<text xml:space="preserve" text-anchor="start" x="1876.8" y="-366.05" font-family="Courier,monospace" font-size="10.00">bill.b1.status: Pending</text>
+<text xml:space="preserve" text-anchor="start" x="1876.8" y="-353.3" font-family="Courier,monospace" font-size="10.00">bill.b1.origin: House</text>
+<text xml:space="preserve" text-anchor="start" x="1876.8" y="-340.55" font-family="Courier,monospace" font-size="10.00">president: p1</text>
+<text xml:space="preserve" text-anchor="start" x="1876.8" y="-327.8" font-family="Courier,monospace" font-size="10.00">vicePresident: p2</text>
+<text xml:space="preserve" text-anchor="start" x="1876.8" y="-315.05" font-family="Courier,monospace" font-size="10.00">terms.p1: 1</text>
+</g>
+<!-- &#45;8018841846248180306&#45;&gt;3052087102599788281 -->
+<g id="edge19" class="edge">
+<title>&#45;8018841846248180306&#45;&gt;3052087102599788281</title>
+<path fill="none" stroke="black" d="M987.74,-476.03C1099.8,-463.43 1343.65,-436.3 1549.55,-415.35 1685.13,-401.56 1723.18,-421.66 1854.8,-386.35 1855.81,-386.08 1856.83,-385.8 1857.85,-385.5"/>
+<polygon fill="black" stroke="black" points="1858.29,-387.93 1864.25,-383.53 1856.84,-383.25 1858.29,-387.93"/>
+<text xml:space="preserve" text-anchor="middle" x="1568.67" y="-416.55" font-family="Helvetica,sans-Serif" font-size="9.00">Introduce</text>
+</g>
+<!-- 4477429022429804702 -->
+<g id="node29" class="node">
+<title>4477429022429804702</title>
+<polygon fill="plum" stroke="black" points="1297.6,-386.35 1120,-386.35 1120,-301 1297.6,-301 1297.6,-386.35"/>
+<text xml:space="preserve" text-anchor="start" x="1130.8" y="-366.05" font-family="Courier,monospace" font-size="10.00">amend.a1.status: Proposed</text>
+<text xml:space="preserve" text-anchor="start" x="1130.8" y="-353.3" font-family="Courier,monospace" font-size="10.00">amend.a1.route: Convention</text>
+<text xml:space="preserve" text-anchor="start" x="1130.8" y="-340.55" font-family="Courier,monospace" font-size="10.00">president: p1</text>
+<text xml:space="preserve" text-anchor="start" x="1130.8" y="-327.8" font-family="Courier,monospace" font-size="10.00">vicePresident: p2</text>
+<text xml:space="preserve" text-anchor="start" x="1130.8" y="-315.05" font-family="Courier,monospace" font-size="10.00">terms.p1: 1</text>
+</g>
+<!-- &#45;8018841846248180306&#45;&gt;4477429022429804702 -->
+<g id="edge20" class="edge">
+<title>&#45;8018841846248180306&#45;&gt;4477429022429804702</title>
+<path fill="none" stroke="black" d="M988.04,-468.13C1022.93,-458.45 1066.57,-444.08 1102.8,-425.1 1120.35,-415.91 1138.03,-403.85 1153.79,-391.88"/>
+<polygon fill="black" stroke="black" points="1155.18,-393.9 1159.22,-387.68 1152.19,-390.02 1155.18,-393.9"/>
+<text xml:space="preserve" text-anchor="middle" x="1164.62" y="-416.55" font-family="Helvetica,sans-Serif" font-size="9.00">ProposeByConvention</text>
+</g>
+<!-- 6597789286719494889 -->
+<g id="node35" class="node">
+<title>6597789286719494889</title>
+<polygon fill="lightgray" stroke="black" points="975.6,-367.23 876,-367.23 876,-320.12 975.6,-320.12 975.6,-367.23"/>
+<text xml:space="preserve" text-anchor="start" x="886.8" y="-346.93" font-family="Courier,monospace" font-size="10.00">president: p1</text>
+<text xml:space="preserve" text-anchor="start" x="886.8" y="-334.18" font-family="Courier,monospace" font-size="10.00">terms.p1: 1</text>
+</g>
+<!-- &#45;8018841846248180306&#45;&gt;6597789286719494889 -->
+<g id="edge21" class="edge">
+<title>&#45;8018841846248180306&#45;&gt;6597789286719494889</title>
+<path fill="none" stroke="black" d="M925.8,-453.68C925.8,-430.9 925.8,-399.36 925.8,-376.07"/>
+<polygon fill="black" stroke="black" points="928.25,-376.09 925.8,-369.09 923.35,-376.09 928.25,-376.09"/>
+<text xml:space="preserve" text-anchor="middle" x="970.42" y="-416.55" font-family="Helvetica,sans-Serif" font-size="9.00">VicePresidentVacates</text>
+</g>
+<!-- 7498686581101237139 -->
+<g id="node36" class="node">
+<title>7498686581101237139</title>
+<polygon fill="lightblue" stroke="black" points="1443.6,-379.98 1320,-379.98 1320,-307.38 1443.6,-307.38 1443.6,-379.98"/>
+<text xml:space="preserve" text-anchor="start" x="1330.8" y="-359.68" font-family="Courier,monospace" font-size="10.00">president: p1</text>
+<text xml:space="preserve" text-anchor="start" x="1330.8" y="-346.93" font-family="Courier,monospace" font-size="10.00">vicePresident: p2</text>
+<text xml:space="preserve" text-anchor="start" x="1330.8" y="-334.18" font-family="Courier,monospace" font-size="10.00">inSession: FALSE</text>
+<text xml:space="preserve" text-anchor="start" x="1330.8" y="-321.43" font-family="Courier,monospace" font-size="10.00">terms.p1: 1</text>
+</g>
+<!-- &#45;8018841846248180306&#45;&gt;7498686581101237139 -->
+<g id="edge22" class="edge">
+<title>&#45;8018841846248180306&#45;&gt;7498686581101237139</title>
+<path fill="none" stroke="black" d="M988.06,-474.24C1047.39,-465.02 1138.82,-448.57 1215.8,-425.1 1258.63,-412.04 1268.61,-406.1 1308.8,-386.35 1310.22,-385.65 1311.66,-384.93 1313.1,-384.21"/>
+<polygon fill="black" stroke="black" points="1313.91,-386.54 1319.01,-381.16 1311.67,-382.19 1313.91,-386.54"/>
+<text xml:space="preserve" text-anchor="middle" x="1259.78" y="-416.55" font-family="Helvetica,sans-Serif" font-size="9.00">Adjourn</text>
+</g>
+<!-- 8524136949502351890 -->
+<g id="node38" class="node">
+<title>8524136949502351890</title>
+<polygon fill="lightgray" stroke="black" points="1097.6,-367.23 998,-367.23 998,-320.12 1097.6,-320.12 1097.6,-367.23"/>
+<text xml:space="preserve" text-anchor="start" x="1008.8" y="-346.93" font-family="Courier,monospace" font-size="10.00">president: p2</text>
+<text xml:space="preserve" text-anchor="start" x="1008.8" y="-334.18" font-family="Courier,monospace" font-size="10.00">terms.p1: 1</text>
+</g>
+<!-- &#45;8018841846248180306&#45;&gt;8524136949502351890 -->
+<g id="edge23" class="edge">
+<title>&#45;8018841846248180306&#45;&gt;8524136949502351890</title>
+<path fill="none" stroke="black" d="M986.82,-453.91C999,-445.92 1010.8,-436.31 1019.8,-425.1 1031.23,-410.87 1038.15,-391.65 1042.25,-375.58"/>
+<polygon fill="black" stroke="black" points="1044.59,-376.35 1043.8,-368.97 1039.82,-375.23 1044.59,-376.35"/>
+<text xml:space="preserve" text-anchor="middle" x="1061.97" y="-416.55" font-family="Helvetica,sans-Serif" font-size="9.00">PresidentVacates</text>
+</g>
+<!-- &#45;4171730672902792109 -->
+<g id="node11" class="node">
+<title>&#45;4171730672902792109</title>
+<polygon fill="plum" stroke="black" points="2935.6,-379.98 2812,-379.98 2812,-307.38 2935.6,-307.38 2935.6,-379.98"/>
+<text xml:space="preserve" text-anchor="start" x="2822.8" y="-359.68" font-family="Courier,monospace" font-size="10.00">president: p2</text>
+<text xml:space="preserve" text-anchor="start" x="2822.8" y="-346.93" font-family="Courier,monospace" font-size="10.00">vicePresident: p1</text>
+<text xml:space="preserve" text-anchor="start" x="2822.8" y="-334.18" font-family="Courier,monospace" font-size="10.00">inSession: FALSE</text>
+<text xml:space="preserve" text-anchor="start" x="2822.8" y="-321.43" font-family="Courier,monospace" font-size="10.00">terms.p2: 1</text>
+</g>
+<!-- 1342840409419403879&#45;&gt;&#45;4171730672902792109 -->
+<g id="edge24" class="edge">
+<title>1342840409419403879&#45;&gt;&#45;4171730672902792109</title>
+<path fill="none" stroke="black" d="M2347.9,-466.57C2362.86,-462.45 2378.91,-458.08 2393.8,-454.1 2410.4,-449.66 2526.65,-418.47 2543.55,-415.35 2656.69,-394.44 2691.42,-422.05 2800.8,-386.35 2803.37,-385.51 2805.94,-384.58 2808.52,-383.57"/>
+<polygon fill="black" stroke="black" points="2809.32,-385.89 2814.81,-380.9 2807.41,-381.37 2809.32,-385.89"/>
+<text xml:space="preserve" text-anchor="middle" x="2553.68" y="-416.55" font-family="Helvetica,sans-Serif" font-size="9.00">Elect</text>
+</g>
+<!-- &#45;4884463761628405929 -->
+<g id="node13" class="node">
+<title>&#45;4884463761628405929</title>
+<polygon fill="plum" stroke="black" points="1843.6,-373.6 1666,-373.6 1666,-313.75 1843.6,-313.75 1843.6,-373.6"/>
+<text xml:space="preserve" text-anchor="start" x="1676.8" y="-353.3" font-family="Courier,monospace" font-size="10.00">amend.a1.status: Proposed</text>
+<text xml:space="preserve" text-anchor="start" x="1676.8" y="-340.55" font-family="Courier,monospace" font-size="10.00">amend.a1.route: Convention</text>
+<text xml:space="preserve" text-anchor="start" x="1676.8" y="-327.8" font-family="Courier,monospace" font-size="10.00">inSession: FALSE</text>
+</g>
+<!-- 1342840409419403879&#45;&gt;&#45;4884463761628405929 -->
+<g id="edge25" class="edge">
+<title>1342840409419403879&#45;&gt;&#45;4884463761628405929</title>
+<path fill="none" stroke="black" d="M2229.73,-480.55C2152.65,-475.9 2014.41,-462.62 1902.55,-425.1 1868.75,-413.76 1833.58,-394.94 1806.04,-378.36"/>
+<polygon fill="black" stroke="black" points="1807.39,-376.32 1800.14,-374.76 1804.84,-380.5 1807.39,-376.32"/>
+<text xml:space="preserve" text-anchor="middle" x="1948.67" y="-416.55" font-family="Helvetica,sans-Serif" font-size="9.00">ProposeByConvention</text>
+</g>
+<!-- &#45;6318881351077474000 -->
+<g id="node18" class="node">
+<title>&#45;6318881351077474000</title>
+<polygon fill="lightblue" stroke="black" points="2407.6,-373.6 2248,-373.6 2248,-313.75 2407.6,-313.75 2407.6,-373.6"/>
+<text xml:space="preserve" text-anchor="start" x="2258.8" y="-353.3" font-family="Courier,monospace" font-size="10.00">bill.b1.status: Pending</text>
+<text xml:space="preserve" text-anchor="start" x="2258.8" y="-340.55" font-family="Courier,monospace" font-size="10.00">bill.b1.origin: House</text>
+<text xml:space="preserve" text-anchor="start" x="2258.8" y="-327.8" font-family="Courier,monospace" font-size="10.00">inSession: FALSE</text>
+</g>
+<!-- 1342840409419403879&#45;&gt;&#45;6318881351077474000 -->
+<g id="edge26" class="edge">
+<title>1342840409419403879&#45;&gt;&#45;6318881351077474000</title>
+<path fill="none" stroke="black" d="M2270.15,-465.57C2258.13,-452.1 2246.03,-432.88 2253.55,-415.35 2259.35,-401.83 2269.15,-389.66 2279.76,-379.4"/>
+<polygon fill="black" stroke="black" points="2281.13,-381.47 2284.6,-374.92 2277.8,-377.87 2281.13,-381.47"/>
+<text xml:space="preserve" text-anchor="middle" x="2272.68" y="-416.55" font-family="Helvetica,sans-Serif" font-size="9.00">Introduce</text>
+</g>
+<!-- 1342840409419403879&#45;&gt;6084076948079501893 -->
+<g id="edge27" class="edge">
+<title>1342840409419403879&#45;&gt;6084076948079501893</title>
+<path fill="none" stroke="black" d="M2342.21,-465.57C2358.59,-460.96 2376.77,-456.59 2393.8,-454.1 2693.8,-410.28 3458.54,-473.68 3757.8,-425.1 3810.86,-416.49 3867.81,-395.6 3910.74,-377.27"/>
+<polygon fill="black" stroke="black" points="3911.47,-379.62 3916.93,-374.6 3909.53,-375.12 3911.47,-379.62"/>
+<text xml:space="preserve" text-anchor="middle" x="3844.19" y="-416.55" font-family="Helvetica,sans-Serif" font-size="9.00">ProposeByCongress</text>
+</g>
+<!-- 1342840409419403879&#45;&gt;7498686581101237139 -->
+<g id="edge28" class="edge">
+<title>1342840409419403879&#45;&gt;7498686581101237139</title>
+<path fill="none" stroke="black" d="M2229.69,-477.29C2085.86,-463.31 1727.5,-428.41 1701.55,-425.1 1591.43,-411.03 1559.56,-423.08 1454.8,-386.35 1452.54,-385.56 1450.27,-384.7 1448,-383.78"/>
+<polygon fill="black" stroke="black" points="1449.09,-381.58 1441.69,-381.05 1447.14,-386.08 1449.09,-381.58"/>
+<text xml:space="preserve" text-anchor="middle" x="1711.67" y="-416.55" font-family="Helvetica,sans-Serif" font-size="9.00">Elect</text>
+</g>
+<!-- 4520768960728595054&#45;&gt;&#45;4171730672902792109 -->
+<g id="edge29" class="edge">
+<title>4520768960728595054&#45;&gt;&#45;4171730672902792109</title>
+<path fill="none" stroke="black" d="M3601.87,-479.88C3496.83,-473.83 3277.35,-458.16 3094.55,-425.1 3027.75,-413.02 3009.65,-412.01 2946.8,-386.35 2944.85,-385.55 2942.89,-384.71 2940.92,-383.84"/>
+<polygon fill="black" stroke="black" points="2942.08,-381.68 2934.7,-380.95 2940.01,-386.12 2942.08,-381.68"/>
+<text xml:space="preserve" text-anchor="middle" x="3110.68" y="-416.55" font-family="Helvetica,sans-Serif" font-size="9.00">Adjourn</text>
+</g>
+<!-- &#45;5299060468968593250 -->
+<g id="node14" class="node">
+<title>&#45;5299060468968593250</title>
+<polygon fill="plum" stroke="black" points="4503.6,-379.98 4380,-379.98 4380,-307.38 4503.6,-307.38 4503.6,-379.98"/>
+<text xml:space="preserve" text-anchor="start" x="4390.8" y="-359.68" font-family="Courier,monospace" font-size="10.00">president: p1</text>
+<text xml:space="preserve" text-anchor="start" x="4390.8" y="-346.93" font-family="Courier,monospace" font-size="10.00">vicePresident: p2</text>
+<text xml:space="preserve" text-anchor="start" x="4390.8" y="-334.18" font-family="Courier,monospace" font-size="10.00">terms.p1: 1</text>
+<text xml:space="preserve" text-anchor="start" x="4390.8" y="-321.43" font-family="Courier,monospace" font-size="10.00">terms.p2: 1</text>
+</g>
+<!-- 4520768960728595054&#45;&gt;&#45;5299060468968593250 -->
+<g id="edge30" class="edge">
+<title>4520768960728595054&#45;&gt;&#45;5299060468968593250</title>
+<path fill="none" stroke="black" d="M3726.06,-480.61C3832.17,-475.65 4054.49,-461.51 4238.8,-425.1 4297.95,-413.42 4313.37,-410.06 4368.8,-386.35 4370.68,-385.55 4372.57,-384.71 4374.47,-383.84"/>
+<polygon fill="black" stroke="black" points="4375.17,-386.22 4380.43,-380.99 4373.06,-381.79 4375.17,-386.22"/>
+<text xml:space="preserve" text-anchor="middle" x="4295.02" y="-416.55" font-family="Helvetica,sans-Serif" font-size="9.00">Elect</text>
+</g>
+<!-- &#45;5914361729159537692 -->
+<g id="node17" class="node">
+<title>&#45;5914361729159537692</title>
+<polygon fill="lightgray" stroke="black" points="4625.6,-367.23 4526,-367.23 4526,-320.12 4625.6,-320.12 4625.6,-367.23"/>
+<text xml:space="preserve" text-anchor="start" x="4536.8" y="-346.93" font-family="Courier,monospace" font-size="10.00">president: p1</text>
+<text xml:space="preserve" text-anchor="start" x="4536.8" y="-334.18" font-family="Courier,monospace" font-size="10.00">terms.p2: 1</text>
+</g>
+<!-- 4520768960728595054&#45;&gt;&#45;5914361729159537692 -->
+<g id="edge31" class="edge">
+<title>4520768960728595054&#45;&gt;&#45;5914361729159537692</title>
+<path fill="none" stroke="black" d="M3725.94,-479.47C3841.36,-472.43 4096.5,-454.75 4309.8,-425.1 4401.64,-412.33 4429.15,-421.87 4514.8,-386.35 4523.69,-382.67 4532.6,-377.56 4540.76,-372.19"/>
+<polygon fill="black" stroke="black" points="4541.78,-374.46 4546.18,-368.49 4539.02,-370.42 4541.78,-374.46"/>
+<text xml:space="preserve" text-anchor="middle" x="4439.72" y="-416.55" font-family="Helvetica,sans-Serif" font-size="9.00">PresidentVacates</text>
+</g>
+<!-- &#45;8059012036573268130 -->
+<g id="node20" class="node">
+<title>&#45;8059012036573268130</title>
+<polygon fill="plum" stroke="black" points="2607.6,-386.35 2430,-386.35 2430,-301 2607.6,-301 2607.6,-386.35"/>
+<text xml:space="preserve" text-anchor="start" x="2440.8" y="-366.05" font-family="Courier,monospace" font-size="10.00">amend.a1.status: Proposed</text>
+<text xml:space="preserve" text-anchor="start" x="2440.8" y="-353.3" font-family="Courier,monospace" font-size="10.00">amend.a1.route: Convention</text>
+<text xml:space="preserve" text-anchor="start" x="2440.8" y="-340.55" font-family="Courier,monospace" font-size="10.00">president: p2</text>
+<text xml:space="preserve" text-anchor="start" x="2440.8" y="-327.8" font-family="Courier,monospace" font-size="10.00">vicePresident: p1</text>
+<text xml:space="preserve" text-anchor="start" x="2440.8" y="-315.05" font-family="Courier,monospace" font-size="10.00">terms.p2: 1</text>
+</g>
+<!-- 4520768960728595054&#45;&gt;&#45;8059012036573268130 -->
+<g id="edge32" class="edge">
+<title>4520768960728595054&#45;&gt;&#45;8059012036573268130</title>
+<path fill="none" stroke="black" d="M3601.63,-482.55C3385.83,-480.49 2677.34,-470.33 2586.55,-425.1 2571.94,-417.82 2559.27,-405.81 2548.97,-393.27"/>
+<polygon fill="black" stroke="black" points="2550.98,-391.87 2544.73,-387.88 2547.13,-394.9 2550.98,-391.87"/>
+<text xml:space="preserve" text-anchor="middle" x="2632.68" y="-416.55" font-family="Helvetica,sans-Serif" font-size="9.00">ProposeByConvention</text>
+</g>
+<!-- &#45;8912456854936553159 -->
+<g id="node21" class="node">
+<title>&#45;8912456854936553159</title>
+<polygon fill="lightblue" stroke="black" points="3117.6,-386.35 2958,-386.35 2958,-301 3117.6,-301 3117.6,-386.35"/>
+<text xml:space="preserve" text-anchor="start" x="2968.8" y="-366.05" font-family="Courier,monospace" font-size="10.00">bill.b1.status: Pending</text>
+<text xml:space="preserve" text-anchor="start" x="2968.8" y="-353.3" font-family="Courier,monospace" font-size="10.00">bill.b1.origin: House</text>
+<text xml:space="preserve" text-anchor="start" x="2968.8" y="-340.55" font-family="Courier,monospace" font-size="10.00">president: p2</text>
+<text xml:space="preserve" text-anchor="start" x="2968.8" y="-327.8" font-family="Courier,monospace" font-size="10.00">vicePresident: p1</text>
+<text xml:space="preserve" text-anchor="start" x="2968.8" y="-315.05" font-family="Courier,monospace" font-size="10.00">terms.p2: 1</text>
+</g>
+<!-- 4520768960728595054&#45;&gt;&#45;8912456854936553159 -->
+<g id="edge33" class="edge">
+<title>4520768960728595054&#45;&gt;&#45;8912456854936553159</title>
+<path fill="none" stroke="black" d="M3601.71,-479.83C3484.1,-473.14 3233.37,-455.71 3152.55,-425.1 3131.58,-417.16 3110.83,-404.51 3092.87,-391.57"/>
+<polygon fill="black" stroke="black" points="3094.69,-389.87 3087.6,-387.69 3091.79,-393.81 3094.69,-389.87"/>
+<text xml:space="preserve" text-anchor="middle" x="3171.68" y="-416.55" font-family="Helvetica,sans-Serif" font-size="9.00">Introduce</text>
+</g>
+<!-- &#45;9209816892060837089 -->
+<g id="node22" class="node">
+<title>&#45;9209816892060837089</title>
+<polygon fill="lightgray" stroke="black" points="3433.6,-367.23 3334,-367.23 3334,-320.12 3433.6,-320.12 3433.6,-367.23"/>
+<text xml:space="preserve" text-anchor="start" x="3344.8" y="-346.93" font-family="Courier,monospace" font-size="10.00">president: p2</text>
+<text xml:space="preserve" text-anchor="start" x="3344.8" y="-334.18" font-family="Courier,monospace" font-size="10.00">terms.p2: 1</text>
+</g>
+<!-- 4520768960728595054&#45;&gt;&#45;9209816892060837089 -->
+<g id="edge34" class="edge">
+<title>4520768960728595054&#45;&gt;&#45;9209816892060837089</title>
+<path fill="none" stroke="black" d="M3601.75,-465.25C3570.57,-455.26 3532.69,-441.51 3500.55,-425.1 3471.55,-410.29 3441.34,-389.31 3418.91,-372.48"/>
+<polygon fill="black" stroke="black" points="3420.48,-370.6 3413.42,-368.32 3417.52,-374.5 3420.48,-370.6"/>
+<text xml:space="preserve" text-anchor="middle" x="3545.18" y="-416.55" font-family="Helvetica,sans-Serif" font-size="9.00">VicePresidentVacates</text>
+</g>
+<!-- 1910125739008507644 -->
+<g id="node25" class="node">
+<title>1910125739008507644</title>
+<polygon fill="lightsalmon" stroke="black" points="3579.6,-379.98 3456,-379.98 3456,-307.38 3579.6,-307.38 3579.6,-379.98"/>
+<text xml:space="preserve" text-anchor="start" x="3466.8" y="-359.68" font-family="Courier,monospace" font-size="10.00">nominee.o1: p2</text>
+<text xml:space="preserve" text-anchor="start" x="3466.8" y="-346.93" font-family="Courier,monospace" font-size="10.00">president: p2</text>
+<text xml:space="preserve" text-anchor="start" x="3466.8" y="-334.18" font-family="Courier,monospace" font-size="10.00">vicePresident: p1</text>
+<text xml:space="preserve" text-anchor="start" x="3466.8" y="-321.43" font-family="Courier,monospace" font-size="10.00">terms.p2: 1</text>
+</g>
+<!-- 4520768960728595054&#45;&gt;1910125739008507644 -->
+<g id="edge35" class="edge">
+<title>4520768960728595054&#45;&gt;1910125739008507644</title>
+<path fill="none" stroke="black" d="M3632.84,-453.68C3612.09,-434.03 3584.47,-407.85 3561.5,-386.08"/>
+<polygon fill="black" stroke="black" points="3563.32,-384.44 3556.56,-381.4 3559.95,-387.99 3563.32,-384.44"/>
+<text xml:space="preserve" text-anchor="middle" x="3619.42" y="-416.55" font-family="Helvetica,sans-Serif" font-size="9.00">Nominate</text>
+</g>
+<!-- 3823811657737837691 -->
+<g id="node27" class="node">
+<title>3823811657737837691</title>
+<polygon fill="lightcoral" stroke="black" points="3725.6,-379.98 3602,-379.98 3602,-307.38 3725.6,-307.38 3725.6,-379.98"/>
+<text xml:space="preserve" text-anchor="start" x="3612.8" y="-359.68" font-family="Courier,monospace" font-size="10.00">president: p2</text>
+<text xml:space="preserve" text-anchor="start" x="3612.8" y="-346.93" font-family="Courier,monospace" font-size="10.00">vicePresident: p1</text>
+<text xml:space="preserve" text-anchor="start" x="3612.8" y="-334.18" font-family="Courier,monospace" font-size="10.00">impeached: {p1}</text>
+<text xml:space="preserve" text-anchor="start" x="3612.8" y="-321.43" font-family="Courier,monospace" font-size="10.00">terms.p2: 1</text>
+</g>
+<!-- 4520768960728595054&#45;&gt;3823811657737837691 -->
+<g id="edge36" class="edge">
+<title>4520768960728595054&#45;&gt;3823811657737837691</title>
+<path fill="none" stroke="black" d="M3663.8,-453.68C3663.8,-434.78 3663.8,-409.85 3663.8,-388.6"/>
+<polygon fill="black" stroke="black" points="3666.25,-388.87 3663.8,-381.87 3661.35,-388.87 3666.25,-388.87"/>
+<text xml:space="preserve" text-anchor="middle" x="3681.43" y="-416.55" font-family="Helvetica,sans-Serif" font-size="9.00">Impeach</text>
+</g>
+<!-- 6195555204582989118 -->
+<g id="node33" class="node">
+<title>6195555204582989118</title>
+<polygon fill="plum" stroke="black" points="3871.6,-373.6 3748,-373.6 3748,-313.75 3871.6,-313.75 3871.6,-373.6"/>
+<text xml:space="preserve" text-anchor="start" x="3758.8" y="-353.3" font-family="Courier,monospace" font-size="10.00">president: p2</text>
+<text xml:space="preserve" text-anchor="start" x="3758.8" y="-340.55" font-family="Courier,monospace" font-size="10.00">vicePresident: p1</text>
+<text xml:space="preserve" text-anchor="start" x="3758.8" y="-327.8" font-family="Courier,monospace" font-size="10.00">terms.p2: 2</text>
+</g>
+<!-- 4520768960728595054&#45;&gt;6195555204582989118 -->
+<g id="edge37" class="edge">
+<title>4520768960728595054&#45;&gt;6195555204582989118</title>
+<path fill="none" stroke="black" d="M3694.76,-453.68C3717.6,-432.04 3748.77,-402.5 3772.91,-379.63"/>
+<polygon fill="black" stroke="black" points="3774.39,-381.61 3777.78,-375.01 3771.02,-378.05 3774.39,-381.61"/>
+<text xml:space="preserve" text-anchor="middle" x="3742.55" y="-416.55" font-family="Helvetica,sans-Serif" font-size="9.00">Elect</text>
+</g>
+<!-- 6237404810322832133 -->
+<g id="node34" class="node">
+<title>6237404810322832133</title>
+<polygon fill="lightsalmon" stroke="black" points="4211.6,-379.98 4088,-379.98 4088,-307.38 4211.6,-307.38 4211.6,-379.98"/>
+<text xml:space="preserve" text-anchor="start" x="4098.8" y="-359.68" font-family="Courier,monospace" font-size="10.00">nominee.o1: p1</text>
+<text xml:space="preserve" text-anchor="start" x="4098.8" y="-346.93" font-family="Courier,monospace" font-size="10.00">president: p2</text>
+<text xml:space="preserve" text-anchor="start" x="4098.8" y="-334.18" font-family="Courier,monospace" font-size="10.00">vicePresident: p1</text>
+<text xml:space="preserve" text-anchor="start" x="4098.8" y="-321.43" font-family="Courier,monospace" font-size="10.00">terms.p2: 1</text>
+</g>
+<!-- 4520768960728595054&#45;&gt;6237404810322832133 -->
+<g id="edge38" class="edge">
+<title>4520768960728595054&#45;&gt;6237404810322832133</title>
+<path fill="none" stroke="black" d="M3725.82,-483.2C3837.08,-482.26 4064.52,-474.19 4123.8,-425.1 4134.85,-415.95 4141.26,-402.05 4144.95,-388.37"/>
+<polygon fill="black" stroke="black" points="4147.26,-389.22 4146.48,-381.85 4142.49,-388.1 4147.26,-389.22"/>
+<text xml:space="preserve" text-anchor="middle" x="4151.43" y="-416.55" font-family="Helvetica,sans-Serif" font-size="9.00">Nominate</text>
+</g>
+<!-- 8015699260406424062 -->
+<g id="node37" class="node">
+<title>8015699260406424062</title>
+<polygon fill="lightcoral" stroke="black" points="4357.6,-379.98 4234,-379.98 4234,-307.38 4357.6,-307.38 4357.6,-379.98"/>
+<text xml:space="preserve" text-anchor="start" x="4244.8" y="-359.68" font-family="Courier,monospace" font-size="10.00">president: p2</text>
+<text xml:space="preserve" text-anchor="start" x="4244.8" y="-346.93" font-family="Courier,monospace" font-size="10.00">vicePresident: p1</text>
+<text xml:space="preserve" text-anchor="start" x="4244.8" y="-334.18" font-family="Courier,monospace" font-size="10.00">impeached: {p2}</text>
+<text xml:space="preserve" text-anchor="start" x="4244.8" y="-321.43" font-family="Courier,monospace" font-size="10.00">terms.p2: 1</text>
+</g>
+<!-- 4520768960728595054&#45;&gt;8015699260406424062 -->
+<g id="edge39" class="edge">
+<title>4520768960728595054&#45;&gt;8015699260406424062</title>
+<path fill="none" stroke="black" d="M3726.05,-479.72C3843.99,-472.85 4095.44,-455.11 4176.8,-425.1 4201.81,-415.87 4226.69,-400.33 4247.18,-385.35"/>
+<polygon fill="black" stroke="black" points="4248.59,-387.35 4252.74,-381.2 4245.66,-383.42 4248.59,-387.35"/>
+<text xml:space="preserve" text-anchor="middle" x="4215.85" y="-416.55" font-family="Helvetica,sans-Serif" font-size="9.00">Impeach</text>
+</g>
+<!-- 4520768960728595054&#45;&gt;8678646393818499660 -->
+<g id="edge40" class="edge">
+<title>4520768960728595054&#45;&gt;8678646393818499660</title>
+<path fill="none" stroke="black" d="M3725.87,-479.46C3862.47,-471.44 4199.34,-450.65 4480.8,-425.1 4558.73,-418.03 4755.14,-406.32 4830.8,-386.35 4831.69,-386.12 4832.57,-385.88 4833.47,-385.63"/>
+<polygon fill="black" stroke="black" points="4834.05,-388.01 4840.07,-383.67 4832.66,-383.31 4834.05,-388.01"/>
+<text xml:space="preserve" text-anchor="middle" x="4642.24" y="-416.55" font-family="Helvetica,sans-Serif" font-size="9.00">ProposeByCongress</text>
+</g>
+<!-- 4940748351521896810&#45;&gt;&#45;4884463761628405929 -->
+<g id="edge41" class="edge">
+<title>4940748351521896810&#45;&gt;&#45;4884463761628405929</title>
+<path fill="none" stroke="black" d="M1850.52,-460.24C1835.31,-450.63 1818.62,-438.55 1805.55,-425.1 1792.99,-412.18 1781.92,-395.66 1773.34,-380.95"/>
+<polygon fill="black" stroke="black" points="1775.68,-380.1 1770.09,-375.22 1771.41,-382.52 1775.68,-380.1"/>
+<text xml:space="preserve" text-anchor="middle" x="1821.67" y="-416.55" font-family="Helvetica,sans-Serif" font-size="9.00">Adjourn</text>
+</g>
+<!-- 4940748351521896810&#45;&gt;&#45;8059012036573268130 -->
+<g id="edge42" class="edge">
+<title>4940748351521896810&#45;&gt;&#45;8059012036573268130</title>
+<path fill="none" stroke="black" d="M1980.88,-475.68C2118.92,-463.91 2372.78,-440.58 2411.8,-425.1 2431.54,-417.27 2450.82,-404.78 2467.45,-391.96"/>
+<polygon fill="black" stroke="black" points="2468.76,-394.05 2472.74,-387.79 2465.73,-390.2 2468.76,-394.05"/>
+<text xml:space="preserve" text-anchor="middle" x="2441.59" y="-416.55" font-family="Helvetica,sans-Serif" font-size="9.00">Elect</text>
+</g>
+<!-- 1784207983325857611 -->
+<g id="node24" class="node">
+<title>1784207983325857611</title>
+<polygon fill="plum" stroke="black" points="1643.6,-373.6 1466,-373.6 1466,-313.75 1643.6,-313.75 1643.6,-373.6"/>
+<text xml:space="preserve" text-anchor="start" x="1476.8" y="-353.3" font-family="Courier,monospace" font-size="10.00">amend.a1.status: Ratified</text>
+<text xml:space="preserve" text-anchor="start" x="1476.8" y="-340.55" font-family="Courier,monospace" font-size="10.00">amend.a1.route: Convention</text>
+<text xml:space="preserve" text-anchor="start" x="1476.8" y="-327.8" font-family="Courier,monospace" font-size="10.00">amend.a1.ratifications: 4</text>
+</g>
+<!-- 4940748351521896810&#45;&gt;1784207983325857611 -->
+<g id="edge43" class="edge">
+<title>4940748351521896810&#45;&gt;1784207983325857611</title>
+<path fill="none" stroke="black" d="M1835.25,-460.1C1787.2,-440.58 1716.42,-411.76 1654.8,-386.35 1647.56,-383.37 1640.03,-380.25 1632.5,-377.12"/>
+<polygon fill="black" stroke="black" points="1633.78,-375 1626.38,-374.58 1631.9,-379.53 1633.78,-375"/>
+<text xml:space="preserve" text-anchor="middle" x="1757.56" y="-416.55" font-family="Helvetica,sans-Serif" font-size="9.00">Ratify</text>
+</g>
+<!-- 3948371819121538237 -->
+<g id="node28" class="node">
+<title>3948371819121538237</title>
+<polygon fill="lightblue" stroke="black" points="2225.6,-379.98 2048,-379.98 2048,-307.38 2225.6,-307.38 2225.6,-379.98"/>
+<text xml:space="preserve" text-anchor="start" x="2058.8" y="-359.68" font-family="Courier,monospace" font-size="10.00">bill.b1.status: Pending</text>
+<text xml:space="preserve" text-anchor="start" x="2058.8" y="-346.93" font-family="Courier,monospace" font-size="10.00">bill.b1.origin: House</text>
+<text xml:space="preserve" text-anchor="start" x="2058.8" y="-334.18" font-family="Courier,monospace" font-size="10.00">amend.a1.status: Proposed</text>
+<text xml:space="preserve" text-anchor="start" x="2058.8" y="-321.43" font-family="Courier,monospace" font-size="10.00">amend.a1.route: Convention</text>
+</g>
+<!-- 4940748351521896810&#45;&gt;3948371819121538237 -->
+<g id="edge44" class="edge">
+<title>4940748351521896810&#45;&gt;3948371819121538237</title>
+<path fill="none" stroke="black" d="M1932.53,-460.02C1969.01,-439.43 2023.29,-408.78 2066.72,-384.25"/>
+<polygon fill="black" stroke="black" points="2067.67,-386.53 2072.56,-380.95 2065.26,-382.26 2067.67,-386.53"/>
+<text xml:space="preserve" text-anchor="middle" x="2026.08" y="-416.55" font-family="Helvetica,sans-Serif" font-size="9.00">Introduce</text>
+</g>
+<!-- 4940748351521896810&#45;&gt;4477429022429804702 -->
+<g id="edge45" class="edge">
+<title>4940748351521896810&#45;&gt;4477429022429804702</title>
+<path fill="none" stroke="black" d="M1802.78,-481.05C1700.79,-476.9 1529.43,-464.15 1387.55,-425.1 1356.68,-416.6 1324.35,-403.49 1295.81,-390.3"/>
+<polygon fill="black" stroke="black" points="1297.01,-388.15 1289.63,-387.4 1294.93,-392.59 1297.01,-388.15"/>
+<text xml:space="preserve" text-anchor="middle" x="1397.67" y="-416.55" font-family="Helvetica,sans-Serif" font-size="9.00">Elect</text>
+</g>
+<!-- 5830231356793042701&#45;&gt;&#45;6318881351077474000 -->
+<g id="edge46" class="edge">
+<title>5830231356793042701&#45;&gt;&#45;6318881351077474000</title>
+<path fill="none" stroke="black" d="M2480.3,-460.19C2476.54,-445.96 2469.94,-428.01 2458.8,-415.35 2449.6,-404.89 2424.9,-390.69 2399.39,-377.77"/>
+<polygon fill="black" stroke="black" points="2400.54,-375.61 2393.18,-374.67 2398.34,-379.99 2400.54,-375.61"/>
+<text xml:space="preserve" text-anchor="middle" x="2481.89" y="-416.55" font-family="Helvetica,sans-Serif" font-size="9.00">Adjourn</text>
+</g>
+<!-- 5830231356793042701&#45;&gt;&#45;8912456854936553159 -->
+<g id="edge47" class="edge">
+<title>5830231356793042701&#45;&gt;&#45;8912456854936553159</title>
+<path fill="none" stroke="black" d="M2564.69,-471.86C2657.93,-457.57 2816.03,-429.38 2946.8,-386.35 2947.8,-386.02 2948.8,-385.69 2949.8,-385.34"/>
+<polygon fill="black" stroke="black" points="2950.36,-387.75 2956.13,-383.09 2948.71,-383.13 2950.36,-387.75"/>
+<text xml:space="preserve" text-anchor="middle" x="2845.05" y="-416.55" font-family="Helvetica,sans-Serif" font-size="9.00">Elect</text>
+</g>
+<!-- 5830231356793042701&#45;&gt;3052087102599788281 -->
+<g id="edge48" class="edge">
+<title>5830231356793042701&#45;&gt;3052087102599788281</title>
+<path fill="none" stroke="black" d="M2404.53,-464.37C2389.35,-460.9 2373.6,-457.35 2358.8,-454.1 2215.97,-422.68 2175.69,-432.13 2036.8,-386.35 2035.8,-386.02 2034.8,-385.68 2033.8,-385.34"/>
+<polygon fill="black" stroke="black" points="2034.89,-383.13 2027.48,-383.08 2033.24,-387.74 2034.89,-383.13"/>
+<text xml:space="preserve" text-anchor="middle" x="2201.02" y="-416.55" font-family="Helvetica,sans-Serif" font-size="9.00">Elect</text>
+</g>
+<!-- 5830231356793042701&#45;&gt;3948371819121538237 -->
+<g id="edge49" class="edge">
+<title>5830231356793042701&#45;&gt;3948371819121538237</title>
+<path fill="none" stroke="black" d="M2414.77,-460.04C2384.92,-449.87 2349.82,-437.44 2318.55,-425.1 2286.45,-412.43 2251.68,-397.38 2221.24,-383.75"/>
+<polygon fill="black" stroke="black" points="2222.37,-381.57 2214.98,-380.94 2220.36,-386.04 2222.37,-381.57"/>
+<text xml:space="preserve" text-anchor="middle" x="2364.68" y="-416.55" font-family="Helvetica,sans-Serif" font-size="9.00">ProposeByConvention</text>
+</g>
+<!-- 4969228309894860796 -->
+<g id="node30" class="node">
+<title>4969228309894860796</title>
+<polygon fill="lightblue" stroke="black" points="2789.6,-373.6 2630,-373.6 2630,-313.75 2789.6,-313.75 2789.6,-373.6"/>
+<text xml:space="preserve" text-anchor="start" x="2640.8" y="-353.3" font-family="Courier,monospace" font-size="10.00">bill.b1.status: Pending</text>
+<text xml:space="preserve" text-anchor="start" x="2640.8" y="-340.55" font-family="Courier,monospace" font-size="10.00">bill.b1.origin: House</text>
+<text xml:space="preserve" text-anchor="start" x="2640.8" y="-327.8" font-family="Courier,monospace" font-size="10.00">bill.b1.passed: {House}</text>
+</g>
+<!-- 5830231356793042701&#45;&gt;4969228309894860796 -->
+<g id="edge50" class="edge">
+<title>5830231356793042701&#45;&gt;4969228309894860796</title>
+<path fill="none" stroke="black" d="M2564.91,-477.25C2605.25,-470.39 2652.18,-455.81 2683.8,-425.1 2695.44,-413.8 2701.87,-397.27 2705.43,-382.12"/>
+<polygon fill="black" stroke="black" points="2707.8,-382.73 2706.82,-375.38 2703,-381.74 2707.8,-382.73"/>
+<text xml:space="preserve" text-anchor="middle" x="2720.33" y="-416.55" font-family="Helvetica,sans-Serif" font-size="9.00">PassChamber</text>
+</g>
+<!-- 5830231356793042701&#45;&gt;6136202946090912521 -->
+<g id="edge51" class="edge">
+<title>5830231356793042701&#45;&gt;6136202946090912521</title>
+<path fill="none" stroke="black" d="M2564.65,-481.1C2850.93,-474.04 3816.05,-448.7 3952.8,-425.1 3967.14,-422.63 3969.72,-417.86 3984.05,-415.35 4270.09,-365.24 4353.73,-451.17 4636.8,-386.35 4641.1,-385.37 4645.45,-384.2 4649.8,-382.89"/>
+<polygon fill="black" stroke="black" points="4650.25,-385.32 4656.18,-380.86 4648.76,-380.65 4650.25,-385.32"/>
+<text xml:space="preserve" text-anchor="middle" x="4026.43" y="-416.55" font-family="Helvetica,sans-Serif" font-size="9.00">ProposeByCongress</text>
+</g>
+<!-- legend_init -->
+<g id="node40" class="node">
+<title>legend_init</title>
+<polygon fill="lightyellow" stroke="black" points="5361.6,-617.7 5292,-617.7 5292,-581.7 5361.6,-581.7 5361.6,-617.7"/>
+<text xml:space="preserve" text-anchor="middle" x="5326.8" y="-595.83" font-family="Helvetica,sans-Serif" font-size="10.00">Initial state</text>
+</g>
+<!-- legend_legislative -->
+<g id="node41" class="node">
+<title>legend_legislative</title>
+<polygon fill="lightblue" stroke="black" points="5389.73,-502.03 5263.88,-502.03 5263.88,-466.03 5389.73,-466.03 5389.73,-502.03"/>
+<text xml:space="preserve" text-anchor="middle" x="5326.8" y="-480.15" font-family="Helvetica,sans-Serif" font-size="10.00">Congress (either house)</text>
+</g>
+<!-- legend_init&#45;&gt;legend_legislative -->
+<!-- legend_executive -->
+<g id="node42" class="node">
+<title>legend_executive</title>
+<polygon fill="lightsalmon" stroke="black" points="5383.73,-361.68 5269.88,-361.68 5269.88,-325.68 5383.73,-325.68 5383.73,-361.68"/>
+<text xml:space="preserve" text-anchor="middle" x="5326.8" y="-339.8" font-family="Helvetica,sans-Serif" font-size="10.00">President / executive</text>
+</g>
+<!-- legend_legislative&#45;&gt;legend_executive -->
+<!-- legend_impeachment -->
+<g id="node43" class="node">
+<title>legend_impeachment</title>
+<polygon fill="lightcoral" stroke="black" points="5385.98,-242 5267.62,-242 5267.62,-206 5385.98,-206 5385.98,-242"/>
+<text xml:space="preserve" text-anchor="middle" x="5326.8" y="-220.12" font-family="Helvetica,sans-Serif" font-size="10.00">Impeachment and trial</text>
+</g>
+<!-- legend_executive&#45;&gt;legend_impeachment -->
+<!-- legend_people -->
+<g id="node44" class="node">
+<title>legend_people</title>
+<polygon fill="plum" stroke="black" points="5429.85,-147 5223.75,-147 5223.75,-111 5429.85,-111 5429.85,-147"/>
+<text xml:space="preserve" text-anchor="middle" x="5326.8" y="-125.12" font-family="Helvetica,sans-Serif" font-size="10.00">People and States (elections, Art. V, suits)</text>
+</g>
+<!-- legend_impeachment&#45;&gt;legend_people -->
+<!-- legend_lapse -->
+<g id="node45" class="node">
+<title>legend_lapse</title>
+<polygon fill="lightgray" stroke="black" points="5390.1,-52 5263.5,-52 5263.5,-16 5390.1,-16 5390.1,-52"/>
+<text xml:space="preserve" text-anchor="middle" x="5326.8" y="-30.12" font-family="Helvetica,sans-Serif" font-size="10.00">Time, death, resignation</text>
+</g>
+<!-- legend_people&#45;&gt;legend_lapse -->
+</g>
+</svg>

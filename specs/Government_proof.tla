@@ -1074,7 +1074,19 @@ LEMMA ShapeNamedPaths ==
 <1>1. Kept \subseteq edges /\ TypeOK /\ BodiesCreated
   BY ShapeKept DEF Shape, TypeInv
 <1>2. CASE n \in Branches \cup {"VicePresident"}
-  BY <1>1, <1>2 DEF Kept, FromCongress, Branches
+  <2>1. FromCongress(n) \subseteq Kept
+    \* CASE is encoded as a choice among every arm whose guard holds, so each
+    \* case needs the arm `n \in Agencies` ruled out: PoolsAreNew does that.
+    <3>1. CASE n = "Congress"       BY <3>1, PoolsAreNew DEF FromCongress, Kept, Fixed
+    <3>2. CASE n = "Executive"      BY <3>2, PoolsAreNew DEF FromCongress, Kept, Fixed
+    <3>3. CASE n = "VicePresident"  BY <3>3, PoolsAreNew DEF FromCongress, Kept, Fixed
+    <3>4. CASE n = "Judiciary"      BY <3>4, PoolsAreNew DEF FromCongress, Kept, Fixed
+    <3> QED
+      BY <1>2, <3>1, <3>2, <3>3, <3>4 DEF Branches
+  <2>2. Txt("People", "Congress", "Select", "ElectHouse") \in Kept
+    BY DEF Kept
+  <2> QED
+    BY <1>1, <2>1, <2>2
 <1>3. CASE n \in live
   <2>1. n \in Agencies \cup Courts /\ n \notin Fixed /\ CreationEdge(n) \in edges
     BY <1>1, <1>3, PoolsAreNew DEF TypeOK, BodiesCreated

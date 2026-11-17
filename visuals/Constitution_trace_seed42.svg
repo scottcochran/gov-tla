@@ -1,0 +1,471 @@
+<svg width="1027pt" height="6531pt"
+ viewBox="0.00 0.00 1027.00 6531.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<style>svg{--white:white;--black:black;--lightyellow:lightyellow;--lightblue:lightblue;--lightsalmon:lightsalmon;--lightgreen:lightgreen;--lightcoral:lightcoral;--plum:plum;--lightgray:lightgray;--peachpuff:peachpuff;--royalblue3:#3a5fcd;--forestgreen:forestgreen;--darkorchid:darkorchid;--gray35:#595959;--red3:#cd0000;--gray70:#b3b3b3;--gray60:#999999;--bg:white;}@media (prefers-color-scheme: dark){svg:not([data-theme=light]){--white:#1a1e26;--black:#e6e9ef;--lightyellow:#3b3614;--lightblue:#1b3550;--lightsalmon:#4b2a1b;--lightgreen:#1d3b22;--lightcoral:#4b2024;--plum:#3a2342;--lightgray:#2b3038;--peachpuff:#40301c;--royalblue3:#8fb0ec;--forestgreen:#7ad28a;--darkorchid:#cf9cf0;--gray35:#b0b8c6;--red3:#f08a8f;--gray70:#5a6270;--gray60:#8a93a3;--bg:#12151b;}}svg[data-theme=dark]{--white:#1a1e26;--black:#e6e9ef;--lightyellow:#3b3614;--lightblue:#1b3550;--lightsalmon:#4b2a1b;--lightgreen:#1d3b22;--lightcoral:#4b2024;--plum:#3a2342;--lightgray:#2b3038;--peachpuff:#40301c;--royalblue3:#8fb0ec;--forestgreen:#7ad28a;--darkorchid:#cf9cf0;--gray35:#b0b8c6;--red3:#f08a8f;--gray70:#5a6270;--gray60:#8a93a3;--bg:#12151b;}@media print{svg:not([data-theme=dark]){--white:white;--black:black;--lightyellow:lightyellow;--lightblue:lightblue;--lightsalmon:lightsalmon;--lightgreen:lightgreen;--lightcoral:lightcoral;--plum:plum;--lightgray:lightgray;--peachpuff:peachpuff;--royalblue3:#3a5fcd;--forestgreen:forestgreen;--darkorchid:darkorchid;--gray35:#595959;--red3:#cd0000;--gray70:#b3b3b3;--gray60:#999999;--bg:white;}}[fill="white"]{fill:var(--white)}[stroke="white"]{stroke:var(--white)}[fill="black"]{fill:var(--black)}[stroke="black"]{stroke:var(--black)}[fill="lightyellow"]{fill:var(--lightyellow)}[stroke="lightyellow"]{stroke:var(--lightyellow)}[fill="lightblue"]{fill:var(--lightblue)}[stroke="lightblue"]{stroke:var(--lightblue)}[fill="lightsalmon"]{fill:var(--lightsalmon)}[stroke="lightsalmon"]{stroke:var(--lightsalmon)}[fill="lightgreen"]{fill:var(--lightgreen)}[stroke="lightgreen"]{stroke:var(--lightgreen)}[fill="lightcoral"]{fill:var(--lightcoral)}[stroke="lightcoral"]{stroke:var(--lightcoral)}[fill="plum"]{fill:var(--plum)}[stroke="plum"]{stroke:var(--plum)}[fill="lightgray"]{fill:var(--lightgray)}[stroke="lightgray"]{stroke:var(--lightgray)}[fill="peachpuff"]{fill:var(--peachpuff)}[stroke="peachpuff"]{stroke:var(--peachpuff)}[fill="#3a5fcd"]{fill:var(--royalblue3)}[stroke="#3a5fcd"]{stroke:var(--royalblue3)}[fill="forestgreen"]{fill:var(--forestgreen)}[stroke="forestgreen"]{stroke:var(--forestgreen)}[fill="darkorchid"]{fill:var(--darkorchid)}[stroke="darkorchid"]{stroke:var(--darkorchid)}[fill="#595959"]{fill:var(--gray35)}[stroke="#595959"]{stroke:var(--gray35)}[fill="#cd0000"]{fill:var(--red3)}[stroke="#cd0000"]{stroke:var(--red3)}[fill="#b3b3b3"]{fill:var(--gray70)}[stroke="#b3b3b3"]{stroke:var(--gray70)}[fill="#999999"]{fill:var(--gray60)}[stroke="#999999"]{stroke:var(--gray60)}.graph>polygon{fill:var(--bg)}text{fill:var(--black)}</style>
+<g id="graph0" class="graph" transform="scale(2.08333 2.08333) rotate(0) translate(4 3130.8)">
+<title>ConstitutionTrace</title>
+<polygon fill="white" stroke="none" points="-4,4 -4,-3130.8 488.8,-3130.8 488.8,4 -4,4"/>
+<g id="clust1" class="cluster">
+<title>cluster_legend</title>
+<path fill="white" stroke="black" d="M266.8,-2483.8C266.8,-2483.8 464.8,-2483.8 464.8,-2483.8 470.8,-2483.8 476.8,-2489.8 476.8,-2495.8 476.8,-2495.8 476.8,-3106.8 476.8,-3106.8 476.8,-3112.8 470.8,-3118.8 464.8,-3118.8 464.8,-3118.8 266.8,-3118.8 266.8,-3118.8 260.8,-3118.8 254.8,-3112.8 254.8,-3106.8 254.8,-3106.8 254.8,-2495.8 254.8,-2495.8 254.8,-2489.8 260.8,-2483.8 266.8,-2483.8"/>
+<text xml:space="preserve" text-anchor="middle" x="365.8" y="-3104.35" font-family="Helvetica,sans-Serif" font-size="11.00">Who acted</text>
+</g>
+<!-- 0 -->
+<g id="node1" class="node">
+<title>0</title>
+<polygon fill="lightyellow" stroke="black" points="201.6,-3093.6 78,-3093.6 78,-3052 201.6,-3052 201.6,-3093.6"/>
+<text xml:space="preserve" text-anchor="start" x="88.8" y="-3074.3" font-family="Courier,monospace" font-weight="bold" font-size="10.00">Start</text>
+<text xml:space="preserve" text-anchor="start" x="88.8" y="-3064.3" font-family="Courier,monospace" font-size="10.00"> &#160;(initial state)</text>
+</g>
+<!-- 1 -->
+<g id="node2" class="node">
+<title>1</title>
+<polygon fill="plum" stroke="black" points="234.6,-3016 45,-3016 45,-2964.4 234.6,-2964.4 234.6,-3016"/>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-2996.7" font-family="Courier,monospace" font-weight="bold" font-size="10.00">Step 1: ProposeByConvention</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-2986.7" font-family="Courier,monospace" font-weight="bold" font-size="10.00">▸ amend.a1.status: Proposed</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-2976.7" font-family="Courier,monospace" font-weight="bold" font-size="10.00">▸ amend.a1.route: Convention</text>
+</g>
+<!-- 0&#45;&gt;1 -->
+<g id="edge1" class="edge">
+<title>0&#45;&gt;1</title>
+<path fill="none" stroke="black" d="M139.8,-3051.88C139.8,-3044.59 139.8,-3036.09 139.8,-3027.81"/>
+<polygon fill="black" stroke="black" points="143.3,-3027.9 139.8,-3017.9 136.3,-3027.9 143.3,-3027.9"/>
+</g>
+<!-- 2 -->
+<g id="node3" class="node">
+<title>2</title>
+<polygon fill="plum" stroke="black" points="234.6,-2928.4 45,-2928.4 45,-2846.8 234.6,-2846.8 234.6,-2928.4"/>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-2909.1" font-family="Courier,monospace" font-weight="bold" font-size="10.00">Step 2: Elect</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-2899.1" font-family="Courier,monospace" font-size="10.00"> &#160;amend.a1.status: Proposed</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-2889.1" font-family="Courier,monospace" font-size="10.00"> &#160;amend.a1.route: Convention</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-2879.1" font-family="Courier,monospace" font-weight="bold" font-size="10.00">▸ president: p2</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-2869.1" font-family="Courier,monospace" font-weight="bold" font-size="10.00">▸ vicePresident: p1</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-2859.1" font-family="Courier,monospace" font-weight="bold" font-size="10.00">▸ terms.p2: 1</text>
+</g>
+<!-- 1&#45;&gt;2 -->
+<g id="edge2" class="edge">
+<title>1&#45;&gt;2</title>
+<path fill="none" stroke="black" d="M139.8,-2964.07C139.8,-2956.71 139.8,-2948.38 139.8,-2940.01"/>
+<polygon fill="black" stroke="black" points="143.3,-2940.17 139.8,-2930.17 136.3,-2940.17 143.3,-2940.17"/>
+</g>
+<!-- 3 -->
+<g id="node4" class="node">
+<title>3</title>
+<polygon fill="lightgray" stroke="black" points="246.6,-2810.8 33,-2810.8 33,-2729.2 246.6,-2729.2 246.6,-2810.8"/>
+<text xml:space="preserve" text-anchor="start" x="43.8" y="-2791.5" font-family="Courier,monospace" font-weight="bold" font-size="10.00">Step 3: VicePresidentVacates</text>
+<text xml:space="preserve" text-anchor="start" x="43.8" y="-2781.5" font-family="Courier,monospace" font-size="10.00"> &#160;amend.a1.status: Proposed</text>
+<text xml:space="preserve" text-anchor="start" x="43.8" y="-2771.5" font-family="Courier,monospace" font-size="10.00"> &#160;amend.a1.route: Convention</text>
+<text xml:space="preserve" text-anchor="start" x="43.8" y="-2761.5" font-family="Courier,monospace" font-size="10.00"> &#160;president: p2</text>
+<text xml:space="preserve" text-anchor="start" x="43.8" y="-2751.5" font-family="Courier,monospace" font-size="10.00"> &#160;terms.p2: 1</text>
+<text xml:space="preserve" text-anchor="start" x="43.8" y="-2741.5" font-family="Courier,monospace" font-weight="bold" font-size="10.00">▸ back to initial: vicePresident</text>
+</g>
+<!-- 2&#45;&gt;3 -->
+<g id="edge3" class="edge">
+<title>2&#45;&gt;3</title>
+<path fill="none" stroke="black" d="M139.8,-2846.49C139.8,-2838.69 139.8,-2830.42 139.8,-2822.31"/>
+<polygon fill="black" stroke="black" points="143.3,-2822.55 139.8,-2812.55 136.3,-2822.55 143.3,-2822.55"/>
+</g>
+<!-- 4 -->
+<g id="node5" class="node">
+<title>4</title>
+<polygon fill="lightblue" stroke="black" points="234.6,-2693.2 45,-2693.2 45,-2601.6 234.6,-2601.6 234.6,-2693.2"/>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-2673.9" font-family="Courier,monospace" font-weight="bold" font-size="10.00">Step 4: Introduce</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-2663.9" font-family="Courier,monospace" font-weight="bold" font-size="10.00">▸ bill.b1.status: Pending</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-2653.9" font-family="Courier,monospace" font-weight="bold" font-size="10.00">▸ bill.b1.origin: House</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-2643.9" font-family="Courier,monospace" font-size="10.00"> &#160;amend.a1.status: Proposed</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-2633.9" font-family="Courier,monospace" font-size="10.00"> &#160;amend.a1.route: Convention</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-2623.9" font-family="Courier,monospace" font-size="10.00"> &#160;president: p2</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-2613.9" font-family="Courier,monospace" font-size="10.00"> &#160;terms.p2: 1</text>
+</g>
+<!-- 3&#45;&gt;4 -->
+<g id="edge4" class="edge">
+<title>3&#45;&gt;4</title>
+<path fill="none" stroke="black" d="M139.8,-2728.84C139.8,-2721.11 139.8,-2712.88 139.8,-2704.75"/>
+<polygon fill="black" stroke="black" points="143.3,-2704.89 139.8,-2694.89 136.3,-2704.89 143.3,-2704.89"/>
+</g>
+<!-- 5 -->
+<g id="node6" class="node">
+<title>5</title>
+<polygon fill="plum" stroke="black" points="234.6,-2565.6 45,-2565.6 45,-2454 234.6,-2454 234.6,-2565.6"/>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-2546.3" font-family="Courier,monospace" font-weight="bold" font-size="10.00">Step 5: Elect</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-2536.3" font-family="Courier,monospace" font-size="10.00"> &#160;bill.b1.status: Pending</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-2526.3" font-family="Courier,monospace" font-size="10.00"> &#160;bill.b1.origin: House</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-2516.3" font-family="Courier,monospace" font-size="10.00"> &#160;amend.a1.status: Proposed</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-2506.3" font-family="Courier,monospace" font-size="10.00"> &#160;amend.a1.route: Convention</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-2496.3" font-family="Courier,monospace" font-weight="bold" font-size="10.00">▸ president: p1</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-2486.3" font-family="Courier,monospace" font-weight="bold" font-size="10.00">▸ vicePresident: p2</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-2476.3" font-family="Courier,monospace" font-weight="bold" font-size="10.00">▸ terms.p1: 1</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-2466.3" font-family="Courier,monospace" font-size="10.00"> &#160;terms.p2: 1</text>
+</g>
+<!-- 4&#45;&gt;5 -->
+<g id="edge5" class="edge">
+<title>4&#45;&gt;5</title>
+<path fill="none" stroke="black" d="M139.8,-2601.25C139.8,-2593.5 139.8,-2585.3 139.8,-2577.13"/>
+<polygon fill="black" stroke="black" points="143.3,-2577.17 139.8,-2567.17 136.3,-2577.17 143.3,-2577.17"/>
+</g>
+<!-- 6 -->
+<g id="node7" class="node">
+<title>6</title>
+<polygon fill="plum" stroke="black" points="234.6,-2418 45,-2418 45,-2306.4 234.6,-2306.4 234.6,-2418"/>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-2398.7" font-family="Courier,monospace" font-weight="bold" font-size="10.00">Step 6: Elect</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-2388.7" font-family="Courier,monospace" font-size="10.00"> &#160;bill.b1.status: Pending</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-2378.7" font-family="Courier,monospace" font-size="10.00"> &#160;bill.b1.origin: House</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-2368.7" font-family="Courier,monospace" font-size="10.00"> &#160;amend.a1.status: Proposed</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-2358.7" font-family="Courier,monospace" font-size="10.00"> &#160;amend.a1.route: Convention</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-2348.7" font-family="Courier,monospace" font-weight="bold" font-size="10.00">▸ president: p2</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-2338.7" font-family="Courier,monospace" font-weight="bold" font-size="10.00">▸ vicePresident: p1</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-2328.7" font-family="Courier,monospace" font-size="10.00"> &#160;terms.p1: 1</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-2318.7" font-family="Courier,monospace" font-weight="bold" font-size="10.00">▸ terms.p2: 2</text>
+</g>
+<!-- 5&#45;&gt;6 -->
+<g id="edge6" class="edge">
+<title>5&#45;&gt;6</title>
+<path fill="none" stroke="black" d="M139.8,-2453.75C139.8,-2445.87 139.8,-2437.7 139.8,-2429.62"/>
+<polygon fill="black" stroke="black" points="143.3,-2429.84 139.8,-2419.84 136.3,-2429.84 143.3,-2429.84"/>
+</g>
+<!-- 7 -->
+<g id="node8" class="node">
+<title>7</title>
+<polygon fill="lightcoral" stroke="black" points="234.6,-2270.4 45,-2270.4 45,-2148.8 234.6,-2148.8 234.6,-2270.4"/>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-2251.1" font-family="Courier,monospace" font-weight="bold" font-size="10.00">Step 7: Impeach</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-2241.1" font-family="Courier,monospace" font-size="10.00"> &#160;bill.b1.status: Pending</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-2231.1" font-family="Courier,monospace" font-size="10.00"> &#160;bill.b1.origin: House</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-2221.1" font-family="Courier,monospace" font-size="10.00"> &#160;amend.a1.status: Proposed</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-2211.1" font-family="Courier,monospace" font-size="10.00"> &#160;amend.a1.route: Convention</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-2201.1" font-family="Courier,monospace" font-size="10.00"> &#160;president: p2</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-2191.1" font-family="Courier,monospace" font-size="10.00"> &#160;vicePresident: p1</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-2181.1" font-family="Courier,monospace" font-weight="bold" font-size="10.00">▸ impeached: {p2}</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-2171.1" font-family="Courier,monospace" font-size="10.00"> &#160;terms.p1: 1</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-2161.1" font-family="Courier,monospace" font-size="10.00"> &#160;terms.p2: 2</text>
+</g>
+<!-- 6&#45;&gt;7 -->
+<g id="edge7" class="edge">
+<title>6&#45;&gt;7</title>
+<path fill="none" stroke="black" d="M139.8,-2305.98C139.8,-2298.22 139.8,-2290.15 139.8,-2282.14"/>
+<polygon fill="black" stroke="black" points="143.3,-2282.41 139.8,-2272.41 136.3,-2282.41 143.3,-2282.41"/>
+</g>
+<!-- 8 -->
+<g id="node9" class="node">
+<title>8</title>
+<polygon fill="plum" stroke="black" points="234.6,-2112.8 45,-2112.8 45,-1991.2 234.6,-1991.2 234.6,-2112.8"/>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-2093.5" font-family="Courier,monospace" font-weight="bold" font-size="10.00">Step 8: Elect</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-2083.5" font-family="Courier,monospace" font-size="10.00"> &#160;bill.b1.status: Pending</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-2073.5" font-family="Courier,monospace" font-size="10.00"> &#160;bill.b1.origin: House</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-2063.5" font-family="Courier,monospace" font-size="10.00"> &#160;amend.a1.status: Proposed</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-2053.5" font-family="Courier,monospace" font-size="10.00"> &#160;amend.a1.route: Convention</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-2043.5" font-family="Courier,monospace" font-weight="bold" font-size="10.00">▸ president: p1</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-2033.5" font-family="Courier,monospace" font-weight="bold" font-size="10.00">▸ vicePresident: p2</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-2023.5" font-family="Courier,monospace" font-size="10.00"> &#160;impeached: {p2}</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-2013.5" font-family="Courier,monospace" font-weight="bold" font-size="10.00">▸ terms.p1: 2</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-2003.5" font-family="Courier,monospace" font-size="10.00"> &#160;terms.p2: 2</text>
+</g>
+<!-- 7&#45;&gt;8 -->
+<g id="edge8" class="edge">
+<title>7&#45;&gt;8</title>
+<path fill="none" stroke="black" d="M139.8,-2148.44C139.8,-2140.68 139.8,-2132.68 139.8,-2124.76"/>
+<polygon fill="black" stroke="black" points="143.3,-2124.77 139.8,-2114.77 136.3,-2124.77 143.3,-2124.77"/>
+</g>
+<!-- 9 -->
+<g id="node10" class="node">
+<title>9</title>
+<polygon fill="plum" stroke="black" points="234.6,-1955.2 45,-1955.2 45,-1823.6 234.6,-1823.6 234.6,-1955.2"/>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-1935.9" font-family="Courier,monospace" font-weight="bold" font-size="10.00">Step 9: Ratify</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-1925.9" font-family="Courier,monospace" font-size="10.00"> &#160;bill.b1.status: Pending</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-1915.9" font-family="Courier,monospace" font-size="10.00"> &#160;bill.b1.origin: House</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-1905.9" font-family="Courier,monospace" font-weight="bold" font-size="10.00">▸ amend.a1.status: Ratified</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-1895.9" font-family="Courier,monospace" font-size="10.00"> &#160;amend.a1.route: Convention</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-1885.9" font-family="Courier,monospace" font-weight="bold" font-size="10.00">▸ amend.a1.ratifications: 4</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-1875.9" font-family="Courier,monospace" font-size="10.00"> &#160;president: p1</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-1865.9" font-family="Courier,monospace" font-size="10.00"> &#160;vicePresident: p2</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-1855.9" font-family="Courier,monospace" font-size="10.00"> &#160;impeached: {p2}</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-1845.9" font-family="Courier,monospace" font-size="10.00"> &#160;terms.p1: 2</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-1835.9" font-family="Courier,monospace" font-size="10.00"> &#160;terms.p2: 2</text>
+</g>
+<!-- 8&#45;&gt;9 -->
+<g id="edge9" class="edge">
+<title>8&#45;&gt;9</title>
+<path fill="none" stroke="black" d="M139.8,-1990.74C139.8,-1982.94 139.8,-1974.86 139.8,-1966.84"/>
+<polygon fill="black" stroke="black" points="143.3,-1967.08 139.8,-1957.08 136.3,-1967.08 143.3,-1967.08"/>
+</g>
+<!-- 10 -->
+<g id="node11" class="node">
+<title>10</title>
+<polygon fill="lightcoral" stroke="black" points="279.6,-1787.6 0,-1787.6 0,-1666 279.6,-1666 279.6,-1787.6"/>
+<text xml:space="preserve" text-anchor="start" x="10.8" y="-1768.3" font-family="Courier,monospace" font-weight="bold" font-size="10.00">Step 10: Convict</text>
+<text xml:space="preserve" text-anchor="start" x="10.8" y="-1758.3" font-family="Courier,monospace" font-size="10.00"> &#160;bill.b1.status: Pending</text>
+<text xml:space="preserve" text-anchor="start" x="10.8" y="-1748.3" font-family="Courier,monospace" font-size="10.00"> &#160;bill.b1.origin: House</text>
+<text xml:space="preserve" text-anchor="start" x="10.8" y="-1738.3" font-family="Courier,monospace" font-size="10.00"> &#160;amend.a1.status: Ratified</text>
+<text xml:space="preserve" text-anchor="start" x="10.8" y="-1728.3" font-family="Courier,monospace" font-size="10.00"> &#160;amend.a1.route: Convention</text>
+<text xml:space="preserve" text-anchor="start" x="10.8" y="-1718.3" font-family="Courier,monospace" font-size="10.00"> &#160;amend.a1.ratifications: 4</text>
+<text xml:space="preserve" text-anchor="start" x="10.8" y="-1708.3" font-family="Courier,monospace" font-size="10.00"> &#160;president: p1</text>
+<text xml:space="preserve" text-anchor="start" x="10.8" y="-1698.3" font-family="Courier,monospace" font-size="10.00"> &#160;terms.p1: 2</text>
+<text xml:space="preserve" text-anchor="start" x="10.8" y="-1688.3" font-family="Courier,monospace" font-size="10.00"> &#160;terms.p2: 2</text>
+<text xml:space="preserve" text-anchor="start" x="10.8" y="-1678.3" font-family="Courier,monospace" font-weight="bold" font-size="10.00">▸ back to initial: impeached, vicePresident</text>
+</g>
+<!-- 9&#45;&gt;10 -->
+<g id="edge10" class="edge">
+<title>9&#45;&gt;10</title>
+<path fill="none" stroke="black" d="M139.8,-1823.54C139.8,-1815.55 139.8,-1807.35 139.8,-1799.27"/>
+<polygon fill="black" stroke="black" points="143.3,-1799.48 139.8,-1789.48 136.3,-1799.48 143.3,-1799.48"/>
+</g>
+<!-- 11 -->
+<g id="node12" class="node">
+<title>11</title>
+<polygon fill="lightsalmon" stroke="black" points="234.6,-1630 45,-1630 45,-1508.4 234.6,-1508.4 234.6,-1630"/>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-1610.7" font-family="Courier,monospace" font-weight="bold" font-size="10.00">Step 11: Nominate</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-1600.7" font-family="Courier,monospace" font-size="10.00"> &#160;bill.b1.status: Pending</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-1590.7" font-family="Courier,monospace" font-size="10.00"> &#160;bill.b1.origin: House</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-1580.7" font-family="Courier,monospace" font-weight="bold" font-size="10.00">▸ nominee.o1: p1</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-1570.7" font-family="Courier,monospace" font-size="10.00"> &#160;amend.a1.status: Ratified</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-1560.7" font-family="Courier,monospace" font-size="10.00"> &#160;amend.a1.route: Convention</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-1550.7" font-family="Courier,monospace" font-size="10.00"> &#160;amend.a1.ratifications: 4</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-1540.7" font-family="Courier,monospace" font-size="10.00"> &#160;president: p1</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-1530.7" font-family="Courier,monospace" font-size="10.00"> &#160;terms.p1: 2</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-1520.7" font-family="Courier,monospace" font-size="10.00"> &#160;terms.p2: 2</text>
+</g>
+<!-- 10&#45;&gt;11 -->
+<g id="edge11" class="edge">
+<title>10&#45;&gt;11</title>
+<path fill="none" stroke="black" d="M139.8,-1665.64C139.8,-1657.88 139.8,-1649.88 139.8,-1641.96"/>
+<polygon fill="black" stroke="black" points="143.3,-1641.97 139.8,-1631.97 136.3,-1641.97 143.3,-1641.97"/>
+</g>
+<!-- 12 -->
+<g id="node13" class="node">
+<title>12</title>
+<polygon fill="lightblue" stroke="black" points="234.6,-1472.4 45,-1472.4 45,-1340.8 234.6,-1340.8 234.6,-1472.4"/>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-1453.1" font-family="Courier,monospace" font-weight="bold" font-size="10.00">Step 12: PassChamber</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-1443.1" font-family="Courier,monospace" font-size="10.00"> &#160;bill.b1.status: Pending</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-1433.1" font-family="Courier,monospace" font-size="10.00"> &#160;bill.b1.origin: House</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-1423.1" font-family="Courier,monospace" font-weight="bold" font-size="10.00">▸ bill.b1.passed: {House}</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-1413.1" font-family="Courier,monospace" font-size="10.00"> &#160;nominee.o1: p1</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-1403.1" font-family="Courier,monospace" font-size="10.00"> &#160;amend.a1.status: Ratified</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-1393.1" font-family="Courier,monospace" font-size="10.00"> &#160;amend.a1.route: Convention</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-1383.1" font-family="Courier,monospace" font-size="10.00"> &#160;amend.a1.ratifications: 4</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-1373.1" font-family="Courier,monospace" font-size="10.00"> &#160;president: p1</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-1363.1" font-family="Courier,monospace" font-size="10.00"> &#160;terms.p1: 2</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-1353.1" font-family="Courier,monospace" font-size="10.00"> &#160;terms.p2: 2</text>
+</g>
+<!-- 11&#45;&gt;12 -->
+<g id="edge12" class="edge">
+<title>11&#45;&gt;12</title>
+<path fill="none" stroke="black" d="M139.8,-1507.94C139.8,-1500.14 139.8,-1492.06 139.8,-1484.04"/>
+<polygon fill="black" stroke="black" points="143.3,-1484.28 139.8,-1474.28 136.3,-1484.28 143.3,-1484.28"/>
+</g>
+<!-- 13 -->
+<g id="node14" class="node">
+<title>13</title>
+<polygon fill="lightgray" stroke="black" points="234.6,-1304.8 45,-1304.8 45,-1173.2 234.6,-1173.2 234.6,-1304.8"/>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-1285.5" font-family="Courier,monospace" font-weight="bold" font-size="10.00">Step 13: PresidentVacates</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-1275.5" font-family="Courier,monospace" font-size="10.00"> &#160;bill.b1.status: Pending</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-1265.5" font-family="Courier,monospace" font-size="10.00"> &#160;bill.b1.origin: House</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-1255.5" font-family="Courier,monospace" font-size="10.00"> &#160;bill.b1.passed: {House}</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-1245.5" font-family="Courier,monospace" font-size="10.00"> &#160;nominee.o1: p1</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-1235.5" font-family="Courier,monospace" font-size="10.00"> &#160;amend.a1.status: Ratified</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-1225.5" font-family="Courier,monospace" font-size="10.00"> &#160;amend.a1.route: Convention</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-1215.5" font-family="Courier,monospace" font-size="10.00"> &#160;amend.a1.ratifications: 4</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-1205.5" font-family="Courier,monospace" font-size="10.00"> &#160;terms.p1: 2</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-1195.5" font-family="Courier,monospace" font-size="10.00"> &#160;terms.p2: 2</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-1185.5" font-family="Courier,monospace" font-weight="bold" font-size="10.00">▸ back to initial: president</text>
+</g>
+<!-- 12&#45;&gt;13 -->
+<g id="edge13" class="edge">
+<title>12&#45;&gt;13</title>
+<path fill="none" stroke="black" d="M139.8,-1340.63C139.8,-1332.68 139.8,-1324.51 139.8,-1316.41"/>
+<polygon fill="black" stroke="black" points="143.3,-1316.57 139.8,-1306.57 136.3,-1316.57 143.3,-1316.57"/>
+</g>
+<!-- 14 -->
+<g id="node15" class="node">
+<title>14</title>
+<polygon fill="lightblue" stroke="black" points="237.6,-1137.2 42,-1137.2 42,-1005.6 237.6,-1005.6 237.6,-1137.2"/>
+<text xml:space="preserve" text-anchor="start" x="52.8" y="-1117.9" font-family="Courier,monospace" font-weight="bold" font-size="10.00">Step 14: Consent</text>
+<text xml:space="preserve" text-anchor="start" x="52.8" y="-1107.9" font-family="Courier,monospace" font-weight="bold" font-size="10.00">▸ officer.o1: p1</text>
+<text xml:space="preserve" text-anchor="start" x="52.8" y="-1097.9" font-family="Courier,monospace" font-size="10.00"> &#160;bill.b1.status: Pending</text>
+<text xml:space="preserve" text-anchor="start" x="52.8" y="-1087.9" font-family="Courier,monospace" font-size="10.00"> &#160;bill.b1.origin: House</text>
+<text xml:space="preserve" text-anchor="start" x="52.8" y="-1077.9" font-family="Courier,monospace" font-size="10.00"> &#160;bill.b1.passed: {House}</text>
+<text xml:space="preserve" text-anchor="start" x="52.8" y="-1067.9" font-family="Courier,monospace" font-size="10.00"> &#160;amend.a1.status: Ratified</text>
+<text xml:space="preserve" text-anchor="start" x="52.8" y="-1057.9" font-family="Courier,monospace" font-size="10.00"> &#160;amend.a1.route: Convention</text>
+<text xml:space="preserve" text-anchor="start" x="52.8" y="-1047.9" font-family="Courier,monospace" font-size="10.00"> &#160;amend.a1.ratifications: 4</text>
+<text xml:space="preserve" text-anchor="start" x="52.8" y="-1037.9" font-family="Courier,monospace" font-size="10.00"> &#160;terms.p1: 2</text>
+<text xml:space="preserve" text-anchor="start" x="52.8" y="-1027.9" font-family="Courier,monospace" font-size="10.00"> &#160;terms.p2: 2</text>
+<text xml:space="preserve" text-anchor="start" x="52.8" y="-1017.9" font-family="Courier,monospace" font-weight="bold" font-size="10.00">▸ back to initial: nominee.o1</text>
+</g>
+<!-- 13&#45;&gt;14 -->
+<g id="edge14" class="edge">
+<title>13&#45;&gt;14</title>
+<path fill="none" stroke="black" d="M139.8,-1173.03C139.8,-1165.08 139.8,-1156.91 139.8,-1148.81"/>
+<polygon fill="black" stroke="black" points="143.3,-1148.97 139.8,-1138.97 136.3,-1148.97 143.3,-1148.97"/>
+</g>
+<!-- 15 -->
+<g id="node16" class="node">
+<title>15</title>
+<polygon fill="lightblue" stroke="black" points="234.6,-969.6 45,-969.6 45,-838 234.6,-838 234.6,-969.6"/>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-950.3" font-family="Courier,monospace" font-weight="bold" font-size="10.00">Step 15: Adjourn</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-940.3" font-family="Courier,monospace" font-size="10.00"> &#160;officer.o1: p1</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-930.3" font-family="Courier,monospace" font-size="10.00"> &#160;bill.b1.status: Pending</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-920.3" font-family="Courier,monospace" font-size="10.00"> &#160;bill.b1.origin: House</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-910.3" font-family="Courier,monospace" font-size="10.00"> &#160;bill.b1.passed: {House}</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-900.3" font-family="Courier,monospace" font-size="10.00"> &#160;amend.a1.status: Ratified</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-890.3" font-family="Courier,monospace" font-size="10.00"> &#160;amend.a1.route: Convention</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-880.3" font-family="Courier,monospace" font-size="10.00"> &#160;amend.a1.ratifications: 4</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-870.3" font-family="Courier,monospace" font-weight="bold" font-size="10.00">▸ inSession: FALSE</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-860.3" font-family="Courier,monospace" font-size="10.00"> &#160;terms.p1: 2</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-850.3" font-family="Courier,monospace" font-size="10.00"> &#160;terms.p2: 2</text>
+</g>
+<!-- 14&#45;&gt;15 -->
+<g id="edge15" class="edge">
+<title>14&#45;&gt;15</title>
+<path fill="none" stroke="black" d="M139.8,-1005.43C139.8,-997.48 139.8,-989.31 139.8,-981.21"/>
+<polygon fill="black" stroke="black" points="143.3,-981.37 139.8,-971.37 136.3,-981.37 143.3,-981.37"/>
+</g>
+<!-- 16 -->
+<g id="node17" class="node">
+<title>16</title>
+<polygon fill="lightblue" stroke="black" points="234.6,-802 45,-802 45,-670.4 234.6,-670.4 234.6,-802"/>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-782.7" font-family="Courier,monospace" font-weight="bold" font-size="10.00">Step 16: Convene</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-772.7" font-family="Courier,monospace" font-size="10.00"> &#160;officer.o1: p1</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-762.7" font-family="Courier,monospace" font-size="10.00"> &#160;bill.b1.status: Pending</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-752.7" font-family="Courier,monospace" font-size="10.00"> &#160;bill.b1.origin: House</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-742.7" font-family="Courier,monospace" font-size="10.00"> &#160;bill.b1.passed: {House}</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-732.7" font-family="Courier,monospace" font-size="10.00"> &#160;amend.a1.status: Ratified</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-722.7" font-family="Courier,monospace" font-size="10.00"> &#160;amend.a1.route: Convention</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-712.7" font-family="Courier,monospace" font-size="10.00"> &#160;amend.a1.ratifications: 4</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-702.7" font-family="Courier,monospace" font-size="10.00"> &#160;terms.p1: 2</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-692.7" font-family="Courier,monospace" font-size="10.00"> &#160;terms.p2: 2</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-682.7" font-family="Courier,monospace" font-weight="bold" font-size="10.00">▸ back to initial: inSession</text>
+</g>
+<!-- 15&#45;&gt;16 -->
+<g id="edge16" class="edge">
+<title>15&#45;&gt;16</title>
+<path fill="none" stroke="black" d="M139.8,-837.83C139.8,-829.88 139.8,-821.71 139.8,-813.61"/>
+<polygon fill="black" stroke="black" points="143.3,-813.77 139.8,-803.77 136.3,-813.77 143.3,-813.77"/>
+</g>
+<!-- 17 -->
+<g id="node18" class="node">
+<title>17</title>
+<polygon fill="lightcoral" stroke="black" points="234.6,-634.4 45,-634.4 45,-502.8 234.6,-502.8 234.6,-634.4"/>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-615.1" font-family="Courier,monospace" font-weight="bold" font-size="10.00">Step 17: Impeach</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-605.1" font-family="Courier,monospace" font-size="10.00"> &#160;officer.o1: p1</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-595.1" font-family="Courier,monospace" font-size="10.00"> &#160;bill.b1.status: Pending</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-585.1" font-family="Courier,monospace" font-size="10.00"> &#160;bill.b1.origin: House</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-575.1" font-family="Courier,monospace" font-size="10.00"> &#160;bill.b1.passed: {House}</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-565.1" font-family="Courier,monospace" font-size="10.00"> &#160;amend.a1.status: Ratified</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-555.1" font-family="Courier,monospace" font-size="10.00"> &#160;amend.a1.route: Convention</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-545.1" font-family="Courier,monospace" font-size="10.00"> &#160;amend.a1.ratifications: 4</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-535.1" font-family="Courier,monospace" font-weight="bold" font-size="10.00">▸ impeached: {p1}</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-525.1" font-family="Courier,monospace" font-size="10.00"> &#160;terms.p1: 2</text>
+<text xml:space="preserve" text-anchor="start" x="55.8" y="-515.1" font-family="Courier,monospace" font-size="10.00"> &#160;terms.p2: 2</text>
+</g>
+<!-- 16&#45;&gt;17 -->
+<g id="edge17" class="edge">
+<title>16&#45;&gt;17</title>
+<path fill="none" stroke="black" d="M139.8,-670.23C139.8,-662.28 139.8,-654.11 139.8,-646.01"/>
+<polygon fill="black" stroke="black" points="143.3,-646.17 139.8,-636.17 136.3,-646.17 143.3,-646.17"/>
+</g>
+<!-- 18 -->
+<g id="node19" class="node">
+<title>18</title>
+<polygon fill="lightblue" stroke="black" points="249.6,-466.8 30,-466.8 30,-335.2 249.6,-335.2 249.6,-466.8"/>
+<text xml:space="preserve" text-anchor="start" x="40.8" y="-447.5" font-family="Courier,monospace" font-weight="bold" font-size="10.00">Step 18: PassChamber</text>
+<text xml:space="preserve" text-anchor="start" x="40.8" y="-437.5" font-family="Courier,monospace" font-size="10.00"> &#160;officer.o1: p1</text>
+<text xml:space="preserve" text-anchor="start" x="40.8" y="-427.5" font-family="Courier,monospace" font-weight="bold" font-size="10.00">▸ bill.b1.status: Presented</text>
+<text xml:space="preserve" text-anchor="start" x="40.8" y="-417.5" font-family="Courier,monospace" font-size="10.00"> &#160;bill.b1.origin: House</text>
+<text xml:space="preserve" text-anchor="start" x="40.8" y="-407.5" font-family="Courier,monospace" font-weight="bold" font-size="10.00">▸ bill.b1.passed: {House, Senate}</text>
+<text xml:space="preserve" text-anchor="start" x="40.8" y="-397.5" font-family="Courier,monospace" font-size="10.00"> &#160;amend.a1.status: Ratified</text>
+<text xml:space="preserve" text-anchor="start" x="40.8" y="-387.5" font-family="Courier,monospace" font-size="10.00"> &#160;amend.a1.route: Convention</text>
+<text xml:space="preserve" text-anchor="start" x="40.8" y="-377.5" font-family="Courier,monospace" font-size="10.00"> &#160;amend.a1.ratifications: 4</text>
+<text xml:space="preserve" text-anchor="start" x="40.8" y="-367.5" font-family="Courier,monospace" font-size="10.00"> &#160;impeached: {p1}</text>
+<text xml:space="preserve" text-anchor="start" x="40.8" y="-357.5" font-family="Courier,monospace" font-size="10.00"> &#160;terms.p1: 2</text>
+<text xml:space="preserve" text-anchor="start" x="40.8" y="-347.5" font-family="Courier,monospace" font-size="10.00"> &#160;terms.p2: 2</text>
+</g>
+<!-- 17&#45;&gt;18 -->
+<g id="edge18" class="edge">
+<title>17&#45;&gt;18</title>
+<path fill="none" stroke="black" d="M139.8,-502.63C139.8,-494.68 139.8,-486.51 139.8,-478.41"/>
+<polygon fill="black" stroke="black" points="143.3,-478.57 139.8,-468.57 136.3,-478.57 143.3,-478.57"/>
+</g>
+<!-- 19 -->
+<g id="node20" class="node">
+<title>19</title>
+<polygon fill="lightgray" stroke="black" points="249.6,-299.2 30,-299.2 30,-167.6 249.6,-167.6 249.6,-299.2"/>
+<text xml:space="preserve" text-anchor="start" x="40.8" y="-279.9" font-family="Courier,monospace" font-weight="bold" font-size="10.00">Step 19: OfficerResigns</text>
+<text xml:space="preserve" text-anchor="start" x="40.8" y="-269.9" font-family="Courier,monospace" font-size="10.00"> &#160;bill.b1.status: Presented</text>
+<text xml:space="preserve" text-anchor="start" x="40.8" y="-259.9" font-family="Courier,monospace" font-size="10.00"> &#160;bill.b1.origin: House</text>
+<text xml:space="preserve" text-anchor="start" x="40.8" y="-249.9" font-family="Courier,monospace" font-size="10.00"> &#160;bill.b1.passed: {House, Senate}</text>
+<text xml:space="preserve" text-anchor="start" x="40.8" y="-239.9" font-family="Courier,monospace" font-size="10.00"> &#160;amend.a1.status: Ratified</text>
+<text xml:space="preserve" text-anchor="start" x="40.8" y="-229.9" font-family="Courier,monospace" font-size="10.00"> &#160;amend.a1.route: Convention</text>
+<text xml:space="preserve" text-anchor="start" x="40.8" y="-219.9" font-family="Courier,monospace" font-size="10.00"> &#160;amend.a1.ratifications: 4</text>
+<text xml:space="preserve" text-anchor="start" x="40.8" y="-209.9" font-family="Courier,monospace" font-size="10.00"> &#160;impeached: {p1}</text>
+<text xml:space="preserve" text-anchor="start" x="40.8" y="-199.9" font-family="Courier,monospace" font-size="10.00"> &#160;terms.p1: 2</text>
+<text xml:space="preserve" text-anchor="start" x="40.8" y="-189.9" font-family="Courier,monospace" font-size="10.00"> &#160;terms.p2: 2</text>
+<text xml:space="preserve" text-anchor="start" x="40.8" y="-179.9" font-family="Courier,monospace" font-weight="bold" font-size="10.00">▸ back to initial: officer.o1</text>
+</g>
+<!-- 18&#45;&gt;19 -->
+<g id="edge19" class="edge">
+<title>18&#45;&gt;19</title>
+<path fill="none" stroke="black" d="M139.8,-335.03C139.8,-327.08 139.8,-318.91 139.8,-310.81"/>
+<polygon fill="black" stroke="black" points="143.3,-310.97 139.8,-300.97 136.3,-310.97 143.3,-310.97"/>
+</g>
+<!-- 20 -->
+<g id="node21" class="node">
+<title>20</title>
+<polygon fill="lightcoral" stroke="black" points="249.6,-131.6 30,-131.6 30,0 249.6,0 249.6,-131.6"/>
+<text xml:space="preserve" text-anchor="start" x="40.8" y="-112.3" font-family="Courier,monospace" font-weight="bold" font-size="10.00">Step 20: Convict</text>
+<text xml:space="preserve" text-anchor="start" x="40.8" y="-102.3" font-family="Courier,monospace" font-size="10.00"> &#160;bill.b1.status: Presented</text>
+<text xml:space="preserve" text-anchor="start" x="40.8" y="-92.3" font-family="Courier,monospace" font-size="10.00"> &#160;bill.b1.origin: House</text>
+<text xml:space="preserve" text-anchor="start" x="40.8" y="-82.3" font-family="Courier,monospace" font-size="10.00"> &#160;bill.b1.passed: {House, Senate}</text>
+<text xml:space="preserve" text-anchor="start" x="40.8" y="-72.3" font-family="Courier,monospace" font-size="10.00"> &#160;amend.a1.status: Ratified</text>
+<text xml:space="preserve" text-anchor="start" x="40.8" y="-62.3" font-family="Courier,monospace" font-size="10.00"> &#160;amend.a1.route: Convention</text>
+<text xml:space="preserve" text-anchor="start" x="40.8" y="-52.3" font-family="Courier,monospace" font-size="10.00"> &#160;amend.a1.ratifications: 4</text>
+<text xml:space="preserve" text-anchor="start" x="40.8" y="-42.3" font-family="Courier,monospace" font-weight="bold" font-size="10.00">▸ disqualified: {p1}</text>
+<text xml:space="preserve" text-anchor="start" x="40.8" y="-32.3" font-family="Courier,monospace" font-size="10.00"> &#160;terms.p1: 2</text>
+<text xml:space="preserve" text-anchor="start" x="40.8" y="-22.3" font-family="Courier,monospace" font-size="10.00"> &#160;terms.p2: 2</text>
+<text xml:space="preserve" text-anchor="start" x="40.8" y="-12.3" font-family="Courier,monospace" font-weight="bold" font-size="10.00">▸ back to initial: impeached</text>
+</g>
+<!-- 19&#45;&gt;20 -->
+<g id="edge20" class="edge">
+<title>19&#45;&gt;20</title>
+<path fill="none" stroke="black" d="M139.8,-167.43C139.8,-159.48 139.8,-151.31 139.8,-143.21"/>
+<polygon fill="black" stroke="black" points="143.3,-143.37 139.8,-133.37 136.3,-143.37 143.3,-143.37"/>
+</g>
+<!-- legend_init -->
+<g id="node22" class="node">
+<title>legend_init</title>
+<polygon fill="lightyellow" stroke="black" points="400.6,-3090.8 331,-3090.8 331,-3054.8 400.6,-3054.8 400.6,-3090.8"/>
+<text xml:space="preserve" text-anchor="middle" x="365.8" y="-3068.92" font-family="Helvetica,sans-Serif" font-size="10.00">Initial state</text>
+</g>
+<!-- legend_legislative -->
+<g id="node23" class="node">
+<title>legend_legislative</title>
+<polygon fill="lightblue" stroke="black" points="428.73,-3008.2 302.88,-3008.2 302.88,-2972.2 428.73,-2972.2 428.73,-3008.2"/>
+<text xml:space="preserve" text-anchor="middle" x="365.8" y="-2986.32" font-family="Helvetica,sans-Serif" font-size="10.00">Congress (either house)</text>
+</g>
+<!-- legend_init&#45;&gt;legend_legislative -->
+<!-- legend_executive -->
+<g id="node24" class="node">
+<title>legend_executive</title>
+<polygon fill="lightsalmon" stroke="black" points="422.73,-2905.6 308.88,-2905.6 308.88,-2869.6 422.73,-2869.6 422.73,-2905.6"/>
+<text xml:space="preserve" text-anchor="middle" x="365.8" y="-2883.72" font-family="Helvetica,sans-Serif" font-size="10.00">President / executive</text>
+</g>
+<!-- legend_legislative&#45;&gt;legend_executive -->
+<!-- legend_impeachment -->
+<g id="node25" class="node">
+<title>legend_impeachment</title>
+<polygon fill="lightcoral" stroke="black" points="424.98,-2788 306.62,-2788 306.62,-2752 424.98,-2752 424.98,-2788"/>
+<text xml:space="preserve" text-anchor="middle" x="365.8" y="-2766.12" font-family="Helvetica,sans-Serif" font-size="10.00">Impeachment and trial</text>
+</g>
+<!-- legend_executive&#45;&gt;legend_impeachment -->
+<!-- legend_people -->
+<g id="node26" class="node">
+<title>legend_people</title>
+<polygon fill="plum" stroke="black" points="468.85,-2665.4 262.75,-2665.4 262.75,-2629.4 468.85,-2629.4 468.85,-2665.4"/>
+<text xml:space="preserve" text-anchor="middle" x="365.8" y="-2643.52" font-family="Helvetica,sans-Serif" font-size="10.00">People and States (elections, Art. V, suits)</text>
+</g>
+<!-- legend_impeachment&#45;&gt;legend_people -->
+<!-- legend_lapse -->
+<g id="node27" class="node">
+<title>legend_lapse</title>
+<polygon fill="lightgray" stroke="black" points="429.1,-2527.8 302.5,-2527.8 302.5,-2491.8 429.1,-2491.8 429.1,-2527.8"/>
+<text xml:space="preserve" text-anchor="middle" x="365.8" y="-2505.92" font-family="Helvetica,sans-Serif" font-size="10.00">Time, death, resignation</text>
+</g>
+<!-- legend_people&#45;&gt;legend_lapse -->
+</g>
+</svg>

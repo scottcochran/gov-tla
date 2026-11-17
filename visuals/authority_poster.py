@@ -9,8 +9,9 @@ English names of the edges; it stops if the model has an edge the layout
 does not place, so the poster cannot silently drift from the spec.
 
 Writes visuals/Government_authority_poster_YEAR.html (1789 unless --year is
-given), and, if Node.js with Playwright is available, the .pdf (vector, print
-size) and .png (preview) beside it. Run it from anywhere:
+given) and the same poster as one .svg file, light by default and dark where
+the viewer asks for it; and, if Node.js with Playwright is available, the
+.pdf (vector, print size) and .png (preview) beside them. Run it from anywhere:
 
     uv run python visuals/authority_poster.py [--year YEAR]
 """
@@ -18,10 +19,12 @@ size) and .png (preview) beside it. Run it from anywhere:
 import argparse
 import html
 import os
+import re
 import shutil
 import subprocess
 from collections import defaultdict
 
+import metrics
 import tlaviz
 
 # ---------------------------------------------------------------------------
@@ -480,7 +483,10 @@ def stop_icon():
             f'<line x1="7" y1="27" x2="27" y2="7" stroke="{CRITICAL}" stroke-width="3.5"/></svg>')
 
 
-def page(year, edges, added, dropped, check_note):
+def copy(year, edges, added, dropped, check_note):
+    """Every number and sentence on the poster, in the page's markup subset
+    (<b>, <small>, <br>, <span class="tag">, <span class="case">), shared by
+    the HTML page and the SVG."""
     f = facts(edges)
     in_force = [x for x, y in sorted(RATIFIED.items(), key=lambda i: i[1]) if y <= year]
     if year == FOUNDING:
@@ -522,6 +528,13 @@ def page(year, edges, added, dropped, check_note):
         loop_text = ('<b>grant cycles among government bodies.</b> Every loop of authority '
                      'closes through the People or the States.')
         back_text = 'Only Article V points back up, from Congress to the States.'
+    return (f, in_force, graph_of, as_of, force, source, control_svg, pairs, legend, struck,
+            note, chain_caveat, loop_text, back_text)
+
+
+def page(year, edges, added, dropped, check_note):
+    (f, in_force, graph_of, as_of, force, source, control_svg, pairs, legend, struck,
+     note, chain_caveat, loop_text, back_text) = copy(year, edges, added, dropped, check_note)
     return f"""<!doctype html>
 <html lang="en"><head><meta charset="utf-8">
 <title>Who Answers to Whom</title>
@@ -587,6 +600,304 @@ def page(year, edges, added, dropped, check_note):
   <span class="tag">authority_poster.py</span></p>
 </footer>
 </body></html>"""
+
+# ---------------------------------------------------------------------------
+# The same poster as one SVG: the panels above, composed with the page's text
+# laid out here, at the page's size (2304 x 3456 px, 24 x 36 in at 96 px/in).
+# Every colour is themed through tlaviz.theme_css, so the file is light by
+# default and dark under prefers-color-scheme: dark or svg[data-theme=dark].
+
+PAGE_W, PAGE_H = 2304, 3456
+PAD_X, PAD_TOP, PAD_BOTTOM, GAP = 120, 84, 56, 32
+FONT = 'Inter, Helvetica, Arial, sans-serif'
+MONO = '"JetBrains Mono", Menlo, Consolas, monospace'
+POSTER_THEME = {
+    INK: ('ink', '#eceae4'), INK2: ('ink2', '#b9b6ad'), MUTED: ('muted', '#8c8a83'),
+    SURFACE: ('surface', '#1a1d24'), PLANE: ('plane', '#121419'),
+    HAIRLINE: ('hairline', '#30343c'), PARCHMENT: ('parchment', '#262a31'),
+    KIND['Power']: ('power', '#7fb2f0'), KIND['Select']: ('select', '#f58a5e'),
+    KIND['Amend']: ('amend', '#4fd39f'), CRITICAL: ('critical', '#f07a7a'),
+    '#c3c2b7': ('removed', '#5a5e66'),
+}
+
+_MARKUP = re.compile(r'<b>|</b>|<small>|</small>|<span class="tag">|<span class="case">|</span>|<br>')
+
+
+def runs(markup):
+    """[(text, styles)] from the page's markup subset; '\\n' is a hard break."""
+    out, style, pos = [], set(), 0
+
+    def emit(text):
+        if text:
+            out.append((html.unescape(text), frozenset(style)))
+
+    for m in _MARKUP.finditer(markup):
+        emit(markup[pos:m.start()])
+        t = m.group(0)
+        if t == '<br>':
+            out.append(('\n', frozenset()))
+        elif t.startswith('</'):
+            style -= {'b', 'small', 'tag', 'case'} if t == '</span>' else {t[2:-1]}
+        else:
+            style.add('tag' if 'tag' in t else 'case' if 'case' in t else t[1:-1])
+        pos = m.end()
+    emit(markup[pos:])
+    return out
+
+
+def measure(text, size, styles):
+    if 'tag' in styles:
+        return len(text) * 0.6 * size * 0.82
+    table = metrics.W['b' if 'b' in styles else 'r']
+    return sum(table.get(ch, 0.5562) for ch in text) * size
+
+
+def wrap_runs(markup, size, maxw, small=60 / 104):
+    """Lines of [(word, styles)], greedily filled; a run's size is scaled for <small>."""
+    lines, line, width = [], [], 0.0
+    for text, styles in runs(markup):
+        if text == '\n':
+            lines.append(line)
+            line, width = [], 0.0
+            continue
+        sz = size * (small if 'small' in styles else 1)
+        for word in re.split(r'(?<= )', text):
+            if not word:
+                continue
+            w = measure(word, sz, styles)
+            if line and width + measure(word.rstrip(), sz, styles) > maxw:
+                lines.append(line)
+                line, width = [], 0.0
+                word = word.lstrip()
+                w = measure(word, sz, styles)
+            line.append((word, styles))
+            width += w
+    if line:
+        lines.append(line)
+    merged = []
+    for line in lines:                       # one tspan per style run, with its spaces inside
+        row = []
+        for text, st in line:
+            if row and row[-1][1] == st:
+                row[-1] = (row[-1][0] + text, st)
+            else:
+                row.append((text, st))
+        if row:
+            row[-1] = (row[-1][0].rstrip(), row[-1][1])
+        merged.append(row)
+    return merged
+
+
+def rich(x, y, markup, size, maxw, colour, lh=1.3, weight=400, anchor='start', small=60 / 104,
+         extra=''):
+    """Wrapped text at the page's font sizes. Returns (svg, height used)."""
+    out, top = [], y
+    for line in wrap_runs(markup, size, maxw, small):
+        base = top + lh * size / 2
+        spans, pills, cx = [], [], x
+        total = sum(measure(t, size * (small if 'small' in st else 1), st) for t, st in line)
+        start = x - total if anchor == 'end' else x - total / 2 if anchor == 'middle' else x
+        cx = start
+        for text, st in line:
+            sz = size * (small if 'small' in st else 1)
+            w = measure(text, sz, st)
+            attrs = ''
+            if 'b' in st:
+                attrs += f' font-weight="700" fill="{INK if colour != INK else INK}"'
+            if 'small' in st:
+                attrs += f' font-size="{sz:.1f}" font-weight="700" fill="{INK2}"'
+            if 'case' in st:
+                attrs += f' font-size="22" fill="{INK2}"'
+            if 'tag' in st:
+                attrs += f' font-family=\'{MONO}\' font-size="{sz * 0.82:.1f}" fill="{INK2}"'
+                pills.append(f'<rect x="{cx - 8:.1f}" y="{base - sz * 0.55:.1f}" width="{w + 16:.1f}" '
+                             f'height="{sz * 1.1:.1f}" rx="6" fill="{PARCHMENT}"/>')
+            spans.append(f'<tspan{attrs}>{esc(text)}</tspan>')
+            cx += w
+        out.append(''.join(pills) + f'<text x="{start:.1f}" y="{base:.1f}" font-size="{size}" '
+                   f'font-weight="{weight}" fill="{colour}" dominant-baseline="central" '
+                   f'xml:space="preserve"{extra}>'
+                   + ''.join(spans) + '</text>')
+        top += lh * size
+    return ''.join(out), top - y
+
+
+def fig(x, y, w, panel_markup):
+    """One of the panels above, placed as a nested SVG scaled to width w.
+    Its <defs> are dropped: the page carries one copy of the markers."""
+    m = re.match(r'<svg viewBox="(\S+) (\S+) (\S+) (\S+)"[^>]*>(.*)</svg>$', panel_markup, re.S)
+    vx, vy, vw, vh = (float(v) for v in m.groups()[:4])
+    body = re.sub(r'<defs>.*?</defs>', '', m.group(5), count=1)
+    h = w * vh / vw
+    return (f'<svg x="{x:.1f}" y="{y:.1f}" width="{w:.1f}" height="{h:.1f}" '
+            f'viewBox="{vx:g} {vy:g} {vw:g} {vh:g}">{body}</svg>'), h
+
+
+def card(x, y, w, h, rx=16):
+    return (f'<rect x="{x:.1f}" y="{y:.1f}" width="{w:.1f}" height="{h:.1f}" rx="{rx}" '
+            f'fill="{SURFACE}" stroke="{HAIRLINE}" stroke-width="1.5"/>')
+
+
+def panel_top(x, y, w, heading, lede, legend_items=()):
+    """A panel's heading, lede and optional legend. Returns (svg, y below)."""
+    out, t = [], y + 40
+    svg_, h = rich(x + 44, t, heading, 50, w - 88, INK, lh=1.1, weight=800,
+                   extra=' letter-spacing="-1"')
+    out.append(svg_)
+    t += h + 14
+    svg_, h = rich(x + 44, t, lede, 28, w - 88, INK2, lh=1.4)
+    out.append(svg_)
+    t += h + 24
+    if legend_items:
+        cx, row_h = x + 44, 23 * 1.3
+        for kind, markup in legend_items:
+            width = 44 + 12 + sum(measure(tx, 23, st) for tx, st in runs(markup))
+            if cx + width > x + w - 44:
+                cx, t = x + 44, t + row_h + 10
+            out.append(f'<line x1="{cx + 2}" y1="{t + row_h / 2:.1f}" x2="{cx + 42}" '
+                       f'y2="{t + row_h / 2:.1f}" stroke="{KIND[kind]}" stroke-width="5"/>')
+            svg_, _ = rich(cx + 56, t, markup, 23, 2000, INK2, lh=1.3)
+            out.append(svg_)
+            cx += width + 28
+        t += row_h + 18
+    return ''.join(out), t
+
+
+def poster_svg(year, edges, added, dropped, check_note):
+    text = copy(year, edges, added, dropped, check_note)
+    svg_, over = _poster(year, text, edges, added, dropped, 1.0)
+    if over > 0:
+        # Shrink the two main figures by what overflows; they are the only
+        # elastic part, and the page's text keeps its sizes.
+        h = max(_FIG_H)
+        svg_, over = _poster(year, text, edges, added, dropped, (h - over) / h)
+    if over > 0:
+        print(f'WARNING: the SVG poster\'s content ends {over:.0f} px into the footer')
+    return svg_
+
+
+_FIG_H = []
+
+
+def _poster(year, text, edges, added, dropped, fig_scale):
+    (f, in_force, graph_of, as_of, force, source, control_svg, pairs, legend, struck,
+     note, chain_caveat, loop_text, back_text) = text
+    _FIG_H.clear()
+    W = PAGE_W - 2 * PAD_X
+    X = PAD_X
+    out = [f'<rect width="{PAGE_W}" height="{PAGE_H}" fill="{PLANE}"/>']
+    y = PAD_TOP
+
+    # Header
+    kicker = f'gov-tla · Government.tla · a TLA+ model of the U.S. Constitution · {year}'.upper()
+    svg_, h = rich(X, y, kicker, 26, W, INK2, lh=1.2, weight=700, extra=' letter-spacing="3.6"')
+    out.append(svg_)
+    y += h + 22
+    svg_, h = rich(X, y, 'Who answers to whom', 140, W, INK, lh=0.95, weight=800,
+                   extra=' letter-spacing="-4.9"')
+    out.append(svg_)
+    y += h + 30
+    deck = (f'{as_of[0].upper() + as_of[1:]}, as a graph: <b>{f["total"]} edges</b> of authority '
+            'among the People, the States, the text and the government. Power flows <b>down</b> '
+            f'one chain{chain_caveat}; checks run <b>in a circle</b>, and Congress holds most of them.')
+    svg_, h = rich(X, y, deck, 40, 1750, INK2, lh=1.3)
+    out.append(svg_)
+    y += h + GAP
+
+    # Stats
+    tile_w = (W - 2 * GAP) / 3
+    tiles = [(str(f['total']),
+              f'<b>edges in {graph_of}:</b> {f["grant"]} say where authority comes from, '
+              f'{f["control"]} let one branch act on another.'),
+             (f'{f["out_c"]} <small>vs</small> {f["in_c"]}',
+              '<b>checks Congress holds</b> on the other two branches, against the checks they '
+              'hold on Congress.'),
+             (str(len(f['loops'])), loop_text)]
+    drawn, heights = [], []
+    for i, (n, t) in enumerate(tiles):
+        tx = X + i * (tile_w + GAP)
+        a, ha = rich(tx + 40, y + 30, n, 104, tile_w - 80, INK, lh=1, weight=800,
+                     extra=' letter-spacing="-4"')
+        b, hb = rich(tx + 40, y + 30 + ha + 14, t, 29, tile_w - 80, INK2, lh=1.35)
+        drawn.append(a + b)
+        heights.append(30 + ha + 14 + hb + 32)
+    th = max(heights)
+    for i, d in enumerate(drawn):
+        out.append(card(X + i * (tile_w + GAP), y, tile_w, th) + d)
+    y += th + GAP
+
+    # Main row: the grant layer and the control layer
+    w1 = (W - GAP) * 1100 / 2100
+    w2 = W - GAP - w1
+    legend_items = [('Power', '<b>Power</b>&nbsp;confers authority'),
+                    ('Select', '<b>Select</b>&nbsp;fills an office'),
+                    ('Amend', '<b>Amend</b>&nbsp;writes the text')]
+    top1, t1 = panel_top(X, y, w1, 'Where authority comes from',
+                         f'The <b>grant layer</b>: {f["grant"]} edges, running <b>downward</b> from '
+                         f'the Constitution to the courts. {back_text}', legend_items)
+    fw1 = (w1 - 88) * fig_scale
+    fig1, h1 = fig(X + 44 + (w1 - 88 - fw1) / 2, t1, fw1, grant_panel(edges))
+    top2, t2 = panel_top(X + w1 + GAP, y, w2, 'How the branches check each other',
+                         f'The <b>control layer</b>: {f["control"]} edges. Every branch can act on '
+                         'each of the others, so checks form a cycle. Arrow width is the number of '
+                         "checks; Congress's arrows are the widest on both sides.")
+    fw2 = (w2 - 88) * fig_scale
+    fig2, h2 = fig(X + w1 + GAP + 44 + (w2 - 88 - fw2) / 2, t2, fw2, control_svg)
+    _FIG_H.extend([h1, h2])
+    ph = max(t1 + h1, t2 + h2) + 36 - y
+    out.append(card(X, y, w1, ph) + top1 + fig1)
+    out.append(card(X + w1 + GAP, y, w2, ph) + top2 + fig2)
+    y += ph + GAP
+
+    # Small row: amendments, statutes
+    w3 = (W - GAP) / 2
+    top3, t3 = panel_top(X, y, w3, 'Amendments rewire the graph',
+                         f'Text edges change only by Article V. Two amendments in the model move '
+                         f'them. {force}')
+    fig3, h3 = fig(X + 44, t3, w3 - 88, amendment_panel(added, dropped))
+    x4 = X + w3 + GAP
+    top4, t4 = panel_top(x4, y, w3, 'Statutes add; courts prune',
+                         'Agencies and lower courts exist only by statute (dashed edges). Congress '
+                         'can enact an edge the text forbids. Once someone sues, the court strikes it:')
+    fig4, h4 = fig(x4 + 44, t4, w3 - 88, statute_panel())
+    t = t4 + h4 + 22
+    items = []
+    for what, case, after in FORBIDDEN:
+        ix, tx = x4 + 44, x4 + 44 + 40 + 14
+        items.append(f'<g transform="translate({ix},{t + 1})"><circle cx="17" cy="17" r="14" '
+                     f'fill="none" stroke="{CRITICAL}" stroke-width="3.5"/><line x1="7" y1="27" '
+                     f'x2="27" y2="7" stroke="{CRITICAL}" stroke-width="3.5"/></g>')
+        a, ha = rich(tx, t, f'<b>{esc(what)}</b>', 24, w3 - 88 - 54, INK, lh=1.3)
+        b, hb = rich(tx, t + ha, f'<span class="case">{esc(case)} · {esc(after)}</span>', 22,
+                     w3 - 88 - 54, INK2, lh=1.3)
+        items.append(a + b)
+        t += ha + hb + 12
+    ph = max(t3 + h3 + 36, t - 12 + 36) - y
+    out.append(card(X, y, w3, ph) + top3 + fig3)
+    out.append(card(x4, y, w3, ph) + top4 + fig4 + ''.join(items))
+    y += ph
+
+    # Footer, at the foot of the page
+    foot = (f'<b>Source:</b> {source} Judicial review is Marbury\'s reading of Articles III and VI, '
+            f'not text. Vote thresholds and persons are abstracted away.{note} A model for study, '
+            'not legal advice.')
+    lines = wrap_runs(foot, 22, 1800)
+    fh = 26 + len(lines) * 22 * 1.45
+    fy = PAGE_H - PAD_BOTTOM - fh
+    out.append(f'<line x1="{X}" y1="{fy:.1f}" x2="{X + W}" y2="{fy:.1f}" stroke="{HAIRLINE}" '
+               'stroke-width="1"/>')
+    svg_, _ = rich(X, fy + 26, foot, 22, 1800, MUTED, lh=1.45)
+    out.append(svg_)
+    svg_, _ = rich(X + W, fy + 26, 'Generated by<br><span class="tag">authority_poster.py</span>',
+                   22, 600, MUTED, lh=1.45, anchor='end')
+    out.append(svg_)
+
+    style = tlaviz.theme_css(POSTER_THEME)
+    title = f'Who answers to whom: the authority graph of {year}'
+    return (f'<svg xmlns="http://www.w3.org/2000/svg" width="{PAGE_W}" height="{PAGE_H}" '
+            f'viewBox="0 0 {PAGE_W} {PAGE_H}" role="img" aria-labelledby="t" '
+            f'font-family=\'{FONT}\'>\n<title id="t">{esc(title)}</title>\n{style}\n{defs()}\n'
+            + '\n'.join(out) + '\n</svg>\n', y + GAP - fy)
 
 
 FOUNDING = 1789
@@ -666,7 +977,10 @@ def main():
     path = os.path.join(tlaviz.VISUALS, f'{out}.html')
     with open(path, 'w') as fh:
         fh.write(page(args.year, edges, added, dropped, args.check_note))
-    print(f'Generated visuals/{out}.html')
+    poster = poster_svg(args.year, edges, added, dropped, args.check_note)
+    with open(os.path.join(tlaviz.VISUALS, f'{out}.svg'), 'w') as fh:
+        fh.write(poster)
+    print(f'Generated visuals/{out}.html and visuals/{out}.svg')
 
     if shutil.which('node'):
         r = subprocess.run(['node', '-e', RENDER_JS, path,
