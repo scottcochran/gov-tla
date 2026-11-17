@@ -762,7 +762,8 @@ files are evidence.
 
 ## Visualization Tools
 
-Three scripts draw what the specs do. A tic-tac-toe board has a few
+Four scripts in [`visuals/`](visuals/), with their shared helper `tlaviz.py`
+and the pictures they draw, show what the specs do. A tic-tac-toe board has a few
 thousand states, so its whole state graph can be dumped once and drawn;
 these specs have millions, so each script instead runs TLC on a small
 wrapper module that bounds the run (a depth `CONSTRAINT` for breadth-first
@@ -806,18 +807,20 @@ winget install graphviz
 ```
 
 The scripts run under [uv](https://docs.astral.sh/uv/), which installs the
-`graphviz` Python package from `pyproject.toml`. Each takes `--help`.
+`graphviz` Python package from `pyproject.toml`. Each takes `--help`, and
+each can be run from any directory: it finds the modules at the repo root and
+writes its pictures beside itself in `visuals/`.
 
 ---
 
-### visualize_states.py
+### visuals/visualize_states.py
 
 Draws the state graph of one module to a limited depth: every behaviour of
 up to `depth` steps from the initial state.
 
 **Usage:**
 ```bash
-uv run python visualize_states.py [module] [depth]
+uv run python visuals/visualize_states.py [module] [depth]
 ```
 
 - `module` (optional): `Constitution` (default), `Executive`, `Judiciary` or `Government`
@@ -831,15 +834,15 @@ uv run python visualize_states.py [module] [depth]
 
 **Examples:**
 ```bash
-uv run python visualize_states.py                   # Constitution, 2 steps
-uv run python visualize_states.py Government        # the authority graph's first moves
-uv run python visualize_states.py Judiciary         # many ways to set exceptions, merged
-uv run python visualize_states.py Executive 2 --merge 0   # all 43 states
+uv run python visuals/visualize_states.py                   # Constitution, 2 steps
+uv run python visuals/visualize_states.py Government        # the authority graph's first moves
+uv run python visuals/visualize_states.py Judiciary         # many ways to set exceptions, merged
+uv run python visuals/visualize_states.py Executive 2 --merge 0   # all 43 states
 ```
 
 **Output:**
-- `{module}_depth{N}.png`, e.g. [`Constitution_depth2.png`](Constitution_depth2.png)
-  and [`Government_depth1.png`](Government_depth1.png)
+- `visuals/{module}_depth{N}.png`, e.g. [`Constitution_depth2.png`](visuals/Constitution_depth2.png)
+  and [`Government_depth1.png`](visuals/Government_depth1.png)
 - Console output: states by depth, and transitions by action
 
 | Module | Depth 1 | Depth 2 |
@@ -854,7 +857,7 @@ configs in this repository.)
 
 ---
 
-### simulate_trace.py
+### visuals/simulate_trace.py
 
 Simulates and visualizes one random behaviour. TLC chooses every step
 (`-simulate` with a seed, so a run can be repeated) and stops after
@@ -862,7 +865,7 @@ Simulates and visualizes one random behaviour. TLC chooses every step
 
 **Usage:**
 ```bash
-uv run python simulate_trace.py [module] [seed] [--steps N]
+uv run python visuals/simulate_trace.py [module] [seed] [--steps N]
 ```
 
 - `seed` (optional): random seed for a reproducible behaviour; without
@@ -871,15 +874,15 @@ uv run python simulate_trace.py [module] [seed] [--steps N]
 
 **Examples:**
 ```bash
-uv run python simulate_trace.py                     # random Constitution run
-uv run python simulate_trace.py Constitution 42     # reproducible run
-uv run python simulate_trace.py Government 3 --steps 40
+uv run python visuals/simulate_trace.py                     # random Constitution run
+uv run python visuals/simulate_trace.py Constitution 42     # reproducible run
+uv run python visuals/simulate_trace.py Government 3 --steps 40
 ```
 
 **Output:**
 - Console output showing each step, who acted, and what it changed
-- `{module}_trace.png` or `{module}_trace_seed{N}.png`, e.g.
-  [`Constitution_trace_seed42.png`](Constitution_trace_seed42.png): one
+- `visuals/{module}_trace.png` or `visuals/{module}_trace_seed{N}.png`, e.g.
+  [`Constitution_trace_seed42.png`](visuals/Constitution_trace_seed42.png): one
   node per state, the lines changed by that step in bold and marked `▸`
 
 **Sample console output** (`Constitution 42`):
@@ -903,7 +906,7 @@ scripts tell them apart by the edge recorded in `last`.
 
 ---
 
-### authority_graph.py
+### visuals/authority_graph.py
 
 `Government.tla`'s state *is* a graph, so this script draws the `edges`
 variable itself: nodes for the People, the States, the Constitution, the
@@ -913,33 +916,33 @@ by statute rather than the Constitution.
 
 **Usage:**
 ```bash
-uv run python authority_graph.py [seed] [--steps N] [--layer grant|control|all]
+uv run python visuals/authority_graph.py [seed] [--steps N] [--layer grant|control|all]
 ```
 
-- No seed: the graph of 1789, [`Government_authority.png`](Government_authority.png)
+- No seed: the graph of 1789, [`visuals/Government_authority.png`](visuals/Government_authority.png)
 - With a seed: simulate `--steps` steps (default 40) and draw the graph as
   it ends, marking edges added by amendment (bold), edges repealed (dotted
   gray), statutory edges under challenge (red, ⚖) and the edge that fired
-  last, e.g. [`Government_authority_seed6.png`](Government_authority_seed6.png)
+  last, e.g. [`visuals/Government_authority_seed6.png`](visuals/Government_authority_seed6.png)
   (XXV ratified and XVII proposed, an agency created, and two of its
   statutory edges challenged in court)
 - `--layer` draws only the grant layer or only the control layer
 
 ---
 
-### authority_poster.py
+### visuals/authority_poster.py
 
 The same graph as a 24 × 36 in print poster, for the founding graph or for
-any later year:
-[`Government_authority_poster_1789.pdf`](Government_authority_poster_1789.pdf)
-and [`Government_authority_poster_2026.pdf`](Government_authority_poster_2026.pdf)
-(previews: [1789](Government_authority_poster_1789.png),
-[2026](Government_authority_poster_2026.png)).
+any later year, in [`visuals/`](visuals/):
+[`Government_authority_poster_1789.pdf`](visuals/Government_authority_poster_1789.pdf)
+and [`Government_authority_poster_2026.pdf`](visuals/Government_authority_poster_2026.pdf)
+(previews: [1789](visuals/Government_authority_poster_1789.png),
+[2026](visuals/Government_authority_poster_2026.png)).
 
 **Usage:**
 ```bash
-uv run python authority_poster.py               # 1789: the founding graph
-uv run python authority_poster.py --year 2026   # as amended through 2026
+uv run python visuals/authority_poster.py               # 1789: the founding graph
+uv run python visuals/authority_poster.py --year 2026   # as amended through 2026
 ```
 
 `--year` applies every amendment in the model ratified by that year: XVII
@@ -961,9 +964,9 @@ are computed from the graph, and the edges come from TLC.
 The script stops if the model has an edge the poster's layout does not
 place.
 
-Writes `Government_authority_poster_YEAR.html`, then renders the PDF and PNG if
-Node.js and Playwright are installed; otherwise print the HTML to PDF at
-24 × 36 in from a browser.
+Writes `visuals/Government_authority_poster_YEAR.html`, then renders the PDF
+and PNG beside it if Node.js and Playwright are installed; otherwise print the
+HTML to PDF at 24 × 36 in from a browser.
 
 ---
 

@@ -8,9 +8,11 @@ layout (where each node sits and how each edge is routed) and the plain
 English names of the edges; it stops if the model has an edge the layout
 does not place, so the poster cannot silently drift from the spec.
 
-Writes Government_authority_poster_YEAR.html (1789 unless --year is given),
-and, if Node.js with Playwright is available, the .pdf (vector, print size)
-and .png (preview) beside it.
+Writes visuals/Government_authority_poster_YEAR.html (1789 unless --year is
+given), and, if Node.js with Playwright is available, the .pdf (vector, print
+size) and .png (preview) beside it. Run it from anywhere:
+
+    uv run python visuals/authority_poster.py [--year YEAR]
 """
 
 import argparse
@@ -661,24 +663,24 @@ def main():
     dropped = [dict(e) for x in effects for e in effects[x][1]]
 
     out = f'Government_authority_poster_{args.year}'
-    path = os.path.join(tlaviz.ROOT, f'{out}.html')
+    path = os.path.join(tlaviz.VISUALS, f'{out}.html')
     with open(path, 'w') as fh:
         fh.write(page(args.year, edges, added, dropped, args.check_note))
-    print(f'Generated {out}.html')
+    print(f'Generated visuals/{out}.html')
 
     if shutil.which('node'):
         r = subprocess.run(['node', '-e', RENDER_JS, path,
-                            os.path.join(tlaviz.ROOT, f'{out}.pdf'),
-                            os.path.join(tlaviz.ROOT, f'{out}.png')],
+                            os.path.join(tlaviz.VISUALS, f'{out}.pdf'),
+                            os.path.join(tlaviz.VISUALS, f'{out}.png')],
                            capture_output=True, text=True,
                            env={**os.environ, 'NODE_PATH': subprocess.run(
                                ['npm', 'root', '-g'], capture_output=True,
                                text=True).stdout.strip()})
         if r.returncode == 0:
-            print(r.stderr.strip() or f'Generated {out}.pdf (24 x 36 in) and {out}.png')
+            print(r.stderr.strip() or f'Generated visuals/{out}.pdf (24 x 36 in) and visuals/{out}.png')
             return
         print('Could not render with Playwright:', r.stderr.strip().splitlines()[-1:])
-    print(f'Open {out}.html in a browser and print it to PDF at 24 x 36 in.')
+    print(f'Open visuals/{out}.html in a browser and print it to PDF at 24 x 36 in.')
 
 
 if __name__ == '__main__':
