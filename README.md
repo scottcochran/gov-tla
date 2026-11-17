@@ -1043,3 +1043,11 @@ to PDF at 24 × 36 in from a browser.
   a bigger machine: one such row is 2.8 million states.
 - Print a row's `constraint=` in its results file. Today it appears only
   in the row list, which the results file names by digest.
+
+## License
+
+Code, specifications and tooling are Apache-2.0 ([LICENSE](LICENSE));
+documentation, result transcripts and pictures are CC BY 4.0
+([LICENSE-DOCS](LICENSE-DOCS)). See [NOTICE](NOTICE) for how the split
+applies. The skills under `.claude/skills/` keep the licences they have in
+TOPAK and tla-kit.

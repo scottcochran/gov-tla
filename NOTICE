@@ -1,0 +1,32 @@
+gov-tla
+Copyright 2026 William Scott Cochran
+
+This repository is dual-licensed by content type.
+
+Source code, formal specifications and tooling -- including the TLA+
+modules and proof modules (specs/*.tla), their TLC configurations
+(specs/*.cfg) and row lists (rows/), the Python and shell scripts
+(scripts/, tools/, visuals/*.py, install-tla.sh), the pin files
+(tools/*-PIN), the project configuration (pyproject.toml, uv.lock,
+.github/, and the files under .claude/ that are not Markdown) -- are
+licensed under the Apache License, Version 2.0. See LICENSE.
+
+Documentation -- including Markdown (.md) prose, the findings and
+assessments in docs/, PROOF-GAPS.txt, the model-checker and prover
+result transcripts (results/*.txt), and the pictures in visuals/
+(.svg, .png, .pdf, .html) -- is licensed under the Creative Commons
+Attribution 4.0 International License (CC BY 4.0). See LICENSE-DOCS.
+
+  SPDX-License-Identifier: Apache-2.0      (code)
+  SPDX-License-Identifier: CC-BY-4.0       (documentation)
+
+Material taken from TOPAK and tla-kit -- the skills adopted under
+.claude/skills/ and the scripts derived from the skill's -- keeps the
+licence it has there, and its source commit is recorded beside it.
+
+Third-party software is not part of this repository and is not covered
+by either license. The TLA+ tools (tla2tools.jar), the TLAPS proof
+manager and its backends, and the tla-kit container image that CI runs
+them in are downloaded by the install scripts or pulled by digest; each
+is under its own licence. The text of the United States Constitution
+that the modules state is in the public domain.
