@@ -7,26 +7,69 @@ state machines gated by supermajorities. These specs model those machines,
 check with TLC that every rule the text states is one the model actually
 depends on, and prove with TLAPS that the rules hold.
 
+Claude wrote the modules and the proofs, in Claude Code sessions, at the
+maintainer's direction. [`docs/ASSESSMENT.md`](docs/ASSESSMENT.md) is
+Claude's own reading of what they are, and are not, good for.
+
+## What turned up
+
+Six things the checker or the prover found while the specs were written.
+They are properties of the model. Where one matches the law, a
+constitutional lawyer already knows it; it is here because the model had
+to reach it and could not assume it. The details, and the rest, are in
+[Findings](#findings).
+
+- **Amendment XXV closes a loop.** The first `Government.tla` claimed
+  that authority is granted down one chain, with every cycle passing
+  through the People or the States. TLC refuted it two steps from the
+  initial state, by ratifying XXV: the President then nominates a Vice
+  President, and the Vice President succeeds the President. That is Ford
+  in 1974, and then Rockefeller.
+- **Rejecting electors can make a majority.** The majority is of the
+  electors appointed. When both Houses hold an elector not lawfully
+  certified, the whole number falls, and one vote of two can elect.
+- **The count can always close, and no rule says so.** Under the text's
+  majority rule the two lists never give one person both offices. This
+  is proved for every finite college and any number of candidates. It
+  fails if a plurality carries, and it fails if an elector may name one
+  person twice: Article II said "two Persons", and Amendment XII does
+  not say so again.
+- **The executive power is continuous because of a statute.** Without
+  3 U.S.C. §19, a term that begins with nobody qualified leaves the
+  office empty, perhaps for good. With it, fairness on the Vice
+  President and on the statute's officer separately is still not
+  enough; it has to be on the two together.
+- **A check made at nomination has to be made again at confirmation.**
+  In the modules as first written, TLC twice found a nominee who changed
+  while pending: one convicted and disqualified, one seated on another
+  court. Both were then confirmed. Each is now a mutation.
+- **One the prover found and the checker had not.** With the two-persons
+  check removed (`M_SAMEPERSON`), one person is both President and Vice
+  President, and convicting that person passes the presidency to
+  themself. A proof step failed there, and TLC confirmed the
+  counterexample once it was pointed at it.
+
+<p align="center">
+  <a href="visuals/Government_authority_poster_2026.png">
+    <img src="visuals/Government_authority_poster_2026.png" width="560"
+         alt="Who answers to whom: the authority graph of Government.tla as amended through 2026, with the grant layer as a chain and the control layer as a cycle">
+  </a>
+</p>
+
+The authority graph of `Government.tla`, as amended through 2026
+([PDF](visuals/Government_authority_poster_2026.pdf),
+[SVG](visuals/Government_authority_poster_2026.svg); the founding graph
+of [1789](visuals/Government_authority_poster_1789.png)). Its edges come
+from TLC and its headline numbers are computed from the graph; see
+[`visuals/authority_poster.py`](#visualsauthority_posterpy).
+
 ## How the specs are written and checked
 
 The modules follow the method in the `writing-tla-specs-and-proofs` skill:
 write each property so that it is **local**, model-check it at small
 constants, prove it, and keep the evidence in files that a script
-regenerates.
-
-The skill is in
-[`.claude/skills/writing-tla-specs-and-proofs/`](.claude/skills/writing-tla-specs-and-proofs/SKILL.md),
-where Claude Code loads it for work in this repository. It is a copy,
-unchanged, of the skill's `SKILL.md` and `references/` on TOPAK's `main`:
-[`skills/writing-tla-specs-and-proofs`](https://github.com/scottcochran/TOPAK/tree/main/skills/writing-tla-specs-and-proofs),
-at merge commit `5ade81e` (TOPAK PR #57; the skill's last change is
-`6988686`, version 0.2.2), licensed CC BY 4.0. The skill also bundles
-scripts and a self-test fixture, which are not copied: this repository has
-its own generators in `scripts/`. If the skill changes on TOPAK's `main`,
-copy it again and update this paragraph. Where the skill and this README
-differ, the README describes how this repository does it: one generic row
-generator (`scripts/tlc_rows.py`) instead of a run script per module, and
-pin files instead of a tracked jar.
+regenerates. [Where the method comes from](#where-the-method-comes-from)
+says which copy of the skill this is.
 
 - **Local properties.** One action could break each property, and that
   action's guard decides whether it does. Each property is one of three
@@ -91,6 +134,22 @@ What is **not** proved, and why:
 
 For a self-assessment by Claude of what these specs and proofs are, and
 are not, good for, see [`docs/ASSESSMENT.md`](docs/ASSESSMENT.md).
+
+### Where the method comes from
+
+The skill is in
+[`.claude/skills/writing-tla-specs-and-proofs/`](.claude/skills/writing-tla-specs-and-proofs/SKILL.md),
+where Claude Code loads it for work in this repository. It is a copy,
+unchanged, of the skill's `SKILL.md` and `references/` on TOPAK's `main`:
+[`skills/writing-tla-specs-and-proofs`](https://github.com/scottcochran/TOPAK/tree/main/skills/writing-tla-specs-and-proofs),
+at merge commit `5ade81e` (TOPAK PR #57; the skill's last change is
+`6988686`, version 0.2.2), licensed CC BY 4.0. The skill also bundles
+scripts and a self-test fixture, which are not copied: this repository has
+its own generators in `scripts/`. If the skill changes on TOPAK's `main`,
+copy it again and update this paragraph. Where the skill and this README
+differ, the README describes how this repository does it: one generic row
+generator (`scripts/tlc_rows.py`) instead of a run script per module, and
+pin files instead of a tracked jar.
 
 ## Modules
 

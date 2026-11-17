@@ -30,6 +30,10 @@ human review.
 - *qualified "true by construction" and the summary of what the proofs
   add.*
 
+*This assessment predates `Elections.tla`. An
+[addendum of 2026.11.17](#addendum-20261117-electionstla), by a third
+session, covers that module and what has changed since.*
+
 ## Summary
 
 As a formal-methods artefact this repository is unusually good. As a
@@ -186,7 +190,7 @@ is the most promising direction for further work.
 7. **Liveness is checked by TLC only**, at small constants; the proof
    modules say so.
 8. **Housekeeping.** The four `*_TTrace_*.bin` TLC trace files are
-   committed.
+   committed. *(Removed on 2026.11.17; see the addendum.)*
 
 ## Do refinement mappings into `Government.tla` fix limit 5?
 
@@ -289,4 +293,140 @@ Checks of single-step rules produced little comparable. The exception is
    entrench a rule, or keep an acting officer indefinitely; or which
    sequences of vacancy, impeachment and recess reach a state nobody
    intended.
-4. Remove the committed `*_TTrace_*.bin` files.
+4. Remove the committed `*_TTrace_*.bin` files. *(Done on 2026.11.17.)*
+
+## Addendum, 2026.11.17: `Elections.tla`
+
+Everything above is about four modules at commit `e86e3c9`. This addendum
+reads the fifth, `Elections.tla`, with its row list, its proof module and
+the findings note beside this file, at commit `bf8e08f`.
+
+- **Who wrote it.** Claude, in a third session, which wrote neither the
+  modules nor the assessment above.
+- **Why.** The maintainer had asked whether the repository was worth
+  posting about, and then for a cleanup before posting. This addendum is
+  part of that cleanup, so it was written with a reason to make the
+  repository look ready. Read it with that in mind.
+- **What was checked.** Reading only. The one thing run was
+  `scripts/proof_sync.py`, which reports every results file IN SYNC with
+  the tree and the pins. No row and no proof was re-run.
+
+### What is there now
+
+| Module | TLC rows (all as expected) | Mutations | Witnesses | Proof obligations (all proved) |
+|---|---|---|---|---|
+| `Elections.tla`: Art. II §1; Amends. XII, XX, XXII | 579 | 24 | 24 | 1,121 |
+
+With the four above that is 2,105 rows, 94 mutations and 6,740
+obligations. The counts are the results files' own: each file's rows
+marked "as expected", and each proof file's "Result:" line.
+
+### The summary still holds, with one exception
+
+Eighteen of the nineteen safety properties are true by construction, as
+limit 1 describes. Eleven are flags: `lateAppointment` is raised in
+`Appoint` by the negation of `Appoint`'s own guard (`Elections.tla:498`,
+with `AppointmentOpen` at `:402`). Seven are state predicates that one
+guard decides.
+
+`CountCanClose` (`Elections.tla:822`) is the exception, and the first
+property in the repository of the kind recommendation 3 asked for. No
+guard says that some result can always be announced. It holds because
+two majorities of the same electors share an elector, and that elector's
+ballot names two persons. The proof is a pigeonhole over the electors
+counted (`Pigeonhole` and `ClosesUnderInv` in `Elections_proof.tla`),
+and it holds for every finite college and any number of candidates.
+
+That proof also corrected the rows. `M_PRE_XII` and `M_PLURALITY` leave
+`CountCanClose` standing at two candidates and break it at three, so two
+HOLDS cells were artefacts of the constants. A HOLDS at small constants
+is weaker evidence than a table of them suggests.
+
+### The limits, read against the new module
+
+- **Limit 2, the abstractions, applies with more force.** The module
+  leaves out competing slates, the one-fifth of each House needed to
+  object, the House's delegations, the calendar, and who decides a
+  qualification. Those are where the contested questions about a count
+  have been. It also fixes three readings, which its header states. The
+  proved `ChoiceFromTheList` is about the guard `c \in pList`; nothing
+  checks that `PTop`, with its rule for ties, is what "the highest
+  numbers not exceeding three" means, and the rows cannot tell three
+  highest from four.
+- **Limit 5, the modules are never combined, is now about five.**
+  `Elections.tla` is a fourth account of the Presidency. It does put one
+  disagreement on the record: `M_XXII_SERVICE` is, in its header's words,
+  the term limit "as `Constitution.tla`'s `TermAllowed` does"
+  (`Constitution.tla:283` counts elections only). So `Constitution.tla`
+  proves `TwoTermLimit` of a rule that `Elections.tla` lists as a
+  mutation of the text. `Constitution.tla`'s header says the two-years
+  clause is abstracted; the README's "Abstracted" list for that module
+  does not.
+- **Limit 7, liveness, has its first exception.** `ExecutiveIsFilled` is
+  proved, under `FairSpec` and without `M_NO_STATUTE`, by one WF1 step.
+  Its leads-to has no quantifier, which is why. The other three are
+  still checked only. That the weaker fairness conditions fail, and that
+  `FairSpec` has a behaviour at all, are TLC's results at small
+  constants.
+- **Limit 8 is gone.** The trace files are removed.
+
+### The pattern across the findings no longer covers them all
+
+Some of the `Elections.tla` findings are of the pending kind: the whole
+number of electors changes while the count is open, and noon can strike
+before a President elect has qualified. Others are not. `CountCanClose`
+under a plurality rule, and the quorum mutations that bind at five
+States and not at four, are arithmetic over thresholds. That is a second
+source of findings, and the one the proofs are best placed to work,
+since TLC sees a threshold only at the sizes a row uses.
+
+None of the findings is offered here as new to election law. That an
+elector held not lawfully certified leaves the whole number appointed is
+the statute's own rule, as the module cites it (3 U.S.C. §15(e)(2)). This
+reading did not search the literature for the others.
+
+### Two things a reader of the evidence should know
+
+- **The flip tests leave no file.** The README says every flip fails as
+  required. `scripts/flip_test.py` writes nothing to the tree, by
+  design, so that sentence and §7.6 of the findings note are the only
+  record. (The note says 25 flips for `Elections.tla`; the module has 24
+  mutations and `none`.) The assessment above recorded that the four
+  modules' flips ran under the script's earlier rule. Nothing in the
+  tree says whether they were run again after the prover pin moved on
+  2026.11.17.
+- **The proofs are written to rules, not scanned.** The method's
+  `references/prover-habits.md` describes two unsound cases in the
+  prover's translation, reported upstream as tlapm #309 and #310. As
+  read on 2026.11.17, #309 is closed as completed and #310 is open. The
+  findings note says of these proofs that they are "written to the
+  method's rules but unscanned". Whether the pinned build `ff40755`
+  carries either fix, this reading did not establish. The method asks a
+  project in that position to say so where it names its prover, and the
+  README does not yet.
+
+### Usefulness by audience, revised
+
+- **Teaching formal methods:** still **high**, and higher. The module
+  adds a worked cardinality proof, a leads-to proved without a measure,
+  and a case of a proof correcting the row list's expectations.
+- **Teaching how the Constitution is structured:** **moderate**, with
+  better material than before: election by rejection, the statute that
+  keeps the office filled, and the count that always closes.
+- **Analysing the Constitution or doctrine:** still **low**. The
+  findings hold of the encoding, with competing slates and the grounds
+  of objection abstracted away.
+
+### Recommendations, revised
+
+1. Recommendations 1 and 3 are partly taken up. More properties like
+   `CountCanClose`, whose truth no guard states, are what would move the
+   third rating.
+2. Recommendation 2, the combined spec, is untouched and now larger.
+   Short of it, either give `Constitution.tla` the two-years clause or
+   name the clause in the README's list of what that module abstracts.
+3. Keep a dated file of each flip run in `results/`, as the rows and the
+   proofs have.
+4. State in the README, beside the prover's name, that the proofs are
+   written to the method's rules for the two translation cases and are
+   not scanned for them.
