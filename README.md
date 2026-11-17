@@ -70,7 +70,7 @@ practice.
 | `Judiciary.tla` | 451 | 23 | 12 | 2,150 |
 | `Executive.tla` | 208 | 14 | 19 | 814 |
 | `Government.tla` | 565 | 14 | 15 | 1,563 |
-| `Elections.tla` | 579 | 24 | 24 | none: checked only |
+| `Elections.tla` | 579 | 24 | 24 | 1,121 |
 
 Every flip test fails as required: with one mutation hypothesis flipped
 to `Mut = "M_X"`, each proof breaks in the lemma of the property that
@@ -78,16 +78,12 @@ mutation must break.
 
 What is **not** proved, and why:
 
-- **`Elections.tla` has no proof module yet.** Its nineteen properties
-  are checked by TLC at the constants in its row list and nothing more.
-  [`PROOF-GAPS.txt`](PROOF-GAPS.txt) records the gap, which is where
-  `scripts/proof_sync.py` looks for a module without a proof.
-
 - **Liveness properties** (`PresentedBillsResolve`, `ActingEventuallyEnds`,
   `UnconstitutionalEdgesAreStruck`) are checked by TLC, not proved. Each is
   a leads-to quantified over bills, agencies or edges, and the pinned
   prover has no sound route for a quantified leads-to. This is the skill's
-  known limit.
+  known limit. `Elections.tla`'s `ExecutiveIsFilled` is the one leads-to
+  with no quantifier, and it is proved, by one WF1 step.
 - **`Government.tla`'s global reachability claims** are checked, not
   proved. They are stated over `Reach`, a recursive function the prover
   has no fixpoint theory for. Each one's local form is proved.
@@ -456,6 +452,23 @@ and `SuccessorActs` taken together. `ExecutiveIsFilled` holds under
 
 `NoBehaviour` is violated under `FairSpec`. No state is terminal.
 
+**Proof.** `Elections_proof.tla` proves the nineteen safety properties,
+each under exactly the mutations that break it, and `ExecutiveIsFilled`
+under `FairSpec` and `Mut # "M_NO_STATUTE"`. Eleven properties are flags
+and prove at the one action that sets each. `PledgesBind` needs one
+strengthening, that a ballot is cast only by an appointed elector.
+`CountCanClose` is proved as valid rather than inductive: in every state
+whose ballots each name two persons, some pair can be announced, by the
+pigeonhole over the electors counted (`FiniteSetTheorems`). Its
+hypotheses are `M_SAME_NAME`, `M_PRE_XII` and `M_PLURALITY`, and the
+proof holds at every number of candidates, where the rows reach three.
+`DevolvesOnlyWithoutMajority` is proved under `M_PLURALITY`, since a
+majority of the whole number is also a plurality. `ExecutiveIsFilled`
+has no quantifier in its leads-to, so it is one WF1 step with no measure:
+while the office is vacant one of the two officers can act, and acting
+changes the state. That the weaker fairness conditions do not suffice,
+and that `FairSpec` has a behaviour at all, stay with TLC.
+
 **Rows.** The defaults are the smallest constants that run a whole
 election: three electors, each held to the pledge, and two candidates.
 That is 38,180 states. Each mutation runs against every property at the
@@ -643,7 +656,8 @@ and nothing changes its precondition between passage and enactment.
 **The graph claims of 1789 and the XXV cycle**: see "A claim TLC refuted"
 above.
 
-**In `Elections.tla`**, checked and not proved:
+**In `Elections.tla`**, checked; `CountCanClose` is also proved, at every
+number of candidates:
 
 - **One person can lead both lists unless the rule is a majority.**
   `CountCanClose` was added after a probe with `M_PLURALITY` and three
@@ -1005,9 +1019,6 @@ to PDF at 24 × 36 in from a browser.
 
 ## Ideas for next steps
 
-- A proof module for `Elections.tla`. Most of its properties are flags
-  or guard-decided state predicates; `CountCanClose` needs a counting
-  argument.
 - Congressional elections: seats that are filled, vacated and refilled,
   Senate classes, and each House judging its own elections. With members
   grouped by State, the House's contingent vote can be built from its
