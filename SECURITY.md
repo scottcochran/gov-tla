@@ -37,8 +37,8 @@ These get the same private handling and credit as a conventional
 vulnerability would in a shipping project.
 
 Conventional defects in the scripts, the workflow or the visualization
-tools are welcome too. Unless they bear on a claim above, please open an
-ordinary issue for them.
+tools are welcome too, through the same channel; say that it is not an
+evidence finding. Issues are off in this repository.
 
 ## How to report
 
