@@ -122,6 +122,10 @@ and Article V.
 Abstracted: quorum, Sundays, elections themselves, judicial review, and
 the age, residency and natural-born tests (folded into the constant
 `Eligible`). The ten days on the President's desk are one `Lapse` step.
+Congress sits and adjourns as one body, and the session gates only the
+return of a bill and recess appointments. An adjourned Congress can still
+pass a bill, override a veto, confirm a nomination, impeach, hold a trial
+and propose an amendment.
 
 | Mutation | Removes | Earlier text, doctrine or practice | Breaks |
 |---|---|---|---|
