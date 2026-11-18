@@ -152,6 +152,15 @@
 (* A bill passes its House of origin first; one that never passes the     *)
 (* other House stays pending (no step kills it); a veto not overridden    *)
 (* dies by FailOverride.                                                  *)
+(* Sessions: Congress sits and adjourns as one body (one House adjourning *)
+(* without the other, Art. I s.5 cl.4, is not expressed), and inSession   *)
+(* is read only where the text turns on a sitting: whether a bill can be  *)
+(* returned (Veto, BecomeLawUnsigned, PocketVeto) and whether the Senate  *)
+(* is in Recess (RecessAppoint). Every other act of Congress (Introduce,  *)
+(* PassChamber, Override, the votes on nominations, Impeach, Convict,     *)
+(* ProposeByCongress) may happen while it is adjourned. Government.tla    *)
+(* gates Pass and Override on its own inSession; the two modules differ   *)
+(* there.                                                                 *)
 (*                                                                         *)
 (* CONSTANTS are unconstrained beyond the named well-formedness ASSUMEs.  *)
 (* ElectionsBound is a state constraint for TLC only: it binds only under *)
@@ -209,7 +218,8 @@ StateVotes  == 0..Cardinality(States)
 VARIABLES
   (* Art. I s.7 *)
   bill,              \* Bills -> BillRec
-  inSession,         \* is Congress sitting?
+  inSession,         \* Congress sitting, both Houses as one; gates only a
+                     \* bill's return and recess appointments
   (* Art. II s.1, Amend. XXII, XXV *)
   president,
   vicePresident,
