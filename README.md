@@ -71,7 +71,7 @@ practice.
 | `Executive.tla` | 208 | 14 | 19 | 814 |
 | `Government.tla` | 565 | 14 | 15 | 1,563 |
 | `Elections.tla` | 579 | 24 | 24 | 1,121 |
-| `SenateRules.tla` (sketch) | 51 | 4 | 8 | none yet |
+| `SenateRules.tla` | 51 | 4 | 8 | 201 |
 
 Every flip test fails as required: with one mutation hypothesis flipped
 to `Mut = "M_X"`, each proof breaks in the lemma of the property that
@@ -80,7 +80,7 @@ mutation must break.
 What is **not** proved, and why:
 
 - **Liveness properties** (`PresentedBillsResolve`, `ActingEventuallyEnds`,
-  `UnconstitutionalEdgesAreStruck`) are checked by TLC, not proved. Each is
+  `UnconstitutionalEdgesAreStruck`, `MajorityPrevails`, `ReconciliationPrevails`) are checked by TLC, not proved. Each is
   a leads-to quantified over bills, agencies or edges, and the pinned
   prover has no sound route for a quantified leads-to. This is the skill's
   known limit. `Elections.tla`'s `ExecutiveIsFilled` is the one leads-to
@@ -89,8 +89,6 @@ What is **not** proved, and why:
   proved. They are stated over `Reach`, a recursive function the prover
   has no fixpoint theory for. Each one's local form is proved.
 - **Witnesses and counterexamples** are existential, and stay with TLC.
-- **`SenateRules.tla`** is a sketch with TLC rows only, and no proof module
-  yet (`PROOF-GAPS.txt`).
 
 For a self-assessment by Claude of what these specs and proofs are, and
 are not, good for, see [`docs/ASSESSMENT.md`](docs/ASSESSMENT.md).
@@ -486,7 +484,7 @@ those sets of constants. Two rows are larger: three candidates
 The rows cannot reach the House's list of three excluding a fourth
 person voted for, which needs seven electors.
 
-### `SenateRules.tla` — the filibuster (a sketch)
+### `SenateRules.tla` — the filibuster
 
 Not constitutional text: the Senate's own rules under Art. I §5 cl. 2,
 layered on the simple-majority passage that `Constitution.tla` models in
@@ -526,6 +524,14 @@ What it shows:
   majority once a majority has lowered the threshold.
   `NeverNominationsOnly` is violated too, so the rules since 2013
   (majority for nominations, three-fifths for legislation) are reachable.
+
+The proof (`SenateRules_proof.tla`) proves each safety property for a
+Senate of any size, assuming only the mutations that break it. Four
+properties are flags. `ClosedOnThreeFifths` is inductive with `TypeOK`
+as stated, because a measure leaves debate only by cloture or, if it is a
+reconciliation bill, by the clock, and a threshold only falls
+(`ThresholdOnlyFalls`). The two leads-to properties are checked, not
+proved.
 
 Abstracted: who the Senators are (a measure's support is a count, fixed
 when it is taken up), the motion to proceed, the thirty hours after

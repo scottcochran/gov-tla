@@ -1,6 +1,6 @@
 # Rows for scripts/tlc_rows.py: name mut spec kind property expected [KEY=value ...]
 # module: SenateRules
-# title: SenateRules.tla - the Senate filibuster (Rule XXII cloture, reconciliation, the nuclear option); a sketch, unproved
+# title: SenateRules.tla - the Senate filibuster (Rule XXII cloture, reconciliation, the nuclear option)
 # expected: Mut = "none" HOLDS on TypeOK, Safety and each of the five properties, and on TypeOK with the deadlock check on is DEADLOCK
 # expected: (once every measure is decided and both thresholds lowered nothing is enabled).
 # expected: Each mutation is COUNTEREXAMPLE on the properties it is listed against and HOLDS on every other, and on TypeOK:
