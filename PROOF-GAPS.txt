@@ -1,2 +1,3 @@
 # Modules with no proof module, and why. One line each: <Module>: <reason>.
 # scripts/proof_sync.py prints the reason, and fails on a module with neither a proof nor a line here.
+SenateRules: a sketch; TLC rows only. The proof would follow the other modules: four flag invariants, and ClosedOnThreeFifths, which is inductive with TypeOK because cloture only falls.
