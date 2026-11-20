@@ -36,7 +36,8 @@ and `results/Constitution-proof-results-2026.11.17.txt` cite)
   adjourned Congress can legislate. No mutation removes Government's two
   guards, so nothing checks that they matter (§5).
 - **Recommendation: document the abstraction rather than add guards (§6).**
-  The plan is in `docs/SESSION-GATE-PLAN-2026.11.17.md`.
+  Done in PR #11 (commit `84bd8a1`), with the Constitution results
+  regenerated as the 2026.11.18 files.
 
 ---
 
