@@ -1,0 +1,79 @@
+# Rows for scripts/tlc_rows.py: name mut spec kind property expected [KEY=value ...]
+# module: SenateRules
+# title: SenateRules.tla - the Senate filibuster (Rule XXII cloture, reconciliation, the nuclear option)
+# expected: Mut = "none" HOLDS on TypeOK, Safety and each of the five properties, and on TypeOK with the deadlock check on is DEADLOCK
+# expected: (once every measure is decided and both thresholds lowered nothing is enabled).
+# expected: Each mutation is COUNTEREXAMPLE on the properties it is listed against and HOLDS on every other, and on TypeOK:
+# expected: M_PREVIOUS_QUESTION breaks ClotureThreshold and ClosedOnThreeFifths; M_TIME_LIMIT DebateEndsByCloture and
+# expected: ClosedOnThreeFifths; M_NO_MAJORITY MajorityFloor; M_CONSTITUTIONAL_OPTION RulesByTwoThirds.
+# expected: With five Senators, where a majority is three-fifths, M_PREVIOUS_QUESTION HOLDS on ClotureThreshold and ClosedOnThreeFifths.
+# expected: Every Never... witness is COUNTEREXAMPLE unmutated.
+# expected: MajorityPrevails is COUNTEREXAMPLE under FairSpec (the filibuster) and HOLDS under FairSpec with M_PREVIOUS_QUESTION,
+# expected: with M_TIME_LIMIT, and under NuclearSpec; ReconciliationPrevails HOLDS under FairSpec and is COUNTEREXAMPLE under
+# expected: SpecNoClock; NoBehaviour is COUNTEREXAMPLE under FairSpec and NuclearSpec.
+#
+# Constants: seven Senators, the fewest odd number at which a majority (four) is short of three-fifths (five); one
+# bill, one nomination and one reconciliation bill.
+# const: Senators = {s1, s2, s3, s4, s5, s6, s7}
+# const: Legislation = {law}
+# const: Nominations = {nom}
+# const: Reconciliations = {rec}
+# --- none: the rules as of 1975
+s-type                       none                     Spec         INVARIANT TypeOK                     HOLDS
+s-cloture                    none                     Spec         INVARIANT ClotureThreshold           HOLDS
+s-debate                     none                     Spec         INVARIANT DebateEndsByCloture        HOLDS
+s-floor                      none                     Spec         INVARIANT MajorityFloor              HOLDS
+s-rules                      none                     Spec         INVARIANT RulesByTwoThirds           HOLDS
+s-threefifths                none                     Spec         INVARIANT ClosedOnThreeFifths        HOLDS
+s-safety                     none                     Spec         INVARIANT Safety                     HOLDS
+s-deadlock                   none                     Spec         DEADLOCK  TypeOK                     DEADLOCK
+# --- M_PREVIOUS_QUESTION: breaks ClotureThreshold and ClosedOnThreeFifths
+pq-type                      M_PREVIOUS_QUESTION      Spec         INVARIANT TypeOK                     HOLDS
+pq-cloture                   M_PREVIOUS_QUESTION      Spec         INVARIANT ClotureThreshold           COUNTEREXAMPLE
+pq-debate                    M_PREVIOUS_QUESTION      Spec         INVARIANT DebateEndsByCloture        HOLDS
+pq-floor                     M_PREVIOUS_QUESTION      Spec         INVARIANT MajorityFloor              HOLDS
+pq-rules                     M_PREVIOUS_QUESTION      Spec         INVARIANT RulesByTwoThirds           HOLDS
+pq-threefifths               M_PREVIOUS_QUESTION      Spec         INVARIANT ClosedOnThreeFifths        COUNTEREXAMPLE
+# --- M_TIME_LIMIT: breaks DebateEndsByCloture and ClosedOnThreeFifths
+time-type                    M_TIME_LIMIT             Spec         INVARIANT TypeOK                     HOLDS
+time-cloture                 M_TIME_LIMIT             Spec         INVARIANT ClotureThreshold           HOLDS
+time-debate                  M_TIME_LIMIT             Spec         INVARIANT DebateEndsByCloture        COUNTEREXAMPLE
+time-floor                   M_TIME_LIMIT             Spec         INVARIANT MajorityFloor              HOLDS
+time-rules                   M_TIME_LIMIT             Spec         INVARIANT RulesByTwoThirds           HOLDS
+time-threefifths             M_TIME_LIMIT             Spec         INVARIANT ClosedOnThreeFifths        COUNTEREXAMPLE
+# --- M_NO_MAJORITY: breaks MajorityFloor
+nomaj-type                   M_NO_MAJORITY            Spec         INVARIANT TypeOK                     HOLDS
+nomaj-cloture                M_NO_MAJORITY            Spec         INVARIANT ClotureThreshold           HOLDS
+nomaj-debate                 M_NO_MAJORITY            Spec         INVARIANT DebateEndsByCloture        HOLDS
+nomaj-floor                  M_NO_MAJORITY            Spec         INVARIANT MajorityFloor              COUNTEREXAMPLE
+nomaj-rules                  M_NO_MAJORITY            Spec         INVARIANT RulesByTwoThirds           HOLDS
+nomaj-threefifths            M_NO_MAJORITY            Spec         INVARIANT ClosedOnThreeFifths        HOLDS
+# --- M_CONSTITUTIONAL_OPTION: breaks RulesByTwoThirds
+constopt-type                M_CONSTITUTIONAL_OPTION  Spec         INVARIANT TypeOK                     HOLDS
+constopt-cloture             M_CONSTITUTIONAL_OPTION  Spec         INVARIANT ClotureThreshold           HOLDS
+constopt-debate              M_CONSTITUTIONAL_OPTION  Spec         INVARIANT DebateEndsByCloture        HOLDS
+constopt-floor               M_CONSTITUTIONAL_OPTION  Spec         INVARIANT MajorityFloor              HOLDS
+constopt-rules               M_CONSTITUTIONAL_OPTION  Spec         INVARIANT RulesByTwoThirds           COUNTEREXAMPLE
+constopt-threefifths         M_CONSTITUTIONAL_OPTION  Spec         INVARIANT ClosedOnThreeFifths        HOLDS
+# --- five Senators: a majority is three-fifths, so M_PREVIOUS_QUESTION removes nothing
+c5-safety                    none                     Spec         INVARIANT Safety                     HOLDS           Senators={s1,s2,s3,s4,s5}
+pq5-cloture                  M_PREVIOUS_QUESTION      Spec         INVARIANT ClotureThreshold           HOLDS           Senators={s1,s2,s3,s4,s5}
+pq5-threefifths              M_PREVIOUS_QUESTION      Spec         INVARIANT ClosedOnThreeFifths        HOLDS           Senators={s1,s2,s3,s4,s5}
+# --- witnesses: each must be violated
+w-passed                     none                     Spec         INVARIANT NeverPassed                COUNTEREXAMPLE
+w-rejected                   none                     Spec         INVARIANT NeverRejected              COUNTEREXAMPLE
+w-reconciledonmajority       none                     Spec         INVARIANT NeverReconciledOnMajority  COUNTEREXAMPLE
+w-lawonmajority              none                     Spec         INVARIANT NeverLawOnMajority         COUNTEREXAMPLE
+w-confirmedonmajority        none                     Spec         INVARIANT NeverConfirmedOnMajority   COUNTEREXAMPLE
+w-precedent                  none                     Spec         INVARIANT NeverPrecedent             COUNTEREXAMPLE
+w-ruleschange                none                     Spec         INVARIANT NeverRulesChange           COUNTEREXAMPLE
+w-nominationsonly            none                     Spec         INVARIANT NeverNominationsOnly       COUNTEREXAMPLE
+# --- liveness: the filibuster as the failure of a leads-to
+l-fair-majority              none                     FairSpec     PROPERTY  MajorityPrevails           COUNTEREXAMPLE
+l-pq-majority                M_PREVIOUS_QUESTION      FairSpec     PROPERTY  MajorityPrevails           HOLDS
+l-time-majority              M_TIME_LIMIT             FairSpec     PROPERTY  MajorityPrevails           HOLDS
+l-nuclear-majority           none                     NuclearSpec  PROPERTY  MajorityPrevails           HOLDS
+l-fair-reconciliation        none                     FairSpec     PROPERTY  ReconciliationPrevails     HOLDS
+l-noclock-reconciliation     none                     SpecNoClock  PROPERTY  ReconciliationPrevails     COUNTEREXAMPLE
+l-fair-nobehaviour           none                     FairSpec     PROPERTY  NoBehaviour                COUNTEREXAMPLE
+l-nuclear-nobehaviour        none                     NuclearSpec  PROPERTY  NoBehaviour                COUNTEREXAMPLE

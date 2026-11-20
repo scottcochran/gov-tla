@@ -71,6 +71,7 @@ practice.
 | `Executive.tla` | 208 | 14 | 19 | 814 |
 | `Government.tla` | 565 | 14 | 15 | 1,563 |
 | `Elections.tla` | 579 | 24 | 24 | 1,121 |
+| `SenateRules.tla` | 51 | 4 | 8 | 201 |
 
 Every flip test fails as required: with one mutation hypothesis flipped
 to `Mut = "M_X"`, each proof breaks in the lemma of the property that
@@ -79,7 +80,7 @@ mutation must break.
 What is **not** proved, and why:
 
 - **Liveness properties** (`PresentedBillsResolve`, `ActingEventuallyEnds`,
-  `UnconstitutionalEdgesAreStruck`) are checked by TLC, not proved. Each is
+  `UnconstitutionalEdgesAreStruck`, `MajorityPrevails`, `ReconciliationPrevails`) are checked by TLC, not proved. Each is
   a leads-to quantified over bills, agencies or edges, and the pinned
   prover has no sound route for a quantified leads-to. This is the skill's
   known limit. `Elections.tla`'s `ExecutiveIsFilled` is the one leads-to
@@ -482,6 +483,61 @@ those sets of constants. Two rows are larger: three candidates
 
 The rows cannot reach the House's list of three excluding a fourth
 person voted for, which needs seven electors.
+
+### `SenateRules.tla` — the filibuster
+
+Not constitutional text: the Senate's own rules under Art. I §5 cl. 2,
+layered on the simple-majority passage that `Constitution.tla` models in
+`PassChamber`. The module stands alone and does not extend
+`Constitution.tla`. The initial state is the rules as of 1975.
+
+| Rule | Where |
+|---|---|
+| Rule XXII — cloture by three-fifths of the Senators duly chosen and sworn | `InvokeCloture`, `ClotureCarries`, `ThreeFifths` |
+| Rule XXII cl. 2, Rule V cl. 2 — the rule amended only by two-thirds present and voting | `AmendRule`, `RulesCarry`, `TwoThirdsOf` |
+| Budget Act of 1974 §310(e) — reconciliation debate limited by statute | `DebateExpires`, `TimeLimited` |
+| Precedents of 2013 and 2017 — majority cloture on nominations, by overruling the chair | `Nuclear` |
+| Passage by a majority | `Pass`, `PassCarries`, `Reject` |
+
+| Mutation | Removes | Earlier law | Breaks |
+|---|---|---|---|
+| `M_PREVIOUS_QUESTION` | three-fifths cloture (a majority closes debate) | the Senate's 1789 previous-question motion, dropped 1806 | `ClotureThreshold`, `ClosedOnThreeFifths` |
+| `M_TIME_LIMIT` | the limit applies to reconciliation only | — | `DebateEndsByCloture`, `ClosedOnThreeFifths` |
+| `M_NO_MAJORITY` | majority passage | — | `MajorityFloor` |
+| `M_CONSTITUTIONAL_OPTION` | two-thirds to amend the rule | the "constitutional option" argued in 1917, 1953, 1957 and 1975 and never adopted | `RulesByTwoThirds` |
+
+With seven Senators, a majority (four) is short of three-fifths (five).
+With five, the two are the same, and the rows show that
+`M_PREVIOUS_QUESTION` then removes nothing.
+
+What it shows:
+
+- **The filibuster is the failure of a leads-to.** `MajorityPrevails`
+  says a measure a majority supports, once taken up, passes. Under
+  `FairSpec`, where the floor takes every vote that would carry and the
+  reconciliation clock runs, TLC finds it violated: a bill with four of
+  seven votes is debated forever. It holds under `M_PREVIOUS_QUESTION`,
+  under `M_TIME_LIMIT`, and for reconciliation bills.
+- **It binds only a majority that declines to end it.** `MajorityPrevails`
+  holds under `NuclearSpec`, which adds weak fairness on `Nuclear`. The
+  witness `NeverLawOnMajority` is violated: a bill passes on a bare
+  majority once a majority has lowered the threshold.
+  `NeverNominationsOnly` is violated too, so the rules since 2013
+  (majority for nominations, three-fifths for legislation) are reachable.
+
+The proof (`SenateRules_proof.tla`) proves each safety property for a
+Senate of any size, assuming only the mutations that break it. Four
+properties are flags. `ClosedOnThreeFifths` is inductive with `TypeOK`
+as stated, because a measure leaves debate only by cloture or, if it is a
+reconciliation bill, by the clock, and a threshold only falls
+(`ThresholdOnlyFalls`). The two leads-to properties are checked, not
+proved.
+
+Abstracted: who the Senators are (a measure's support is a count, fixed
+when it is taken up), the motion to proceed, the thirty hours after
+cloture, amendments, holds, unanimous consent, the "talking" filibuster,
+vacancies, the Vice President's casting vote, the Byrd rule, and raising
+the threshold again.
 
 ### `Government.tla` — the authority graph
 
