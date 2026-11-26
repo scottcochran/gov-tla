@@ -86,6 +86,33 @@ uv run --no-project --python 3.12 python <riemann-diagrams>/plugins/proof-poster
 The generator makes the same checks and prints a `WARNING` for any failure, so the regression check fails on a
 link that lands nowhere.
 
+## CI, releases and the Pages site
+
+Three workflows, adapted from riemann-diagrams':
+
+- **`diagrams.yml`** runs on every pull request and push to `main`. It regenerates the family under Python 3.9
+  and fails on any `WARNING`, `ERROR` or `NOTE` line. It also fails on any difference from the committed SVGs and
+  manifest, and on any link `check-links.py` rejects. The script is fetched from riemann-diagrams at a pinned
+  commit and checked by its sha256.
+- **`release.yml`** runs when the custodian pushes an annotated `vMAJOR.MINOR.PATCH` tag on `main`. It runs
+  `diagrams.yml` on the tag, then creates a GitHub release. The release holds the SVGs and `pins.json`, which
+  records the tag, the state-of-record commit, the generator's commit and the run. It also holds `SHA256SUMS`
+  over all of them, and notes that open with the tag's message. Then it calls `pages.yml`.
+- **`pages.yml`** publishes one release to GitHub Pages. It checks the tag's SVGs against the release's
+  `SHA256SUMS` before it deploys, so the site is the release and nothing else. It serves the SVGs at
+  `diagrams/gov-tla/…`, the paths they have in the tree, and an index: this README, rendered, above the list of
+  diagrams. It ends by reading `pins.json` back from the site, and fails unless the site names the tag. Run it by
+  hand from `main` with an existing tag to republish a release.
+
+To release, tag `main` and push the tag. The message says what changed and which diagrams a reader must re-read:
+
+```bash
+git tag -s v0.1.0 -m "v0.1.0: …" && git push origin v0.1.0
+```
+
+The site holds one release at a time; every release stays on its release page. Diagrams opened from the site
+are served as `image/svg+xml`, so their links and target frames work there.
+
 ## The gov-tla diagram family (2026.11.25)
 
 Drawn against `main` at `d3c9aed` (2026.11.20), tracked files only.

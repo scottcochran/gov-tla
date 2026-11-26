@@ -1,0 +1,123 @@
+# A release of the diagram family is a version tag, pushed by the custodian, never moved or reused. This workflow
+# runs the diagrams check on the tag, as CI runs it on main, then writes pins.json and SHA256SUMS, and creates the
+# GitHub release with the family's SVGs, the two files, and notes that say what the release was drawn against and
+# how to check it. Adapted from riemann-diagrams' release.yml.
+#
+# Once the release exists, the pages job calls pages.yml with the tag, which publishes the release's diagrams to
+# GitHub Pages (see that file).
+#
+# The tag must be annotated, on main, vMAJOR.MINOR.PATCH, and the custodian's. Its message is the release's
+# opening: what changed, and which diagrams a reader must re-read.
+name: release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  tag:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: The tag is the custodian's, annotated, and on main
+        run: |
+          set -euo pipefail
+          tag=${GITHUB_REF#refs/tags/}
+          [ "$GITHUB_ACTOR" = scottcochran ] || { echo "release: tags are pushed by the custodian only"; exit 1; }
+          [[ "$tag" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "release: $tag is not vMAJOR.MINOR.PATCH"; exit 1; }
+          git fetch -q origin "refs/tags/$tag:refs/tags/$tag" --force
+          [ "$(git cat-file -t "refs/tags/$tag")" = tag ] || { echo "release: $tag is not annotated"; exit 1; }
+          [ -n "$(git tag -l --format='%(contents)' "$tag" | tr -d '[:space:]')" ] || { echo "release: $tag has no message"; exit 1; }
+          git merge-base --is-ancestor HEAD origin/main || { echo "release: $tag is not on main"; exit 1; }
+
+  check:
+    needs: tag
+    uses: ./.github/workflows/diagrams.yml
+
+  release:
+    needs: check
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Stage the assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          tag=${GITHUB_REF#refs/tags/}
+          # the checkout action fetches the tag peeled to its commit; the notes need the annotated tag's message
+          git fetch -q --force origin "refs/tags/$tag:refs/tags/$tag"
+          [ "$(git cat-file -t "refs/tags/$tag")" = tag ] || { echo "release: $tag is not annotated after fetch"; exit 1; }
+          mkdir -p stage
+          cp diagrams/gov-tla/*.svg stage/
+          git tag -l --format='%(contents)' "$tag" > tag-message.txt
+          python3 - "$tag" > stage/pins.json <<'PY'
+          import json, os, re, sys
+          tag = sys.argv[1]
+          pin = re.search(r'^PIN_COMMIT = "([0-9a-f]{40})"', open("diagrams/gov-tla/src/corpus.py").read(), re.M).group(1)
+          server, repo, sha, run = (os.environ[k] for k in ("GITHUB_SERVER_URL", "GITHUB_REPOSITORY", "GITHUB_SHA",
+                                                              "GITHUB_RUN_ID"))
+          print(json.dumps({
+            "tag": tag,
+            "state_of_record": {"commit": pin, "url": f"{server}/{repo}/commit/{pin}",
+                                "what": "the tracked tree every diagram is drawn against and every link out opens"},
+            "generator": {"commit": sha, "url": f"{server}/{repo}/commit/{sha}", "python": "3.9 (the family's pin)"},
+            "run": {"id": run, "url": f"{server}/{repo}/actions/runs/{run}"},
+          }, indent=1))
+          PY
+          (cd stage && sha256sum *.svg pins.json > SHA256SUMS)
+          python3 - "$tag" > notes.md <<'PY'
+          import json, sys
+          tag = sys.argv[1]
+          pins = json.load(open("stage/pins.json"))
+          manifest = json.load(open("diagrams/gov-tla/manifest.json"))
+          out = [open("tag-message.txt").read().strip(), "",
+                 f"Drawn against [`{pins['state_of_record']['commit'][:7]}`]({pins['state_of_record']['url']}) "
+                 f"(tracked files only), generated at [`{pins['generator']['commit'][:7]}`]({pins['generator']['url']}) "
+                 f"under Python {pins['generator']['python']}.", "",
+                 "Open a diagram in a browser to follow its links: GitHub's file viewer shows an SVG as an image, "
+                 "without its links or its style. The links between diagrams are relative, so they work among these "
+                 "assets downloaded together, and on the Pages site.", "",
+                 "| Id | Diagram | Anchors | Links within · to another diagram · to a source |", "|---|---|---|---|"]
+          for pid, m in manifest.items():
+              out.append(f"| {pid} | {m['title'].replace('|', '/')} | {len(m['anchors'])} | "
+                         f"{m['links']} · {m['links_out']} · {m['links_ext']} |")
+          out += ["", "Check the assets: `sha256sum -c SHA256SUMS` in the directory they were downloaded to."]
+          print("\n".join(out))
+          PY
+          ls -la stage; head -30 notes.md
+      - name: Create the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tag=${GITHUB_REF#refs/tags/}
+          gh release create "$tag" --verify-tag --title "$tag" --notes-file notes.md stage/*
+
+  pages:
+    needs: release
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    uses: ./.github/workflows/pages.yml
+    with:
+      tag: ${{ github.ref_name }}
