@@ -2,7 +2,8 @@
 
 Ported from TOPAK's diagrams/topak/src/lib.py (the same author, at TOPAK commit e25dcf4): the primitives,
 measurement, theming and overlap check are unchanged; the state constants, the statuses, the header and footer
-are gov-tla's, and TOPAK's strip_external is dropped.
+are gov-tla's, and TOPAK's strip_external is dropped. The light theme's page background is a grey matched to the
+content (diagrams/PAGE.md), as riemann-diagrams has it, where TOPAK's is white.
 
 Dependency-free. Every diagram is a Canvas; primitives measure their own text with the
 Liberation Sans advance widths in metrics.py (metric-compatible with Arial/Helvetica), wrap it,
@@ -39,6 +40,7 @@ AMENDED_ELECTIONS = ("amended 2026.11.25: Elections_proof.tla ends after its 24 
 # Theme tokens: name -> (light, dark)
 BASE = {
     "bg":    ("#ffffff", "#12151b"),
+    "page":  ("#ececec", "#12151b"),   # the page behind the cards: in light, the mean luminance of the content (PAGE.md)
     "ink":   ("#1e2430", "#e6e9ef"),
     "muted": ("#4a5262", "#b0b8c6"),
     "faint": ("#7d8596", "#7f8898"),
@@ -795,7 +797,7 @@ class Canvas:
                 f'<title id="t">gov-tla {escape(self.ident)} — {escape(re.sub(r"[*`]", "", self.title))}</title>\n'
                 f'<desc id="d">{escape(re.sub(r"[*`]", "", self.subtitle))}</desc>\n'
                 f'<style>\n{_css()}\n</style>\n<defs>{markers}</defs>\n'
-                f'<rect width="{self.W}" height="{H}" {fill("bg")}/>\n')
+                f'<rect width="{self.W}" height="{H}" {fill("page")}/>\n')
         self.warnings = self.check()
         self.link()
         self.warnings += self.check_links()
