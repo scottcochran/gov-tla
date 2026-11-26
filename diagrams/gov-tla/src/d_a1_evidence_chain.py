@@ -9,7 +9,7 @@ Build-time checks (each raises, so the generator prints ERROR, like a gate):
   - every digest on a results file's Modules: line equals the sha256 of that file in specs/ now;
   - a proof results file's TLC results line names the module's named TLC results file, by its sha256.
 """
-from lib import Canvas, STATUS, text_width
+from lib import Canvas, STATUS, text_width, linked, poster_link, POSTER_MODULE
 import corpus as C
 
 ID, SLUG = "A1", "evidence-chain"
@@ -64,6 +64,9 @@ def status_strip(c, x0, x1, y, items):
 
 def n(x):
     return f"{x:,}"
+
+
+PID = {m: k for k, m in POSTER_MODULE.items()}    # module -> its diagram's id
 
 
 # ---------------------------------------------------------------------------------------------- build-time reads
@@ -122,7 +125,7 @@ def build():
     y = c.y
 
     # ---- status strip
-    items = [(f"{m}.tla", [("checked", f"{n(D[m]['read']['rows'])} rows"),
+    items = [(linked(poster_link(PID[m]), f"{m}.tla"), [("checked", f"{n(D[m]['read']['rows'])} rows"),
                            ("proved", f"{n(D[m]['read']['obligations'])} obligations")]) for m in C.MODULES]
     items += [("Liveness (the README's list)", [("notproved", "5 properties"), ("proved", "ExecutiveIsFilled")]),
               ("Government Reach claims", [("notproved", "")]),
@@ -248,12 +251,15 @@ def build():
     for m in C.MODULES:
         r, d = readme[m], D[m]
         rd = d["read"]
-        rows.append([f"{m}.tla", n(r["rows"]), str(r["mutations"]), str(r["witnesses"]), n(r["obligations"]),
+        rows.append([f"{m}.tla", linked(C.file_url(d["tf"]), n(r["rows"])),
+                     linked(poster_link(PID[m], "mutations"), str(r["mutations"])),
+                     linked(poster_link(PID[m], "witnesses"), str(r["witnesses"])),
+                     linked(C.file_url(d["pf"]), n(r["obligations"])),
                      f"[[teal|{n(rd['rows'])}]] rows · [[violet|{rd['mutations']}]] mutations · "
                      f"[[green|{rd['witnesses']}]] witnesses · [[blue|{n(rd['obligations'])}]] obligations: all "
                      f"equal",
                      f"`{d['tf'][8:]}`", f"`{d['pf'][8:]}`",
-                     f"{len(d['p']['theorems'])} · {len(d['p']['lemmas'])}",
+                     linked(poster_link(PID[m], "theorems"), f"{len(d['p']['theorems'])} · {len(d['p']['lemmas'])}"),
                      "[[teal|yes]] · [[teal|yes]], " + ", ".join(f"`{f}`" for f in d["p"]["modules"])])
     rows.append({"cells": ["Total", f"**{n(sum(r['rows'] for r in readme.values()))}**",
                            f"**{sum(r['mutations'] for r in readme.values())}**",

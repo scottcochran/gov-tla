@@ -16,7 +16,7 @@ everything else falls back to light.
 Inline markup in any text: **bold**, `code`, and [[accent|text]] for an accent-coloured run.
 """
 import re
-from xml.sax.saxutils import escape
+from xml.sax.saxutils import escape, unescape
 
 from metrics import W as _W
 
@@ -71,6 +71,52 @@ STATUS = {
 }
 
 
+# ---------------------------------------------------------------------------------------------
+# Links (the linking-posters method of riemann-diagrams' proof-posters plugin). Every poster has a header group `top`;
+# a card or a table row whose key is a source's own name (a mutation, a property, a theorem, a row) is a group with
+# that name as its id, and a few lists are anchored by name (`mutations`, `matrix`, `witnesses`, `theorems`). A code
+# run that names an anchor opens it: on this poster, on the one other poster that draws it (through the committed
+# manifest), or else its line in the module at the pinned commit (corpus.PIN_COMMIT). Every anchored group's first
+# child is a halo, hidden by its opacity attribute and shown by the poster's style while the group is a link's target.
+TOP = "top"
+HALO_PAD = 7
+POSTER_MODULE = {"B1": "Constitution", "B2": "Judiciary", "B3": "Executive", "B4": "Government",
+                 "B5": "Elections", "B6": "SenateRules"}
+POSTERS, ANCHORS_OF = {}, {}          # from the manifest: poster id -> file; file -> its anchors
+_ANCHOR = re.compile(r"[A-Za-z_][\w.-]*")
+_KEY = re.compile(r"([A-Za-z_][\w.-]*)(?:\([^`]*\))?")
+_RESERVED = {"t", "d", TOP}
+
+
+def load_registry(manifest):
+    """The links between posters resolve against the committed manifest, loaded before any poster is built."""
+    POSTERS.clear()
+    ANCHORS_OF.clear()
+    for pid, m in sorted(manifest.items()):
+        POSTERS[pid] = m["file"]
+        ANCHORS_OF[m["file"]] = frozenset(m.get("anchors", ()))
+
+
+def poster_link(pid, frag=TOP):
+    """file#frag of another poster, when the manifest lists it and the anchor; else None."""
+    f = POSTERS.get(pid)
+    if f and (frag == TOP or frag in ANCHORS_OF[f]):
+        return f"{f}#{frag}"
+    return None
+
+
+def linked(url, text):
+    """A link run, or the text alone when there is no target."""
+    return f"[[@{url}|{text}]]" if url else text
+
+
+def halo(x, y, w, h, accent, pad=HALO_PAD, rx=14):
+    """The frame behind an anchored group: one class attribute, the frame's and the colours'."""
+    return (f'<rect x="{x - pad:.1f}" y="{y - pad:.1f}" width="{w + 2 * pad:.1f}" height="{h + 2 * pad:.1f}" '
+            f'rx="{rx}" fill="{light(accent + "-t")}" stroke="{light(accent)}" '
+            f'class="rd-target ft-{accent} s-{accent}" stroke-width="3.5" opacity="0"/>')
+
+
 def _css():
     lines = []
     def block(idx_base, idx_s, idx_t):
@@ -83,6 +129,13 @@ def _css():
     lines.append("svg{" + block(0, 0, 1) + "}")
     lines.append("@media (prefers-color-scheme: dark){svg:not([data-theme=light]){" + block(1, 2, 3) + "}}")
     lines.append("svg[data-theme=dark]{" + block(1, 2, 3) + "}")
+    lines.append("a:hover tspan,a:focus tspan,a:hover>text{text-decoration:underline}")
+    lines.append(".rd-target{opacity:0} g:target>.rd-target{opacity:1;animation:rd-pulse 0.9s ease-in-out 3} "
+                 "@keyframes rd-pulse{50%{stroke-width:9}} g[id]{scroll-margin-top:90px} "
+                 "g.rd-row:target>rect:first-child{fill:var(--amber-t);stroke:var(--amber);stroke-width:3;"
+                 "animation:rd-pulse 0.9s ease-in-out 3} "
+                 "@media (prefers-reduced-motion:reduce){g:target>.rd-target,g.rd-row:target>rect:first-child"
+                 "{animation:none}}")
     for k in BASE:
         lines.append(f".f-{k}{{fill:var(--{k})}} .s-{k}{{stroke:var(--{k})}}")
     for k in ACCENTS:
@@ -122,11 +175,12 @@ def sonly(stroke_name):
 # ---------------------------------------------------------------------------------------------
 # Text measurement and rich-text wrapping
 
-_RUN = re.compile(r"(\*\*.+?\*\*|`.+?`|\[\[[a-z]+\|.+?\]\])")
+_RUN = re.compile(r"(\*\*.+?\*\*|`.+?`|\[\[[a-z]+\|.+?\]\]|\[\[@[^|\]]+\|.+?\]\])")
 
 
 def parse(s):
-    """-> list of (text, style, accent) runs. style in r/b/m (regular, bold, mono)."""
+    """-> list of (text, style, accent) runs. style in r/b/m (regular, bold, mono). The accent of a run inside
+    [[@url|text]] is the url with its @, and render_line makes the run a link; text may hold code runs."""
     runs = []
     for part in _RUN.split(s):
         if not part:
@@ -140,6 +194,9 @@ def parse(s):
                     runs.append((sub, "b", None))
         elif part.startswith("`") and part.endswith("`") and len(part) > 2:
             runs.append((part[1:-1], "m", None))
+        elif part.startswith("[[@") and part.endswith("]]"):
+            url, txt = part[2:-2].split("|", 1)
+            runs.extend((t, st, url) for t, st, _ in parse(txt))
         elif part.startswith("[[") and part.endswith("]]"):
             acc, txt = part[2:-2].split("|", 1)
             runs.append((txt, "b", acc))
@@ -214,16 +271,27 @@ def render_line(x, y, line, size, color="ink", anchor="start", bold=False):
     lw = line_width(line, size)
     bx = x if anchor == "start" else (x - lw / 2 if anchor == "middle" else x - lw)
     TEXT_BOXES.append((bx, y - size * 0.75, bx + lw, y + size * 0.2, "".join(t for t, _, _ in line)))
-    spans = []
+    spans, link, linked_ = [], None, []
+
+    def flush():
+        if linked_:
+            spans.append(f'<a href="{escape(link[1:])}">{"".join(linked_)}</a>')
+            linked_.clear()
     for t, st, acc in _merge(line):
         attrs = []
         if st == "b" or bold:
             attrs.append('font-weight="bold"')
         if st == "m":
             attrs.append(f'font-family="{MONO}" font-size="{size * MONO_SCALE:.1f}"')
-        if acc:
+        url = acc if acc and acc.startswith("@") else None
+        if acc and not url:
             attrs.append(fill(acc))
-        spans.append(f'<tspan {" ".join(attrs)}>{escape(t)}</tspan>' if attrs else escape(t))
+        span = f'<tspan {" ".join(attrs)}>{escape(t)}</tspan>' if attrs else escape(t)
+        if url != link:
+            flush()
+            link = url
+        (linked_ if url else spans).append(span)
+    flush()
     return (f'<text x="{x:.1f}" y="{y:.1f}" font-family="{SANS}" font-size="{size}" '
             f'{fill(color)} text-anchor="{anchor}">{"".join(spans)}</text>')
 
@@ -242,6 +310,9 @@ class Canvas:
         self.ymax = 0
         self.x0, self.x1 = pad, width - pad
         self.blocks = []   # (x0, y0, x1, y1, name) of cards and tables, for the overlap check
+        self.module = POSTER_MODULE.get(ident)
+        self.anchors = []  # ids of anchored groups, in the order drawn: the manifest lists them
+        self.links = self.links_out = self.links_ext = 0   # made by link(): on this poster, to another, out
         self.y = self._header()
 
     # -- bookkeeping
@@ -252,8 +323,12 @@ class Canvas:
 
     def _header(self):
         p = self.pad
-        self.add(f'<text x="{p}" y="{p + 8}" font-family="{SANS}" font-size="13" letter-spacing="1.5" '
+        self.add(f'<g id="{TOP}">')
+        mark = len(self.out)
+        label = (f'<text x="{p}" y="{p + 8}" font-family="{SANS}" font-size="13" letter-spacing="1.5" '
                  f'font-weight="bold" {fill("faint")}>GOV-TLA · {escape(self.ident)}</text>')
+        back = poster_link("A1", f"{self.module}.tla") if self.module else None
+        self.add(f'<a href="{escape(back)}">{label}</a>' if back else label)
         y = p + 44
         for ln in wrap(self.title, self.W - 2 * p, 30, bold=True):
             self.add(render_line(p, y, ln, 30, "ink", bold=True))
@@ -263,8 +338,37 @@ class Canvas:
             self.add(render_line(p, y, ln, 16, "muted"))
             y += 23
         y += 10
+        self.out.insert(mark, halo(p - 10, p - 12, self.W - 2 * p + 20, y - p + 4, "grey"))
+        self.add("</g>")
         self.add(f'<line x1="{p}" y1="{y}" x2="{self.W - p}" y2="{y}" {sonly("line")} stroke-width="1.5"/>', y)
         return y + 34
+
+    # -- anchors
+    def key_of(self, s, mono=False):
+        """The anchor a card title or a row's first cell names, when it is wholly one code run naming a source key
+        (`M_ORIGIN`, `Bicameralism`, `Override(b, c)` -> Override); None otherwise."""
+        s = (s or "").strip()
+        m = re.fullmatch(r"(?:\*\*)?`([^`]+)`(?:\*\*)?", s)
+        code = s if mono else (m.group(1) if m else None)
+        k = _KEY.fullmatch(code.strip()) if code else None
+        return k.group(1) if k else None
+
+    def open_anchor(self, anchor, explicit=False):
+        """Start an anchored group; returns the mark the halo goes at, or None when the id is taken or unusable
+        (an explicit anchor that cannot be used raises)."""
+        if not anchor or anchor in self.anchors or anchor in _RESERVED or anchor.startswith("arw-") \
+                or not _ANCHOR.fullmatch(anchor):
+            if explicit:
+                raise ValueError(f"{self.ident}: anchor {anchor!r} is taken or not an XML name")
+            return None
+        self.anchors.append(anchor)
+        self.add(f'<g id="{escape(anchor)}">')
+        return len(self.out)
+
+    def close_anchor(self, mark, x, y, w, h, accent="grey", pad=HALO_PAD, rx=14):
+        if mark is not None:
+            self.out.insert(mark, halo(x, y, w, h, accent, pad, rx))
+            self.add("</g>")
 
     # -- primitives
     def text(self, x, y, s, size=14, color="ink", anchor="start", bold=False):
@@ -310,7 +414,8 @@ class Canvas:
         return self.pill(x, y, label + (f" · {extra}" if extra else ""), acc, size, dash, anchor=anchor)
 
     def card(self, x, y, w, title, body=(), accent="grey", status=None, status_extra="", dash=None,
-             h=None, size=14, tsize=16, tint=True, draw=True, sub=None, pad=16, bullets=True, lead=None):
+             h=None, size=14, tsize=16, tint=True, draw=True, sub=None, pad=16, bullets=True, lead=None,
+             anchor=None):
         """A titled box. body: list of rich strings (bulleted when bullets=True). Returns height."""
         inner = w - 2 * pad
         lead = lead or round(size * 1.42, 1)
@@ -340,6 +445,7 @@ class Canvas:
             hh = max(h, hh)
         if not draw:
             return hh
+        mark = self.open_anchor(anchor or self.key_of(title), explicit=bool(anchor))
         if dash is None and status:
             dash = STATUS[status][2]
         self.blocks.append((x, y, x + w, y + hh, "card " + (title or "")[:40]))
@@ -366,6 +472,7 @@ class Canvas:
                 self.add(render_line(x + pad + indent, cy + size, ln, size, "ink"))
                 cy += lead
             cy += 3
+        self.close_anchor(mark, x, y, w, hh, accent)
         return hh
 
     def region(self, x, y, w, h, label, accent="grey", dash="10 6", sw=2.2, tint=False, size=14, rx=14):
@@ -423,10 +530,12 @@ class Canvas:
         return size + 16
 
     def table(self, x, y, cols, rows, size=13.5, header=True, hsize=13.5, pad=9, zebra=True, draw=True,
-              accent="grey"):
+              accent="grey", anchor=None):
         """cols: list of (title, width[, opts]) where opts may hold mono/bold/accent/align.
         rows: list of lists of rich strings; or {'group': label, 'accent': a}; or
-        {'cells': [...], 'accent': a, 'dash': bool} to tint a row. Returns height."""
+        {'cells': [...], 'accent': a, 'dash': bool} to tint a row. Returns height.
+        anchor names the whole table (a list a count opens). A row whose first cell is wholly one code run naming a
+        source key is anchored by that key, unless the poster anchors it already (the first drawn keeps it)."""
         lead = round(size * 1.38, 1)
         tw = sum(c[1] for c in cols)
         cy = y
@@ -468,6 +577,12 @@ class Canvas:
                 racc, rdash, r = r.get("accent"), r.get("dash", False), r["cells"]
             ls = [cell_lines(s, c[1], c[2] if len(c) > 2 else {}) for s, c in zip(r, cols)]
             rh = max(max(len(l), 1) for l in ls) * lead + 2 * pad - 4
+            rkey = self.key_of(r[0], (cols[0][2] if len(cols[0]) > 2 else {}).get("mono")) if draw and r else None
+            rkey = rkey if rkey and rkey not in self.anchors and rkey not in _RESERVED \
+                and _ANCHOR.fullmatch(rkey) else None
+            if rkey:
+                self.anchors.append(rkey)
+                parts.append(f'<g id="{escape(rkey)}" class="rd-row">')   # framed by recolouring its own rect
             if draw:
                 bgtok = f"{racc}-t" if racc else ("zebra" if zebra and ri % 2 else "bg")
                 parts.append(f'<rect x="{x}" y="{cy:.1f}" width="{tw}" height="{rh:.1f}" {fs(bgtok, "line")} '
@@ -482,6 +597,8 @@ class Canvas:
                         parts.append(render_line(cx + pad, cy + pad + size - 2 + i * lead, ln, size, col,
                                                  bold=opt.get("bold", False)))
                     cx += c[1]
+            if rkey:
+                parts.append("</g>")
             cy += rh
         if draw:
             self.blocks.append((x, y, x + tw, cy, "table " + cols[0][0][:30]))
@@ -492,7 +609,9 @@ class Canvas:
                 parts.append(f'<line x1="{cx}" y1="{y}" x2="{cx}" y2="{cy:.1f}" {sonly("line")} stroke-width="1"/>')
             parts.append(f'<rect x="{x}" y="{y}" width="{tw}" height="{cy - y:.1f}" {sonly(accent)} '
                          f'stroke-width="1.4"/>')
+            mark = self.open_anchor(anchor, explicit=True) if anchor else None
             self.add("\n".join(parts), cy)
+            self.close_anchor(mark, x, y, tw, cy - y, "amber")   # a list lands framed as a row does
         return cy - y
 
     def legend(self, x, y, items, title="Legend", size=13, maxw=None):
@@ -551,6 +670,99 @@ class Canvas:
                                 f"@({b[0]:.0f},{b[1]:.0f})")
         return warn
 
+    _TOKEN = re.compile(r'(<g id="[^"]*"(?: class="rd-row")?>|</g>|<a href="[^"]*">.*?</a>|<tspan ((?:[^<>]*? )?font-family="'
+                        + re.escape(MONO) + r'"[^<>]*)>([^<>]+)</tspan>)', re.S)
+
+    def resolve(self, name, inside):
+        """Where a code run naming `name` links, or None. inside: the ids of the groups it is drawn in."""
+        import corpus
+        mod = re.fullmatch(r"(?:specs/)?(\w+?)(_proof)?\.(tla|cfg)", name)
+        if mod and mod.group(1) in POSTER_MODULE.values():
+            m, proof, ext = mod.groups()
+            pid = next(k for k, v in POSTER_MODULE.items() if v == m)
+            if proof or ext == "cfg" or m == self.module:
+                return corpus.file_url(f"specs/{name.split('/')[-1]}"), "ext"
+            return poster_link(pid), "out"
+        k = _KEY.fullmatch(name.strip())
+        key = k.group(1) if k else None
+        if key and key in self.anchors:
+            return (None, None) if key in inside else (f"#{key}", "in")
+        if key:
+            # A name this poster's own module defines is that module's, even where another module's poster anchors
+            # the same name (Elect, NoOne, Presentment are defined in several modules, and differ).
+            # A module diagram links a name only to its own module: the modules are independent, and one name
+            # declared in two (president, Senators, Elect) is two things. A diagram of no one module (A1) links a
+            # name to the one other diagram that anchors it, or else to the one module that defines it.
+            if key in self._sources and self.module:
+                return self._sources[key], "ext"
+            if not self.module:
+                homes = [f for f in sorted(ANCHORS_OF) if key in ANCHORS_OF[f] and f != POSTERS.get(self.ident)]
+                if len(homes) == 1:
+                    return f"{homes[0]}#{key}", "out"
+                if key in self._sources:
+                    return self._sources[key], "ext"
+        for rel in (name, f"results/{name}"):
+            u = corpus.file_url(rel) if "/" in rel or rel.endswith((".md", ".txt", ".py", ".yml")) else None
+            if u:
+                return u, "ext"
+        return None, None
+
+    def link(self):
+        """Every code run that names an anchor or a source becomes a link (resolve). Runs already inside a link, and
+        a run naming the group it is drawn in, are left alone. Plain href, SVG's own <a> inside <text>; no glyph is
+        added, so the measured widths and the overlap check are unchanged."""
+        import corpus
+        self._sources = corpus.source_links(self.module)
+        text = "\n".join(self.out)
+        stack, out, pos = [], [], 0
+        for m in self._TOKEN.finditer(text):
+            out.append(text[pos:m.start()])
+            pos = m.end()
+            tok = m.group(1)
+            if tok.startswith("<g id="):
+                stack.append(unescape(tok[7:tok.index('"', 7)]))
+            elif tok == "</g>":
+                stack.pop()
+            elif tok.startswith("<tspan"):
+                href, kind = self.resolve(unescape(m.group(3)), stack)
+                if href:
+                    setattr(self, {"in": "links", "out": "links_out", "ext": "links_ext"}[kind],
+                            getattr(self, {"in": "links", "out": "links_out", "ext": "links_ext"}[kind]) + 1)
+                    tok = f'<a href="{escape(href)}">{tok}</a>'
+            out.append(tok)
+        out.append(text[pos:])
+        if stack:
+            raise ValueError(f"{self.ident}: anchored groups left open: {stack}")
+        self.out = ["".join(out)]
+
+    def check_links(self):
+        """Every link lands: on an id of this poster, on an anchor the manifest lists for another, or on a file at
+        the pinned commit. No link markup is left as text, and no id is drawn twice."""
+        import corpus
+        body = "\n".join(self.out)
+        warn = []
+        ids = re.findall(r' id="([^"]*)"', body)
+        for i in sorted({i for i in ids if ids.count(i) > 1}):
+            warn.append(f"id drawn twice: {i!r}")
+        own = set(self.anchors) | {TOP}
+        for h in sorted(set(re.findall(r' href="([^"]*)"', body))):
+            f, _, frag = unescape(h).partition("#")
+            if f.startswith("http"):
+                if not f.startswith(corpus.BLOB):
+                    warn.append(f"link out not at the pinned commit: {h}")
+            elif not f:
+                if frag not in own:
+                    warn.append(f"link to no anchor on this poster: #{frag}")
+            elif f not in ANCHORS_OF:
+                warn.append(f"link to a poster the manifest does not list: {f}")
+            elif not frag:
+                warn.append(f"link to a poster with no target: {f}")
+            elif frag != TOP and frag not in ANCHORS_OF[f]:
+                warn.append(f"link to an anchor {f} does not draw: #{frag}")
+        if "[[@" in body:
+            warn.append("link markup left as text: [[@")
+        return warn
+
     def svg(self):
         p = self.pad
         y = self.ymax + 44
@@ -573,11 +785,13 @@ class Canvas:
             f'<path d="M 0 0 L 10 5 L 0 10 z" {fill(k)}/></marker>'
             for k in list(ACCENTS) + ["ink", "muted", "faint"])
         head = (f'<svg xmlns="http://www.w3.org/2000/svg" width="{self.W}" height="{H}" '
-                f'viewBox="0 0 {self.W} {H}" role="img" aria-labelledby="t d">\n'
+                f'viewBox="0 0 {self.W} {H}" aria-labelledby="t d">\n'
                 f'<title id="t">gov-tla {escape(self.ident)} — {escape(re.sub(r"[*`]", "", self.title))}</title>\n'
                 f'<desc id="d">{escape(re.sub(r"[*`]", "", self.subtitle))}</desc>\n'
                 f'<style>\n{_css()}\n</style>\n<defs>{markers}</defs>\n'
                 f'<rect width="{self.W}" height="{H}" {fill("bg")}/>\n')
         self.warnings = self.check()
+        self.link()
+        self.warnings += self.check_links()
         TEXT_BOXES.clear()
         return head + "\n".join(self.out) + "\n</svg>\n"

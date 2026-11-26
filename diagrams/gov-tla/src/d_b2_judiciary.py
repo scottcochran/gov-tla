@@ -722,7 +722,7 @@ def build():
                          ("Results: COUNTEREXAMPLE on (read)", 400),
                          ("Proof: theorems whose ASSUME names it (read)", 520),
                          ("Agreement with the results file (the diagram's check)", WW - 3060)],
-                 mrows, size=13.5, accent="violet") + 20
+                 mrows, size=13.5, accent="violet", anchor="mutations") + 20
     srcs = ", ".join(sources)
     y += c.para(X0, y, WW, f"Six records say what each mutation breaks: {srcs}, and the results file's "
                 "COUNTEREXAMPLE rows. Where one differs from the results file the row is marked red and the "
@@ -791,7 +791,7 @@ def build():
                 lines.append(f"[[red|{d[2]} {d[3]} it]]")
             row.append("\n".join(lines))
         mrows.append({"cells": row, "accent": "red"} if any(d[0] == m for d in disagree) else row)
-    y += c.table(X0, y, cols, mrows, size=13, hsize=13, accent="violet") + 20
+    y += c.table(X0, y, cols, mrows, size=13, hsize=13, accent="violet", anchor="matrix") + 20
     jm = [m for m in muts[1:] if ce[m] <= set(judge_props) - set(case_props)]
     km = [m for m in muts[1:] if ce[m] <= set(case_props) - set(judge_props)]
     moved = []
@@ -833,7 +833,7 @@ def build():
                          ("What it reaches (`Judiciary.tla` header § WITNESSES)", 700), ("Row", 190),
                          ("Profile", 150), ("Constants over the defaults (read)", WW - 2050),
                          ("Verdict (read)", 210), ("Distinct states (read)", 190), ("", 170)],
-                 wrows, size=13.5, accent="green") + 50
+                 wrows, size=13.5, accent="green", anchor="witnesses") + 50
 
     # ================================================================ band 7: deadlock, liveness
     y = band(c, X0, y, "The deadlock audit, and no liveness", status="notproved", extra="no theorem")
@@ -887,7 +887,7 @@ def build():
                          ("Mutations with a COUNTEREXAMPLE on it (results, read)", 430),
                          ("ASSUME = counter-examples?", 150),
                          ("The property (`Judiciary.tla` header § PROPERTIES)", WW - 2550)],
-                 trows, size=13.5, accent="blue") + 20
+                 trows, size=13.5, accent="blue", anchor="theorems") + 20
     y += c.para(X0, y, WW, "The proof module's header lists each theorem \"with its hypothesis: exactly the "
                 "mutations whose rows in results/Judiciary-results-*.txt read COUNTEREXAMPLE for it\"; the column "
                 "ASSUME = counterexamples checks that sentence against the results file drawn. " + D["assumptions"],

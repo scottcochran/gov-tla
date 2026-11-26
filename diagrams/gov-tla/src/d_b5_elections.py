@@ -708,7 +708,7 @@ def build():
         mrows.append({"cells": [m, md(row[1]), md(row[2]), md(row[3]),
                                 ", ".join(f"`{x}`" for x in hb[m][1]) or "none", cer, chk],
                       "accent": "red" if not good else None})
-    y += c.table(X0, y, cols, mrows, size=13.5, accent="violet") + 20
+    y += c.table(X0, y, cols, mrows, size=13.5, accent="violet", anchor="mutations") + 20
     y += c.para(X0, y, WW, R["safety"][:-1] + " (README). " + ("Every mutation's three lists agree." if not disagree else
                 f"[[red|{len(disagree)} mutations' lists differ]]: " + ", ".join(disagree) + ".") +
                 " The README's and the header's qualifications (\"with three candidates\", \"five States\") are "
@@ -770,7 +770,7 @@ def build():
             else:
                 line.append("HOLDS")
         mx.append({"cells": line, "accent": "blue"} if mut == "none" else line)
-    y += c.table(X0, y, mcols, mx, size=12.5, pad=7, hsize=12.5, accent="teal") + 20
+    y += c.table(X0, y, mcols, mx, size=12.5, pad=7, hsize=12.5, accent="teal", anchor="matrix") + 20
     n_inv = len(inv_rows)
     y += c.para(X0, y, WW, "The unmutated lines are the text at the defaults (every property), then Safety at each set "
                 "of constants a mutation's rows use (the c- rows), so a COUNTEREXAMPLE in a mutation's block is the "
@@ -810,7 +810,7 @@ def build():
     wcols = [("Row", 290, {"mono": True}), ("Property", 330, {"mono": True}), ("Kind", 130),
              ("Constants", 560, {"mono": True}), ("Verdict", 200), ("Distinct states", 190)]
     wcols.append(("What it shows", X1 - tw0 - sum(x[1] for x in wcols)))
-    ht = c.table(tw0, y, wcols, wr, size=13, accent="green")
+    ht = c.table(tw0, y, wcols, wr, size=13, accent="green", anchor="witnesses")
     y += max(hw, ht) + 20
     y += c.para(X0, y, WW, "A state witness is an INVARIANT row, a step witness (`[][...]_vars`) a PROPERTY row "
                 "(`Elections.tla`, Reachability witnesses). A step witness's count is not recorded. Without the "
@@ -913,7 +913,7 @@ def build():
         pr.append({"cells": [th["name"], ", ".join(f"`{a}`" for a in th["assume"]) or "none",
                              th["prove"], ", ".join(f"`{x}`" for x in breaking) or "none", check, kind],
                    "accent": "blue" if prop in ("ExecutiveIsFilled", "Safety") else None})
-    y += c.table(X0, y, pcols, pr, size=13.5, accent="blue") + 16
+    y += c.table(X0, y, pcols, pr, size=13.5, accent="blue", anchor="theorems") + 16
     flag_by = {}
     for pp in sorted(flags):
         k = [i for i, x in enumerate(hdr) if re.match(rf"^\s{{2}}{pp}\b", x)]

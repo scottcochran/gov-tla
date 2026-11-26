@@ -754,7 +754,7 @@ def build():
                   "[[red|" + ", ".join(ce[mu]) + "]]" if ce[mu] else "[[red|none]]",
                   ", ".join(f"`{x}`" for x in thm.get(mu, [])) or "[[red|none]]", f"`{mlem[mu]}`"]
         trows.append({"cells": cells_, "accent": "red"} if not agree[mu] else cells_)
-    y += c.table(X0, y, cols, trows, size=13.5) + 20
+    y += c.table(X0, y, cols, trows, size=13.5, anchor="mutations") + 20
     nd = [mu for mu in muts if not agree[mu]]
     y += c.para(X0, y, WW, (f"**All five records agree for every one of the {len(muts)} mutations** (read when this "
                             "diagram is built; a disagreement would be drawn as a red row and reported, not "
@@ -819,7 +819,7 @@ def build():
                           ("box", "red", "listed inert by the rows header, but the states differ (the diagram's "
                            "check)", "6 4")],
                   title="Cells", size=13) + 16
-    y += c.table(X0, y, mcols, mrows, size=12.5, hsize=hs) + 20
+    y += c.table(X0, y, mcols, mrows, size=12.5, hsize=hs, anchor="matrix") + 20
     y += c.para(X0, y, WW, "An empty cell is a pair no row runs: `Safety` runs unmutated only. `TypeOK` runs under "
                 "each mutation with the machine that mutation changes (rows header). "
                 + ("Every COUNTEREXAMPLE cell is one the README's Breaks column and the module header both name, "
@@ -856,7 +856,7 @@ def build():
                           "[[green|COUNTEREXAMPLE]]" if r["verdict"] == "COUNTEREXAMPLE" else f"[[red|{r['verdict']}]]",
                           n(r["states"]) if r["states"] is not None else "count not recorded",
                           "checked, as expected" if r["ok"] else "[[red|not as expected]]"])
-    y += c.table(X0, y, wcols, wrows, size=13.5) + 20
+    y += c.table(X0, y, wcols, wrows, size=13.5, anchor="witnesses") + 20
     y += c.para(X0, y, WW, "A witness's COUNTEREXAMPLE is the expected result: it shows TLC reaches the state the "
                 "property forbids, so a property that holds is not holding only because that state is unreachable "
                 "(README § How the specs are written and checked, Witnesses). `NeverSuccession` and "
@@ -929,7 +929,7 @@ def build():
             chk = ("[[teal|equal]]: " + ", ".join(f"`{m}`" for m in sorted(hyp, key=muts.index))) if hyp == brk \
                 else "[[red|differ]]: hypotheses " + ", ".join(sorted(hyp)) + "; breaks " + ", ".join(sorted(brk))
         prow.append([th["name"], assumes, f"`{th['prove']}`", st, lem, chk])
-    y += c.table(X0, y, pcols, prow, size=13.5) + 20
+    y += c.table(X0, y, pcols, prow, size=13.5, anchor="theorems") + 20
     other = [lm for lm in p["lemmas"] if not lm.startswith("Mut") and not any(
         lm in (r[4] or "") for r in prow)]
     y += row_cards(c, X0, y, WW, 26, [

@@ -10,6 +10,7 @@ committed one (scripts/compare_results.py's rule) and with the current specs' sh
 import hashlib
 import pathlib
 import re
+import subprocess
 
 ROOT = pathlib.Path(__file__).resolve().parents[3]
 
@@ -25,6 +26,13 @@ RESULTS = {
     "Elections":    ("results/Elections-results-2026.11.16.txt", "results/Elections-proof-results-2026.11.17.txt"),
     "SenateRules":  ("results/SenateRules-results-2026.11.19b.txt", "results/SenateRules-proof-results-2026.11.19b.txt"),
 }
+
+
+# The commit every link out opens: the state of record (lib.STATE names it). A source line is linked as it is at this
+# commit, read from it with git, so a link lands on the line drawn even after the file moves on in the tree.
+REPO = "scottcochran/gov-tla"
+PIN_COMMIT = "d3c9aed60d06cdd4ee0ca715c375b5c5e75abb35"
+BLOB = f"https://github.com/{REPO}/blob/{PIN_COMMIT}/"
 
 
 class CorpusError(Exception):
@@ -252,3 +260,89 @@ def proof_gaps():
         _need(sep, "PROOF-GAPS.txt", f"line is not '<Module>: <reason>': {ln!r}")
         out[k] = v
     return out
+
+
+# ---------------------------------------------------------------------------------------------- the sources at the pin
+_GIT = {}
+
+
+def _git(*args):
+    if args not in _GIT:
+        r = subprocess.run(["git", "-C", str(ROOT), *args], capture_output=True, text=True)
+        if r.returncode != 0:
+            raise CorpusError(f"git {' '.join(args)}: {r.stderr.strip()[:200]}")
+        _GIT[args] = r.stdout
+    return _GIT[args]
+
+
+def pinned_files():
+    """Every file tracked at PIN_COMMIT."""
+    return frozenset(_git("ls-tree", "-r", "--name-only", PIN_COMMIT).splitlines())
+
+
+def at_pin(rel):
+    """A file's text as it is at PIN_COMMIT."""
+    return _git("show", f"{PIN_COMMIT}:{rel}")
+
+
+def file_url(rel):
+    """The file at the pin, or None when the pin has no such file."""
+    return BLOB + rel if rel in pinned_files() else None
+
+
+# A definition at the start of a line: an operator (with or without parameters), a function, or a named ASSUME,
+# THEOREM, LEMMA, COROLLARY or PROPOSITION. A LET's local definitions are indented and so not matched.
+_DEF = re.compile(r"^(?:(?:THEOREM|LEMMA|COROLLARY|PROPOSITION|ASSUME)\s+)?([A-Za-z_]\w*)\s*"
+                  r"(?:\([^)]*\)|\[[^\]]*\])?\s*==", re.M)
+_ROWNAME = re.compile(r"^([a-z][a-z0-9-]*)\s+(?:none|M_\w+)\s", re.M)
+
+
+def _lines(text, pat):
+    out = {}
+    for m in pat.finditer(text):
+        out.setdefault(m.group(1), text.count("\n", 0, m.start()) + 1)
+    return out
+
+
+_DECL = re.compile(r"^(?:CONSTANTS?|VARIABLES?)\b(.*?)(?=^\S|\Z)", re.M | re.S)
+
+
+def _declared(text):
+    """Name -> line of every constant and variable a CONSTANT(S) or VARIABLE(S) block declares."""
+    out = {}
+    for m in _DECL.finditer(text):
+        base = text.count("\n", 0, m.start(1)) + 1
+        body = re.sub(r"\(\*.*?\*\)", lambda c: re.sub(r"[^\n]", " ", c.group(0)), m.group(1), flags=re.S)
+        for i, ln in enumerate(body.split("\n")):
+            ln = re.sub(r"\\\*.*$", "", ln)
+            for name in re.findall(r"(?:^|,)\s*([A-Za-z_]\w*)", ln):
+                out.setdefault(name, base + i)
+    return out
+
+
+def module_links(module):
+    """Name -> its line at the pin, for one module: the row names of its row list, then the declarations and
+    definitions of its proof module and of the module itself, later ones taking precedence (the module's own
+    definition wins)."""
+    links = {}
+    for rel, pat in ((f"rows/{module}-rows.txt", _ROWNAME), (f"specs/{module}_proof.tla", _DEF),
+                     (f"specs/{module}.tla", _DEF)):
+        if rel in pinned_files():
+            text = at_pin(rel)
+            found = _lines(text, pat)
+            if rel.endswith(".tla"):
+                found = {**_declared(text), **found}
+            links.update({k: f"{BLOB}{rel}#L{v}" for k, v in found.items()})
+    return links
+
+
+def source_links(module=None):
+    """The links out a poster's code runs may take: its module's names (module_links), or, for a poster of no one
+    module, every name that only one module defines or runs."""
+    if module:
+        return module_links(module)
+    seen = {}
+    for m in MODULES:
+        for k, v in module_links(m).items():
+            seen.setdefault(k, set()).add(v)
+    return {k: next(iter(v)) for k, v in sorted(seen.items()) if len(v) == 1}

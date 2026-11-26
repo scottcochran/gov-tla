@@ -1150,7 +1150,7 @@ def build():
                  hb_txt + ("" if ok_h else " [[red|≠ results]]"), ", ".join(mconf[m]), cetxt,
                  f"`{lm[0]}`: `{lm[1]}`"]
         mrows.append(cells if ok_r and ok_h else {"cells": cells, "accent": "red"})
-    y += c.table(X0, y, mcols, mrows, size=13) + 14
+    y += c.table(X0, y, mcols, mrows, size=13, anchor="mutations") + 14
     rech = [r for r in R if r["mut"] == "M_RECHECK"]
     a_none = byname["a-none-type"]["states"]
     need(all(r["states"] == a_none and r["asserted"] == [f"states={a_none}"] for r in rech), TF,
@@ -1239,7 +1239,7 @@ def build():
         st = sorted({r["states"] for (k, _), r in cell.items() if k == (m, cf) and r["verdict"] == "HOLDS"})
         st_row.append("**" + ", ".join(n(s) for s in st) + "**" if st else "—")
     xrows.append({"cells": st_row, "accent": "grey"})
-    y += c.table(X0, y, xcols, xrows, size=12.5, hsize=11.5) + 14
+    y += c.table(X0, y, xcols, xrows, size=12.5, hsize=11.5, anchor="matrix") + 14
     nmx = sum(1 for r in R if cat[r["name"]] == "matrix")
     y += c.para(X0, y, WW, f"{nmx} rows on `Spec` and {len(refuted)} r- rows, every one as expected. An empty cell "
                 "is a property no row runs under that mutation in that configuration. `Safety` is every safety "
@@ -1280,7 +1280,7 @@ def build():
             body = re.sub(r"\s+", " ", spec["defs"][x][1]).strip()
             wrows.append([r["name"], x, r["kind"], r["conf"], "[[green|COUNTEREXAMPLE]]",
                           n(r["states"]) if r["states"] is not None else "count not recorded", f"`{body}`"])
-    y += c.table(X0, y, wcols, wrows, size=13) + 14
+    y += c.table(X0, y, wcols, wrows, size=13, anchor="witnesses") + 14
     y += c.para(X0, y, WW, "A witness is existential: a run that reaches the state is evidence that it is "
                 "reachable at those constants, and no proof is attempted (README § What is not proved). TLC "
                 "records no distinct-state count for a violated temporal property. The pairing of rows with the "
@@ -1348,7 +1348,7 @@ def build():
             bad_thm.append(f"{th['name']}: hypotheses {hs}, TLC breaks {br}")
         trows.append([th["name"], ", ".join(th["assume"]) or "none", th["prove"],
                       codes(br) if br else "none", "[[blue|yes]]" if ok else "[[red|no]]"])
-    y += c.table(X0, y, tcols, trows, size=13) + 14
+    y += c.table(X0, y, tcols, trows, size=13, anchor="theorems") + 14
     need(not bad_thm, PF, f"theorem hypotheses differ from the TLC breaks: {bad_thm}")
     y += row_cards(c, X0, y, WW, 26, [
         ("The prover and the obligations", [

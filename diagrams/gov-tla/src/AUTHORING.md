@@ -111,7 +111,14 @@ finding until someone decides to amend it.
   strings, `{"group": label, "accent": a}` or `{"cells": [...], "accent": a}`. Returns its height.
 - `c.region(x, y, w, h, label, accent, dash=, tint=)`; `c.arrow([(x, y), ...], accent, dash=, label=, lpos=,
   loff=, both=)`; `c.para`, `c.text`, `c.pill`, `c.status`, `c.label`, `c.line`, `c.legend`, `c.heading`.
-- Rich text: `**bold**`, `` `code` ``, `[[red|accented bold]]`, and `\n` for a hard break.
+- Rich text: `**bold**`, `` `code` ``, `[[red|accented bold]]`, `[[@url|linked text]]` (write it with
+  `linked(url, text)`, which leaves the text plain when there is no url), and `\n` for a hard break.
+- **Links** (`diagrams/README.md` § Links). Name things in code font and the library links them: to an anchor on
+  the diagram, else to the module's own declaration or definition at the pin. Do not hand-write links to source
+  lines. A card titled with one code-font name, and a table row whose first cell is one, are anchored by it. Give
+  `anchor="…"` to a card or table a count should open (each B diagram's `mutations`, `matrix`, `witnesses` and
+  `theorems`). `poster_link(id, anchor)` addresses another diagram's anchor and is None until the manifest lists
+  it. A link to another diagram always names an anchor; its whole diagram is `#top`.
 - `corpus.tlc_results(rel)`, `corpus.proof_results(rel)`, `corpus.mutations(res)`, `corpus.witnesses(res)`,
   `corpus.matrix(res, spec)`, `corpus.readme_summary()`, `corpus.proof_gaps()`, `corpus.read(rel)`,
   `corpus.sha256(rel)`, `corpus.RESULTS[module]`.

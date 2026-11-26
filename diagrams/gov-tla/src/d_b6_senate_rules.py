@@ -608,7 +608,7 @@ def build():
             ("Breaks", 330), ("Module header, MUTATIONS (the whole entry)", 900),
             ("COUNTEREXAMPLE at 7 Senators (results)", 330), ("At 5 Senators (results)", 380)]
     cols.append(("README, header and results (the diagram's check)", WW - sum(x[1] for x in cols)))
-    y += c.table(X0, y, cols, rows, size=13.5) + 24
+    y += c.table(X0, y, cols, rows, size=13.5, anchor="mutations") + 24
     y += c.para(X0, y, WW, "README § `SenateRules.tla`: \"" + rp["seven"] + "\" The rows header expects it: \"With "
                 "five Senators, where a majority is three-fifths, M_PREVIOUS_QUESTION HOLDS on ClotureThreshold and "
                 "ClosedOnThreeFifths\" (`" + ROWS + "`).", 13.5, "muted") + 40
@@ -644,7 +644,7 @@ def build():
     mcols = [("Mut · Senate", first, {"mono": True, "bold": True})] + \
             [(p_.replace("DEADLOCK ", "") + (" (deadlock check on)" if p_.startswith("DEADLOCK") else ""), pw)
              for p_ in props]
-    y += c.table(X0, y, mcols, mrows, size=13.5) + 24
+    y += c.table(X0, y, mcols, mrows, size=13.5, anchor="matrix") + 24
     y += c.para(X0, y, WW, "Each cell: the verdict and the distinct states the results file records. Empty: no row runs. Grey rows: five Senators "
                 "(`Senators={s1,s2,s3,s4,s5}` on the row). A cell would be marked red where its verdict differs "
                 "from the README's Breaks cell; " + ("none is." if not disagreements else
@@ -672,7 +672,7 @@ def build():
              ("README § SenateRules.tla, What it shows", 900), ("Row", 300), ("Verdict", 230),
              ("Distinct states", 170)]
     wcols.append(("Status", WW - sum(x[1] for x in wcols)))
-    y += c.table(X0, y, wcols, wrows, size=13.5) + 24
+    y += c.table(X0, y, wcols, wrows, size=13.5, anchor="witnesses") + 24
     y += c.para(X0, y, WW, f"The README's summary table counts {summ['witnesses']} witnesses; the section's prose "
                 "names two of them. All eight run under `Spec` (no fairness) with `Mut = \"none\"` at seven "
                 "Senators. \"Witnesses and counterexamples are existential, and stay with TLC\" (README § What is "
@@ -776,7 +776,7 @@ def build():
                                                      {"mono": True}),
              ("Hypotheses are exactly those (the proof header's claim, checked here)", 330)]
     tcols.append(("Inductive strengthening (proof module header, in prose)", WW - sum(x[1] for x in tcols)))
-    y += c.table(X0, y, tcols, trows, size=13.5) + 24
+    y += c.table(X0, y, tcols, trows, size=13.5, anchor="theorems") + 24
     y += row_cards(c, X0, y, WW, 24, [
         (f"Lemmas ({len(P['lemmas'])}, read)", [", ".join(f"`{x}`" for x in P["lemmas"]),
          "One lemma per mutation, `Mut…Admits`, says what it lets through; \"the counterexamples themselves are "

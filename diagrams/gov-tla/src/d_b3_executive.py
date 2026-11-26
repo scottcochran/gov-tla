@@ -709,7 +709,7 @@ def build():
                                 "[[teal|yes]]" if ok else "[[red|NO: drawn as each says]]"],
                       "accent": None if ok else "red"})
     mrows = [x if x["accent"] else x["cells"] for x in mrows]
-    y += c.table(X0, y, mcols, mrows, size=13.5, accent="violet") + 20
+    y += c.table(X0, y, mcols, mrows, size=13.5, accent="violet", anchor="mutations") + 20
     y += c.para(X0, y, WW, ("**No disagreement**: for every mutation, the README's Breaks cell, the module header, the "
                 "results file's Expected: line, the properties TLC found a counterexample to, and the theorems "
                 "whose hypotheses exclude it name the same properties." if not disagree else
@@ -763,7 +763,7 @@ def build():
             row.append(cell)
         xrows.append({"cells": row, "accent": "red"} if flag else ({"cells": row, "accent": "blue"} if m == "none"
                                                                      else row))
-    y += c.table(X0, y, xcols, xrows, size=13, hsize=hsz, accent="violet") + 20
+    y += c.table(X0, y, xcols, xrows, size=13, hsize=hsz, accent="violet", anchor="matrix") + 20
     n_x = sum(len(v) for v in by.values())
     y += c.para(X0, y, WW, f"{n_x} rows; each cell gives the verdict and its distinct states. An empty cell is a "
                 "pair no row runs (`Safety`, `TypeOK` and the deadlock audit run under `none` only). The `none` row "
@@ -822,7 +822,7 @@ def build():
         wrows.append([r["name"], r["prop"], r["kind"], f"\"{phrase[r['prop']]}\"",
                       f"[[green|{r['verdict']}]]", n(r["states"]) if r["states"] is not None else "count not recorded",
                       "a state predicate" if r["kind"] == "INVARIANT" else "`[][...]_vars`, which names a step"])
-    hwt = c.table(X0 + ww1 + 30, y, wcols, wrows, size=13.5, accent="green")
+    hwt = c.table(X0 + ww1 + 30, y, wcols, wrows, size=13.5, accent="green", anchor="witnesses")
     y += max(hwl, hwt) + 20
     y += c.para(X0, y, WW, "A witness is checked, never proved: a run that reaches a state is evidence it is reachable "
                 "at those constants (README § How …, What is not proved). TLC records no distinct-state count for a "
@@ -920,7 +920,7 @@ def build():
         prow.append([x["name"], ", ".join(f"`{a}`" for a in x["assume"]) or "none: every mutation",
                      x["prove"], ce_s, agree, streng[q]])
     need(covered >= set(safety), pf, "a safety property with no theorem")
-    y += c.table(X0, y, pcols, prow, size=13.5, accent="blue") + 24
+    y += c.table(X0, y, pcols, prow, size=13.5, accent="blue", anchor="theorems") + 24
     lem = p["lemmas"]
     admits = [x for x in lem if x.startswith("Mut") and x.endswith("Admits")]
     need(len(admits) == len(muts), pf, f"one Mut…Admits lemma per mutation expected: {len(admits)} vs {len(muts)}")

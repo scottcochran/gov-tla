@@ -36,6 +36,56 @@ A change that the regression check reports as **unexpected** means something a d
 results file, a row list, a spec, the README's tables, or the library. Read the diff before amending or restoring.
 A new results file changes no diagram until `corpus.RESULTS` names it, and A1 fails to build until it does.
 
+## Links
+
+The diagrams link to each other and to the sources they draw, following the `linking-posters` method of the
+proof-posters plugin (`plugins/proof-posters/skills/linking-posters/` in riemann-diagrams). Open a diagram in a
+browser to follow them. **GitHub's file viewer shows an SVG as an image, without its links or its style.**
+
+**What a link opens.** Names are linked, not prose: a name in code font, and A1's counts.
+
+| From | To |
+|---|---|
+| A name a diagram anchors (a mutation, a property, a theorem, a row, an action's card) | that row or card, on the same diagram |
+| Any other name the diagram's module declares or defines, or a row name of its row list | its line in the module, proof module or row list, at the pinned commit |
+| A module's file name (`Executive.tla`) | that module's diagram, at its top; on its own diagram, the file at the pin |
+| A file name (`scripts/tlc_rows.py`, `results/…`, `README.md`) | the file at the pinned commit |
+| A B diagram's header label (`GOV-TLA · B3`) | that module's row in A1's summary table |
+| A1: a module name; its mutation, witness and theorem counts | the module's diagram: its top, its mutation table, witness table, theorem table |
+| A1: a row or obligation count | the results file that lists the rows or states the count, at the pin |
+
+A module diagram links a name only within its own module. The modules are independent, and a name declared in two
+of them (`president`, `Senators`, `Elect`) is two things, so it is never linked from one module's diagram to
+another's. A1, which is no one module's, links a name to the one diagram that anchors it, or to the one module
+that defines it.
+
+**Anchors.** Every diagram's header is `#top`. A card titled with one code-font name, and a table row whose first
+cell is one, take that name as their id: `B1-constitution-2026.11.25.svg#M_ORIGIN`. Where a name is drawn twice,
+the first drawn keeps it. Each B diagram also anchors four lists by name: `#mutations`, `#matrix`, `#witnesses`
+and `#theorems`. The ids are the sources' own names, so a link stays good when a layout changes.
+
+**The pin.** Every link out is to `github.com/scottcochran/gov-tla/blob/<PIN_COMMIT>/…`, where
+`corpus.PIN_COMMIT` is the commit `lib.STATE` names (`d3c9aed`). Line numbers are read from the file at that
+commit (`git show`), not from the tree, so a link lands on the line the diagram drew even after the file moves on.
+
+**The manifest and the second run.** `gov-tla/manifest.json` lists every diagram's anchors and its links by kind.
+A diagram links to another's anchor only when the committed manifest lists it. When a run moves any diagram's
+anchors, the generator updates the manifest, prints a `NOTE` line and exits 1. Run it again, and the links follow.
+
+**Where you land.** The target is framed when it opens: a card or list shows an amber halo, and a row is
+recoloured amber. The frame pulses three times and then stays. Under `prefers-reduced-motion` it does not pulse.
+A renderer that runs no CSS shows the diagram exactly as before: the light and dark renders are pixel-identical to
+the unlinked diagrams.
+
+```bash
+# Every link lands: parse every output, no duplicate id, every target exists and is framed, every link out pinned
+uv run --no-project --python 3.12 python <riemann-diagrams>/plugins/proof-posters/skills/linking-posters/scripts/check-links.py \
+  --config diagrams/proof-posters.toml
+```
+
+The generator makes the same checks and prints a `WARNING` for any failure, so the regression check fails on a
+link that lands nowhere.
+
 ## The gov-tla diagram family (2026.11.25)
 
 Drawn against `main` at `d3c9aed` (2026.11.20), tracked files only.

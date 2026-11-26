@@ -1,0 +1,27 @@
+# Where the linking-posters skill of riemann-diagrams' proof-posters plugin finds this diagram family's parts, for
+# its check-links.py:
+#   uv run --no-project --python 3.12 python <riemann-diagrams>/plugins/proof-posters/skills/linking-posters/scripts/check-links.py \
+#     --config diagrams/proof-posters.toml
+# Paths are relative to this file's directory (diagrams/). Only the tables check-links.py reads are here.
+
+[build]
+outputs = ["gov-tla/*.svg"]
+manifests = ["gov-tla/manifest.json"]
+rerun_marker = "NOTE "       # the generator exits 1 with a line starting so when anchors moved: run it again
+
+[pins]
+file = "gov-tla/src/corpus.py"
+
+[[pins.commit]]
+name = "PIN_COMMIT"
+what = "the gov-tla commit the diagrams are drawn against; every link out opens a file at it"
+repo = "scottcochran/gov-tla"
+
+[links]
+# Every link to another diagram names an anchor; every anchored card, list and header carries a halo (class
+# rd-target), and every anchored row is class rd-row, each shown by the style while it is the target. Every link out
+# is at the pin.
+require_targets = true
+frame_classes = ["rd-target", "rd-row"]   # a halo behind a card or list; a row recolours its own background
+unrendered = ["[[@"]           # lib.linked's markup: never left as text in an output
+allow = []
