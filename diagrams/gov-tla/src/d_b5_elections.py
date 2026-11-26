@@ -12,10 +12,15 @@ Build-time reads (each raises corpus.CorpusError on a shape it does not expect, 
   - specs/Elections.tla's header (MUTATIONS) and its Stages and Clocks; specs/Elections.cfg's CONSTANTS;
   - rows/Elections-rows.txt's `# const:` block and its rows (for the constraint the results file does not print);
   - specs/Elections_proof.tla's text, for where its first end-of-module line falls among its lemmas.
+
+Amended 2026.11.25 for the Elections proof fix (PR #16; docs/ELECTIONS-PROOF-TERMINATOR-FINDINGS-2026.11.25.md): the
+module now ends after its 24 mutation lemmas, and the named proof results file proves them. The diagram draws the
+lemmas as inside the module and proved when the text puts them before its one end-of-module line, and draws the
+earlier reading, in red, should a lemma ever follow that line again.
 """
 import re
 
-from lib import Canvas, STATUS, text_width
+from lib import Canvas, STATUS, text_width, STATE_ELECTIONS_FIX, AMENDED_ELECTIONS
 import corpus as C
 
 ID, SLUG = "B5", "elections"
@@ -24,6 +29,7 @@ W = 3600
 S = 14
 MOD = "Elections"
 TF, PF = C.RESULTS[MOD]
+FIX = "docs/ELECTIONS-PROOF-TERMINATOR-FINDINGS-2026.11.25.md"   # the record of the fix this diagram is amended for
 
 
 # ---------------------------------------------------------------------------------------------- layout helpers
@@ -414,7 +420,9 @@ def build():
                "specs/Elections.cfg; specs/Elections_proof.tla (header: THEOREMS, ASSUMPTIONS, INDUCTIVE "
                "STRENGTHENING, NOT PROVED; the theorems; the liveness section; the end-of-module lines); "
                f"{rows_rel} (header comments, # const: block, rows); {TF}; {PF}; scripts/proof_results.py "
-               "(statements); docs/MUTATION-MATRIX-FINDINGS-2026.11.17.md § 2, § 7.6, § 8")
+               "(statements); docs/MUTATION-MATRIX-FINDINGS-2026.11.17.md § 2, § 7.6, § 8; "
+               "docs/ELECTIONS-PROOF-TERMINATOR-FINDINGS-2026.11.25.md § 1, § 5",
+               state=STATE_ELECTIONS_FIX, note=AMENDED_ELECTIONS, pin=C.PIN_ELECTIONS_FIX)
     X0, X1 = c.x0, c.x1
     WW = X1 - X0
     y = c.y
@@ -430,7 +438,8 @@ def build():
              ("Witnesses", [("checked", f"{W_N}, existential")]),
              ("Mutations' counterexamples", [("checked", f"{len(muts)} mutations, existential")]),
              ("Mut…Admits lemmas", [((f"{len(after_end)} of {len(admits)} after the first end-of-module line",
-                                      "red", "6 4"), "")]),
+                                      "red", "6 4"), "")] if after_end else
+              [("proved", f"all {len(admits)}, inside the module")]),
              ("Flip tests", [(("No results file", "red", "2 3"), "")])]
     y = status_strip(c, X0, X1, y, items)
     y += c.para(X0, y, WW, "**Checked** means TLC explored every reachable state at the constants in the row list. "
@@ -951,6 +960,16 @@ def build():
     y += row_cards(c, X0, y, WW, 30, [
         (f"The lemmas, read ({len(base_lem)} before line {ends[0]})", [", ".join(f"`{x}`" for x in base_lem)],
          "blue", {"bullets": False}),
+    ] + ([] if after_end else [
+        (f"The {len(admits)} `Mut…Admits` lemmas: inside the module, and proved ({FIX[5:]})", [
+            f"The module ends at line {ends[0]}, its one end-of-module line, and every lemma comes before it "
+            f"(read). Each `Mut…Admits` lemma says what its mutation admits, as README § How …, Proofs has it.",
+            "Until PR #16, a `====` after `ExecutiveIsFilledAlways` (line 1372) ended the module before them. "
+            "The 2026.11.17 results file proved 1,121 obligations and listed the 24 on its LEMMAS line, because "
+            "`scripts/proof_results.py` reads the whole text (the findings doc § 1, § 3).",
+            f"With that line removed: **{n(obl)} obligations, all proved**, the 1,121 before plus one per lemma "
+            f"(the findings doc § 5; {PF[8:]})."], "blue", {"status": "proved"}),
+    ]) + ([] if not after_end else [
         (f"[[red|{len(after_end)} lemmas after line {ends[0]}]] (the diagram's reading of the text)", [
             f"Line {ends[0]} of `Elections_proof.tla` is a `====` line, which closes a TLA+ module; it follows "
             f"`ExecutiveIsFilledAlways`. The {len(after_end)} lemmas "
@@ -961,7 +980,7 @@ def build():
             f"{n(obl)} obligations include them.",
             "README § How …, Proofs: each proof module has \"one lemma per mutation saying what that mutation "
             "admits\"."], "red", {}),
-    ], size=13.5) + 50
+    ]), size=13.5) + 50
     need(not thm_after, "specs/Elections_proof.tla", "a THEOREM after the first end-of-module line")
 
     # ---- band 8: README findings for the module
@@ -1051,7 +1070,8 @@ def build():
         ("§ 7.6 What happened when the proof was written", [
             "\"1,121 obligations, all proved by the pinned prover; 25 flip tests, one per mutation, each failing in "
             "the lemma that carries the hypothesis.\"",
-            f"Read: {n(obl)} obligations; {len(muts)} mutations; {hyps} `Mut #` hypotheses across the "
+            f"Read: {n(obl)} obligations (1,121 until the 24 mutation lemmas came inside the module, "
+            f"ELECTIONS-PROOF-TERMINATOR-FINDINGS-2026.11.25.md § 5); {len(muts)} mutations; {hyps} `Mut #` hypotheses across the "
             f"{len(p['theorems'])} theorems. No results file records a flip test (`flip_test.py` writes nothing "
             f"to the tree)."], "pink", {}),
         ("§ 8 What the proof means for the matrix", [

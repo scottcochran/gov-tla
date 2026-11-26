@@ -196,15 +196,20 @@ Each is a one-step `BY DEF` of the operator its mutation changes.
    Either would have stopped the 2026.11.17 file being written. A check that
    every base and proof module has exactly one terminator, at its last
    non-blank line, would belong in `scripts/proof_sync.py`.
-2. **Amend the diagram family once this merges.** `diagrams/gov-tla/src/
-   corpus.py` names `Elections-proof-results-2026.11.17.txt`, so A1, the
-   family's gate, will refuse to build until it names the new file. That is
-   the gate working. Then A1 and B5 regenerate, B5 shows the 24 lemmas as
-   proved, and item 1 of `diagrams/FINDINGS-2026.11.25.md` is marked fixed.
-3. **Upstream to the skill.** `writing-tla-specs-and-proofs` could add the rule
+2. **Upstream to the skill.** `writing-tla-specs-and-proofs` could add the rule
    to its anti-patterns: one terminator per module, and a results generator
    that reads statements from the module as the prover parses it, not from the
    file text.
+
+**Done in the same pull request: the diagram amendment.** Once this branch
+was rebased onto the merged diagram family, A1, the family's gate, refused to
+build. The new results file was the newest of its kind, and
+`diagrams/gov-tla/src/corpus.py` did not name it. That is the gate working.
+`corpus.RESULTS` now names the 2026.11.26 file, and A1 and B5 are amended
+against `a6e724e`, the commit of the fix: their footers say so, and their links
+out open that commit. B5 draws the 24 lemmas inside the module and proved.
+Item 1 of `diagrams/FINDINGS-2026.11.25.md` is marked fixed. The other five
+diagrams read nothing that changed and regenerate byte for byte.
 
 ## Appendix A. Reproducing
 

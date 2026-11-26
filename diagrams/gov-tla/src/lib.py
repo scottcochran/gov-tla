@@ -30,6 +30,10 @@ DATE = "2026.11.25"
 # Untracked files (NOTES.md, TODO.md, drafts) are never drawn. A diagram drawn against a later commit passes
 # Canvas state=; an amended one passes note=. Unamended diagrams regenerate byte for byte.
 STATE = "State of record: gov-tla main at d3c9aed (2026.11.20), tracked files only"
+# A1 and B5, amended for the Elections proof fix: drawn against its commit (corpus.PIN_ELECTIONS_FIX).
+STATE_ELECTIONS_FIX = "State of record: gov-tla at a6e724e (2026.11.25, PR #16), tracked files only"
+AMENDED_ELECTIONS = ("amended 2026.11.25: Elections_proof.tla ends after its 24 mutation lemmas, and "
+                     "results/Elections-proof-results-2026.11.26.txt proves 1,145 obligations")
 
 # ---------------------------------------------------------------------------------------------
 # Theme tokens: name -> (light, dark)
@@ -301,7 +305,7 @@ def render_line(x, y, line, size, color="ink", anchor="start", bold=False):
 class Canvas:
     """One diagram. Primitives append SVG and track the lowest y used so height is computed."""
 
-    def __init__(self, ident, title, subtitle, width, sources, pad=56, note=None, state=None):
+    def __init__(self, ident, title, subtitle, width, sources, pad=56, note=None, state=None, pin=None):
         self.ident, self.title, self.subtitle, self.W = ident, title, subtitle, width
         self.sources = sources
         self.note, self.state = note, state
@@ -311,6 +315,7 @@ class Canvas:
         self.x0, self.x1 = pad, width - pad
         self.blocks = []   # (x0, y0, x1, y1, name) of cards and tables, for the overlap check
         self.module = POSTER_MODULE.get(ident)
+        self.pin = pin      # the commit its links out open; None: corpus.PIN_COMMIT, the family's state of record
         self.anchors = []  # ids of anchored groups, in the order drawn: the manifest lists them
         self.links = self.links_out = self.links_ext = 0   # made by link(): on this poster, to another, out
         self.y = self._header()
@@ -676,12 +681,13 @@ class Canvas:
     def resolve(self, name, inside):
         """Where a code run naming `name` links, or None. inside: the ids of the groups it is drawn in."""
         import corpus
+        pin = self.pin or corpus.PIN_COMMIT
         mod = re.fullmatch(r"(?:specs/)?(\w+?)(_proof)?\.(tla|cfg)", name)
         if mod and mod.group(1) in POSTER_MODULE.values():
             m, proof, ext = mod.groups()
             pid = next(k for k, v in POSTER_MODULE.items() if v == m)
             if proof or ext == "cfg" or m == self.module:
-                return corpus.file_url(f"specs/{name.split('/')[-1]}"), "ext"
+                return corpus.file_url(f"specs/{name.split('/')[-1]}", pin), "ext"
             return poster_link(pid), "out"
         k = _KEY.fullmatch(name.strip())
         key = k.group(1) if k else None
@@ -702,7 +708,7 @@ class Canvas:
                 if key in self._sources:
                     return self._sources[key], "ext"
         for rel in (name, f"results/{name}"):
-            u = corpus.file_url(rel) if "/" in rel or rel.endswith((".md", ".txt", ".py", ".yml")) else None
+            u = corpus.file_url(rel, pin) if "/" in rel or rel.endswith((".md", ".txt", ".py", ".yml")) else None
             if u:
                 return u, "ext"
         return None, None
@@ -712,7 +718,7 @@ class Canvas:
         a run naming the group it is drawn in, are left alone. Plain href, SVG's own <a> inside <text>; no glyph is
         added, so the measured widths and the overlap check are unchanged."""
         import corpus
-        self._sources = corpus.source_links(self.module)
+        self._sources = corpus.source_links(self.module, self.pin or corpus.PIN_COMMIT)
         text = "\n".join(self.out)
         stack, out, pos = [], [], 0
         for m in self._TOKEN.finditer(text):
@@ -748,7 +754,7 @@ class Canvas:
         for h in sorted(set(re.findall(r' href="([^"]*)"', body))):
             f, _, frag = unescape(h).partition("#")
             if f.startswith("http"):
-                if not f.startswith(corpus.BLOB):
+                if not f.startswith(corpus.blob(self.pin or corpus.PIN_COMMIT)):
                     warn.append(f"link out not at the pinned commit: {h}")
             elif not f:
                 if frag not in own:

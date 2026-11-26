@@ -73,13 +73,17 @@ jobs:
           python3 - "$tag" > stage/pins.json <<'PY'
           import json, os, re, sys
           tag = sys.argv[1]
-          pin = re.search(r'^PIN_COMMIT = "([0-9a-f]{40})"', open("diagrams/gov-tla/src/corpus.py").read(), re.M).group(1)
+          src = open("diagrams/gov-tla/src/corpus.py").read()
+          pin = re.search(r'^PIN_COMMIT = "([0-9a-f]{40})"', src, re.M).group(1)
+          # every pin a diagram links at: PIN_COMMIT, the family's, and one per amendment (Canvas pin=)
+          pins_all = dict(re.findall(r'^(PIN_\w+) = "([0-9a-f]{40})"', src, re.M))
           server, repo, sha, run = (os.environ[k] for k in ("GITHUB_SERVER_URL", "GITHUB_REPOSITORY", "GITHUB_SHA",
                                                               "GITHUB_RUN_ID"))
           print(json.dumps({
             "tag": tag,
             "state_of_record": {"commit": pin, "url": f"{server}/{repo}/commit/{pin}",
-                                "what": "the tracked tree every diagram is drawn against and every link out opens"},
+                                "what": "the tracked tree the family is drawn against; an amended diagram names its own"},
+            "pins": {k: {"commit": v, "url": f"{server}/{repo}/commit/{v}"} for k, v in sorted(pins_all.items())},
             "generator": {"commit": sha, "url": f"{server}/{repo}/commit/{sha}", "python": "3.9 (the family's pin)"},
             "run": {"id": run, "url": f"{server}/{repo}/actions/runs/{run}"},
           }, indent=1))
