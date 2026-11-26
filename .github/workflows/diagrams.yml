@@ -36,11 +36,17 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
-      - uses: astral-sh/setup-uv@1db35dd8eee11c5894872e0b383ae6c406cf738d # v10.4.0
+      # The repository allows GitHub-owned actions only, so the pinned interpreter comes from setup-python, not uv.
+      # It puts Python 3.9 first on PATH as `python`; the runner's own Python (/usr/bin/python3, 3.12 on
+      # ubuntu-24.04) stays for check-links.py, which needs 3.11 or later.
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.9"
       - name: Regenerate under Python 3.9
         run: |
           set -euo pipefail
-          uv run --no-project --python 3.9 python diagrams/gen-gov-tla-family.py | tee gen.log
+          python -c 'import sys; assert sys.version_info[:2] == (3, 9), sys.version; print(sys.version)'
+          python diagrams/gen-gov-tla-family.py | tee gen.log
           if grep -E '^\s*(WARNING|ERROR)|^NOTE ' gen.log; then
             echo "::error::diagrams: the generator reported the lines above"
             exit 1
@@ -64,4 +70,5 @@ jobs:
           f="$RUNNER_TEMP/check-links.py"
           curl -fsSL -o "$f" "https://raw.githubusercontent.com/scottcochran/riemann-diagrams/$CHECK_LINKS_COMMIT/plugins/proof-posters/skills/linking-posters/scripts/check-links.py"
           echo "$CHECK_LINKS_SHA256  $f" | sha256sum --strict -c
-          python3 "$f" --config diagrams/proof-posters.toml
+          /usr/bin/python3 -c 'import sys; assert sys.version_info >= (3, 11), sys.version'
+          /usr/bin/python3 "$f" --config diagrams/proof-posters.toml
