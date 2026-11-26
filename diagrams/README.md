@@ -1,0 +1,60 @@
+# Diagrams
+
+Generated diagrams of the gov-tla corpus: the modules, their row lists, their results files and the README that
+describes them. A diagram is a derived artifact. It describes the records and never decides anything. **Where a
+diagram and a record disagree, the record wins.** None of it is a claim about law or practice.
+
+Each diagram is an SVG that adapts to light and dark themes (`prefers-color-scheme`; renderers without CSS fall
+back to light), sized to be read zoomed in or printed at poster scale. Where a record has a table, the diagram
+draws all of it. Diagrams read the results files at build time through
+[`gov-tla/src/corpus.py`](gov-tla/src/corpus.py), so their counts and verdicts are the files', and a build fails
+(`ERROR`) when a file no longer parses or no longer agrees with what the diagram checks.
+
+The method is TOPAK's `generating-corpus-diagrams` skill
+(`skills/generating-corpus-diagrams/skills/generating-corpus-diagrams/` on TOPAK's `main`). The family's binding
+rules are [`gov-tla/src/AUTHORING.md`](gov-tla/src/AUTHORING.md). The drawing library
+([`lib.py`](gov-tla/src/lib.py), [`metrics.py`](gov-tla/src/metrics.py)) is ported from TOPAK's
+`diagrams/topak/src/` (the same author, at TOPAK commit `e25dcf4`).
+
+## Generating, looking, checking
+
+```bash
+# Generate (all, or by id). The interpreter is pinned: Python 3.12 changed sum() over floats, which moves
+# coordinates, so the family is generated under 3.9 and regenerates byte for byte only under it.
+uv run --no-project --python 3.9 python diagrams/gen-gov-tla-family.py [A1 B1 ...]
+
+# Render both themes, whole or cropped, to look at (light: rsvg-convert; dark: headless Chrome)
+SK=<TOPAK>/skills/generating-corpus-diagrams/skills/generating-corpus-diagrams
+uv run $SK/scripts/render.py A1 --family-dir diagrams/gov-tla
+uv run $SK/scripts/render.py A1 --family-dir diagrams/gov-tla --needle "The flip tests" --h 900 --width 1800
+
+# The regression check: regenerate everything; any change not declared with --expect is a finding
+uv run $SK/scripts/regen_check.py --generator diagrams/gen-gov-tla-family.py --family-dir diagrams/gov-tla [--expect B5]
+```
+
+A change that the regression check reports as **unexpected** means something a diagram reads has moved: a
+results file, a row list, a spec, the README's tables, or the library. Read the diff before amending or restoring.
+A new results file changes no diagram until `corpus.RESULTS` names it, and A1 fails to build until it does.
+
+## The gov-tla diagram family (2026.11.25)
+
+Drawn against `main` at `d3c9aed` (2026.11.20), tracked files only.
+
+**Drawn 2026.11.25**: seven diagrams, A1 by hand and B1–B6 by six drawing agents in parallel, one per module, each reviewed in both themes and its reported inconsistencies checked against the files. The family's statuses are the README's words: *checked*, *proved*, *sampled* and *refuted*, with *checked, not proved* for liveness and `Reach` claims. Drawing surfaced ten verified findings and seven unchecked leads, none of which changes a verdict: see [FINDINGS-2026.11.25.md](FINDINGS-2026.11.25.md). No record was changed to match a diagram.
+
+### A — the corpus and its evidence
+
+| Id | Diagram | What it shows |
+|---|---|---|
+| A1 | [How every count in the README is made](gov-tla/A1-evidence-chain-2026.11.25.svg) | The pipeline from a module to its two results files (generators that write, audits that only read), the method's five rules, the README's summary table drawn whole beside the same counts read from the twelve named results files, every TLC row by kind and verdict, what is not proved, and the flip tests' two records side by side. **Builds only if** every README count equals its results file's, each named file is the newest of its kind, and every digest matches the current specs. |
+
+### B — one diagram per module
+
+| Id | Diagram | What it shows |
+|---|---|---|
+| B1 | [Constitution.tla: legislation, the Executive and Article V](gov-tla/B1-constitution-2026.11.25.svg) | The three machines over one Executive and one sitting of Congress, each with numbered action arrows and a key of guards, mutations and flags; the thirteen properties as the header states them; how each row switches on only the machine its property reads, with the inert cells checked against state counts; the README's provisions and mutation tables whole beside the header, the Expected: line, the counterexamples and the proof hypotheses; the 20 × 15 matrix with distinct states; 14 witnesses; the liveness and deadlock rows; 14 theorems with their hypotheses; the README's findings and the session-gate finding. |
+| B2 | [Judiciary.tla: one Supreme Court, the courts Congress makes, their judges and their cases](gov-tla/B2-judiciary-2026.11.25.svg) | Congress, judges, courts and cases with seven numbered arrows and the guard each mutation removes; the four flags; the README's provisions and mutation tables whole beside the header, the rows comments, the counterexamples and the proof hypotheses (`M_REESTABLISH` drawn red: the header omits `BenchFitsSeats`); the judge-side and case-side profiles; the 24 × 20 matrix with distinct states; witnesses; the two deadlock rows (no liveness); 21 theorems, 23 mutation lemmas; what TLC found in the earlier text. |
+| B3 | [Executive.tla: Article II and the administrative state](gov-tla/B3-executive-2026.11.25.svg) | Three machines over one President, one Congress and the agencies it charters: the Amendment XXV inability machine (arrows ①–⑧ with a key); agencies from the six `KnownCharters` (the three `Chartered` checks evaluated at build time), head appointment, three removals and the FVRA acting chain; eligibility, impeachment, pardon, treaties, war and sessions. The README's provisions and mutation tables whole beside the header, the Expected: line, the counterexamples and the proof hypotheses; the matrix over 14 properties; 19 witnesses; the liveness rows (`ActingEventuallyEnds`: checked, not proved); 14 theorems with their hypotheses. |
+| B4 | [Government.tla: the authority graph](gov-tla/B4-government-2026.11.25.svg) | The grant layer read from the module's edge sets (`Founding`, `Adds`, `Drops`, `AgencyEdges`, `CourtEdges`), nodes in `Rank` order, the edges that run back drawn below; the control layer as a holder × target table; every edge and every action of `Next` as the module writes them; the README's claims and mutation tables whole, joined to theorems and rows; the configurations; the mutation × configuration matrix; witnesses; the liveness rows (`UnconstitutionalEdgesAreStruck`: checked, not proved); the five `Reach` claims checked, not proved, their local forms proved; the one sampled row drawn sampled; 27 theorems; the claim TLC **refuted**, with its trace; one band from `SESSION-GATE-FINDINGS-2026.11.17.md` § 5. |
+| B5 | [Elections.tla: the presidential cycle](gov-tla/B5-elections-2026.11.25.svg) | The `stage` and `clock` lanes, and who acts at each stage with the guard each mutation removes (ten numbered arrows and a key); the README's provisions and mutation tables whole beside the header and the counterexamples; the matrix with one line per mutation and set of constants (529 rows on `Spec`); 24 witnesses; the liveness rows, with `ExecutiveIsFilled` **proved** by one WF1 step; 22 theorems with their hypotheses; the 24 `Mut…Admits` lemmas drawn red, after the first end-of-module line of `Elections_proof.tla`; `Elections.cfg` beside `c-cfg-safety`; one band from `MUTATION-MATRIX-FINDINGS-2026.11.17.md`. |
+| B6 | [SenateRules.tla: the filibuster](gov-tla/B6-senate-rules-2026.11.25.svg) | The floor (stages, numbered steps) and each kind's cloture threshold, which only falls; the vote ladder at seven and five Senators (the diagram's arithmetic, checked against the operators at build time); the README's rule and mutation tables whole beside the module header; the mutation × property matrix with the seven- and five-Senator rows apart; the eight witnesses; the temporal rows (`MajorityPrevails`, `ReconciliationPrevails`, `NoBehaviour`: checked, not proved); the seven theorems with their hypotheses; why there are two TLC results files dated 2026.11.19. |
