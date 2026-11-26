@@ -5,7 +5,8 @@ describes them. A diagram is a derived artifact. It describes the records and ne
 diagram and a record disagree, the record wins.** None of it is a claim about law or practice.
 
 Each diagram is an SVG that adapts to light and dark themes (`prefers-color-scheme`; renderers without CSS fall
-back to light), sized to be read zoomed in or printed at poster scale. Where a record has a table, the diagram
+back to light), sized to be read zoomed in or printed at poster scale. In the light theme the cards sit on a grey
+page matched to the content's mean luminance, as in riemann-diagrams ([PAGE.md](PAGE.md)). Where a record has a table, the diagram
 draws all of it. Diagrams read the results files at build time through
 [`gov-tla/src/corpus.py`](gov-tla/src/corpus.py), so their counts and verdicts are the files', and a build fails
 (`ERROR`) when a file no longer parses or no longer agrees with what the diagram checks.
