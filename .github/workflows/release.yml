@@ -41,8 +41,13 @@ jobs:
           [[ "$tag" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "release: $tag is not vMAJOR.MINOR.PATCH"; exit 1; }
           git fetch -q origin "refs/tags/$tag:refs/tags/$tag" --force
           [ "$(git cat-file -t "refs/tags/$tag")" = tag ] || { echo "release: $tag is not annotated"; exit 1; }
-          [ -n "$(git tag -l --format='%(contents)' "$tag" | tr -d '[:space:]')" ] || { echo "release: $tag has no message"; exit 1; }
+          [ -n "$(git tag -l --format='%(contents:subject)%(contents:body)' "$tag" | tr -d '[:space:]')" ] || { echo "release: $tag has no message"; exit 1; }
           git merge-base --is-ancestor HEAD origin/main || { echo "release: $tag is not on main"; exit 1; }
+          # a release of a commit already released would repeat its diagrams, and Pages does not redeploy a commit
+          git fetch -q origin 'refs/tags/v*:refs/tags/v*' --force
+          for t in $(git tag -l 'v*' --points-at HEAD); do
+            [ "$t" = "$tag" ] || { echo "release: $tag names the commit $t already released"; exit 1; }
+          done
 
   check:
     needs: tag
@@ -69,7 +74,8 @@ jobs:
           [ "$(git cat-file -t "refs/tags/$tag")" = tag ] || { echo "release: $tag is not annotated after fetch"; exit 1; }
           mkdir -p stage
           cp diagrams/gov-tla/*.svg stage/
-          git tag -l --format='%(contents)' "$tag" > tag-message.txt
+          # subject and body, not %(contents): that includes a signed tag's signature block
+          git tag -l --format='%(contents:subject)%0a%0a%(contents:body)' "$tag" > tag-message.txt
           python3 - "$tag" > stage/pins.json <<'PY'
           import json, os, re, sys
           tag = sys.argv[1]
