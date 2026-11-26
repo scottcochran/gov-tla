@@ -1369,7 +1369,6 @@ THEOREM ExecutiveIsFilledAlways ==
   BY SomeoneCanAct
 <1> QED
   BY <1>1, <1>2, <1>3, PTL DEF FairSpec, Spec, SomeoneActs, ExecutiveIsFilled
-========================================================================
 
 -----------------------------------------------------------------------------
 (* Why each mutation must fail: what it admits, in the module's terms. The  *)

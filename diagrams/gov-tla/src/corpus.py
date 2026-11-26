@@ -23,7 +23,7 @@ RESULTS = {
     "Judiciary":    ("results/Judiciary-results-2026.11.09.txt", "results/Judiciary-proof-results-2026.11.17.txt"),
     "Executive":    ("results/Executive-results-2026.11.16.txt", "results/Executive-proof-results-2026.11.17.txt"),
     "Government":   ("results/Government-results-2026.11.16.txt", "results/Government-proof-results-2026.11.17.txt"),
-    "Elections":    ("results/Elections-results-2026.11.16.txt", "results/Elections-proof-results-2026.11.17.txt"),
+    "Elections":    ("results/Elections-results-2026.11.16.txt", "results/Elections-proof-results-2026.11.26.txt"),
     "SenateRules":  ("results/SenateRules-results-2026.11.19b.txt", "results/SenateRules-proof-results-2026.11.19b.txt"),
 }
 
@@ -32,7 +32,16 @@ RESULTS = {
 # commit, read from it with git, so a link lands on the line drawn even after the file moves on in the tree.
 REPO = "scottcochran/gov-tla"
 PIN_COMMIT = "d3c9aed60d06cdd4ee0ca715c375b5c5e75abb35"
-BLOB = f"https://github.com/{REPO}/blob/{PIN_COMMIT}/"
+# A diagram amended against a later state of record links at that state's commit (Canvas pin=). A1 and B5 are
+# amended for the Elections proof fix (PR #16): its commit holds the corrected proof module and its results file.
+PIN_ELECTIONS_FIX = "a6e724e28826ea8fb0237c9809cff69d489c0f25"
+
+
+def blob(pin=PIN_COMMIT):
+    return f"https://github.com/{REPO}/blob/{pin}/"
+
+
+BLOB = blob()
 
 
 class CorpusError(Exception):
@@ -275,19 +284,19 @@ def _git(*args):
     return _GIT[args]
 
 
-def pinned_files():
-    """Every file tracked at PIN_COMMIT."""
-    return frozenset(_git("ls-tree", "-r", "--name-only", PIN_COMMIT).splitlines())
+def pinned_files(pin=PIN_COMMIT):
+    """Every file tracked at the pin."""
+    return frozenset(_git("ls-tree", "-r", "--name-only", pin).splitlines())
 
 
-def at_pin(rel):
-    """A file's text as it is at PIN_COMMIT."""
-    return _git("show", f"{PIN_COMMIT}:{rel}")
+def at_pin(rel, pin=PIN_COMMIT):
+    """A file's text as it is at the pin."""
+    return _git("show", f"{pin}:{rel}")
 
 
-def file_url(rel):
+def file_url(rel, pin=PIN_COMMIT):
     """The file at the pin, or None when the pin has no such file."""
-    return BLOB + rel if rel in pinned_files() else None
+    return blob(pin) + rel if rel in pinned_files(pin) else None
 
 
 # A definition at the start of a line: an operator (with or without parameters), a function, or a named ASSUME,
@@ -320,29 +329,29 @@ def _declared(text):
     return out
 
 
-def module_links(module):
+def module_links(module, pin=PIN_COMMIT):
     """Name -> its line at the pin, for one module: the row names of its row list, then the declarations and
     definitions of its proof module and of the module itself, later ones taking precedence (the module's own
     definition wins)."""
     links = {}
     for rel, pat in ((f"rows/{module}-rows.txt", _ROWNAME), (f"specs/{module}_proof.tla", _DEF),
                      (f"specs/{module}.tla", _DEF)):
-        if rel in pinned_files():
-            text = at_pin(rel)
+        if rel in pinned_files(pin):
+            text = at_pin(rel, pin)
             found = _lines(text, pat)
             if rel.endswith(".tla"):
                 found = {**_declared(text), **found}
-            links.update({k: f"{BLOB}{rel}#L{v}" for k, v in found.items()})
+            links.update({k: f"{blob(pin)}{rel}#L{v}" for k, v in found.items()})
     return links
 
 
-def source_links(module=None):
+def source_links(module=None, pin=PIN_COMMIT):
     """The links out a poster's code runs may take: its module's names (module_links), or, for a poster of no one
     module, every name that only one module defines or runs."""
     if module:
-        return module_links(module)
+        return module_links(module, pin)
     seen = {}
     for m in MODULES:
-        for k, v in module_links(m).items():
+        for k, v in module_links(m, pin).items():
             seen.setdefault(k, set()).add(v)
     return {k: next(iter(v)) for k, v in sorted(seen.items()) if len(v) == 1}

@@ -17,6 +17,11 @@ name = "PIN_COMMIT"
 what = "the gov-tla commit the diagrams are drawn against; every link out opens a file at it"
 repo = "scottcochran/gov-tla"
 
+[[pins.commit]]
+name = "PIN_ELECTIONS_FIX"
+what = "the commit A1 and B5 are amended against (PR #16, the Elections proof fix); their links out open it"
+repo = "scottcochran/gov-tla"
+
 [links]
 # Every link to another diagram names an anchor; every anchored card, list and header carries a halo (class
 # rd-target), and every anchored row is class rd-row, each shown by the style while it is the target. Every link out

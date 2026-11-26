@@ -9,7 +9,7 @@ Build-time checks (each raises, so the generator prints ERROR, like a gate):
   - every digest on a results file's Modules: line equals the sha256 of that file in specs/ now;
   - a proof results file's TLC results line names the module's named TLC results file, by its sha256.
 """
-from lib import Canvas, STATUS, text_width, linked, poster_link, POSTER_MODULE
+from lib import Canvas, STATUS, text_width, linked, poster_link, POSTER_MODULE, STATE_ELECTIONS_FIX, AMENDED_ELECTIONS
 import corpus as C
 
 ID, SLUG = "A1", "evidence-chain"
@@ -119,7 +119,8 @@ def build():
                "proof_results.py, proof_sync.py, compare_results.py, ci_plan.py, flip_test.py (docstrings); "
                ".github/workflows/checks.yml; docs/ASSESSMENT.md § Strengths, point 2; PROOF-GAPS.txt; "
                + "; ".join(f"{d['tf']}, {d['pf']}" for d in D.values())
-               + "; specs/*.tla digests compared at build time")
+               + "; specs/*.tla digests compared at build time",
+               state=STATE_ELECTIONS_FIX, note=AMENDED_ELECTIONS, pin=C.PIN_ELECTIONS_FIX)
     X0, X1 = c.x0, c.x1
     WW = X1 - X0
     y = c.y
@@ -251,10 +252,10 @@ def build():
     for m in C.MODULES:
         r, d = readme[m], D[m]
         rd = d["read"]
-        rows.append([f"{m}.tla", linked(C.file_url(d["tf"]), n(r["rows"])),
+        rows.append([f"{m}.tla", linked(C.file_url(d["tf"], C.PIN_ELECTIONS_FIX), n(r["rows"])),
                      linked(poster_link(PID[m], "mutations"), str(r["mutations"])),
                      linked(poster_link(PID[m], "witnesses"), str(r["witnesses"])),
-                     linked(C.file_url(d["pf"]), n(r["obligations"])),
+                     linked(C.file_url(d["pf"], C.PIN_ELECTIONS_FIX), n(r["obligations"])),
                      f"[[teal|{n(rd['rows'])}]] rows · [[violet|{rd['mutations']}]] mutations · "
                      f"[[green|{rd['witnesses']}]] witnesses · [[blue|{n(rd['obligations'])}]] obligations: all "
                      f"equal",
