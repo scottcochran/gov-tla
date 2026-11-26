@@ -1,0 +1,797 @@
+"""Shared drawing library for the gov-tla diagram family.
+
+Ported from TOPAK's diagrams/topak/src/lib.py (the same author, at TOPAK commit e25dcf4): the primitives,
+measurement, theming and overlap check are unchanged; the state constants, the statuses, the header and footer
+are gov-tla's, and TOPAK's strip_external is dropped.
+
+Dependency-free. Every diagram is a Canvas; primitives measure their own text with the
+Liberation Sans advance widths in metrics.py (metric-compatible with Arial/Helvetica), wrap it,
+and return the height they used, so layouts are computed rather than hand-tuned.
+
+Theming: every colour is written twice, once as a presentation attribute (the light theme, for
+renderers without CSS) and once as a class whose CSS custom property switches under
+`prefers-color-scheme: dark`. CSS beats presentation attributes, so browsers adapt and
+everything else falls back to light.
+
+Inline markup in any text: **bold**, `code`, and [[accent|text]] for an accent-coloured run.
+"""
+import re
+from xml.sax.saxutils import escape, unescape
+
+from metrics import W as _W
+
+SANS = "Helvetica, Arial, 'Liberation Sans', sans-serif"
+MONO = "'DejaVu Sans Mono', Menlo, Consolas, monospace"
+MONO_EM = 0.602          # DejaVu Sans Mono / Menlo advance
+MONO_SCALE = 0.92        # code runs are set slightly smaller than the surrounding text
+
+DATE = "2026.11.25"
+# The state of record is the tracked tree at a commit of main: the specs, rows, results, README and docs there.
+# Untracked files (NOTES.md, TODO.md, drafts) are never drawn. A diagram drawn against a later commit passes
+# Canvas state=; an amended one passes note=. Unamended diagrams regenerate byte for byte.
+STATE = "State of record: gov-tla main at d3c9aed (2026.11.20), tracked files only"
+
+# ---------------------------------------------------------------------------------------------
+# Theme tokens: name -> (light, dark)
+BASE = {
+    "bg":    ("#ffffff", "#12151b"),
+    "ink":   ("#1e2430", "#e6e9ef"),
+    "muted": ("#4a5262", "#b0b8c6"),
+    "faint": ("#7d8596", "#7f8898"),
+    "panel": ("#f5f6f8", "#1a1e26"),
+    "line":  ("#d4d8e0", "#363d4a"),
+    "zebra": ("#fafbfc", "#161a21"),
+}
+# accent -> (stroke light, tint light, stroke dark, tint dark)
+ACCENTS = {
+    "blue":   ("#2f5aa8", "#edf2fb", "#8fb0ec", "#1a2540"),   # authority, ratified
+    "teal":   ("#166b5b", "#e8f5f1", "#6cc7b0", "#12302a"),   # mechanism, verified object
+    "amber":  ("#a35a00", "#fdf3e4", "#f0b15c", "#33260f"),   # Proposed
+    "violet": ("#6b46a8", "#f3eefb", "#b9a0e8", "#261d38"),   # draft
+    "red":    ("#a4262c", "#fcefef", "#f08a8f", "#3a1a1d"),   # gap, deny, refused
+    "grey":   ("#5f6878", "#f1f2f4", "#a3abb9", "#22262e"),   # neutral, external, withdrawn
+    "brown":  ("#8a4b14", "#f9f0e6", "#e0a56b", "#2f2215"),   # humans, custody
+    "pink":   ("#9d2f6e", "#fbeef5", "#ec8cc2", "#351a2a"),   # detection, Observer
+    "green":  ("#2e7d32", "#edf6ee", "#85c98a", "#17291a"),   # subtraction, safe direction
+}
+
+STATUS = {
+    # key: (label, accent, dash). The words are the README's (How the specs are written and checked):
+    # checked = TLC explored every reachable state at the row list's constants; proved = TLAPS discharged every
+    # obligation under the module's named assumptions; sampled = random simulation, never cited as a check.
+    "checked":    ("Checked · TLC", "teal", None),
+    "proved":     ("Proved · TLAPS", "blue", None),
+    "notproved":  ("Checked, not proved", "amber", "6 4"),
+    "sampled":    ("Sampled, not checked", "grey", "4 3"),
+    "refuted":    ("Refuted by TLC", "red", None),
+    "abstracted": ("Abstracted", "grey", "2 3"),
+    "open":       ("Open", "red", "6 4"),
+    "notwritten": ("Not written", "red", "2 3"),
+    "superseded": ("Superseded", "grey", "2 3"),
+}
+
+
+# ---------------------------------------------------------------------------------------------
+# Links (the linking-posters method of riemann-diagrams' proof-posters plugin). Every poster has a header group `top`;
+# a card or a table row whose key is a source's own name (a mutation, a property, a theorem, a row) is a group with
+# that name as its id, and a few lists are anchored by name (`mutations`, `matrix`, `witnesses`, `theorems`). A code
+# run that names an anchor opens it: on this poster, on the one other poster that draws it (through the committed
+# manifest), or else its line in the module at the pinned commit (corpus.PIN_COMMIT). Every anchored group's first
+# child is a halo, hidden by its opacity attribute and shown by the poster's style while the group is a link's target.
+TOP = "top"
+HALO_PAD = 7
+POSTER_MODULE = {"B1": "Constitution", "B2": "Judiciary", "B3": "Executive", "B4": "Government",
+                 "B5": "Elections", "B6": "SenateRules"}
+POSTERS, ANCHORS_OF = {}, {}          # from the manifest: poster id -> file; file -> its anchors
+_ANCHOR = re.compile(r"[A-Za-z_][\w.-]*")
+_KEY = re.compile(r"([A-Za-z_][\w.-]*)(?:\([^`]*\))?")
+_RESERVED = {"t", "d", TOP}
+
+
+def load_registry(manifest):
+    """The links between posters resolve against the committed manifest, loaded before any poster is built."""
+    POSTERS.clear()
+    ANCHORS_OF.clear()
+    for pid, m in sorted(manifest.items()):
+        POSTERS[pid] = m["file"]
+        ANCHORS_OF[m["file"]] = frozenset(m.get("anchors", ()))
+
+
+def poster_link(pid, frag=TOP):
+    """file#frag of another poster, when the manifest lists it and the anchor; else None."""
+    f = POSTERS.get(pid)
+    if f and (frag == TOP or frag in ANCHORS_OF[f]):
+        return f"{f}#{frag}"
+    return None
+
+
+def linked(url, text):
+    """A link run, or the text alone when there is no target."""
+    return f"[[@{url}|{text}]]" if url else text
+
+
+def halo(x, y, w, h, accent, pad=HALO_PAD, rx=14):
+    """The frame behind an anchored group: one class attribute, the frame's and the colours'."""
+    return (f'<rect x="{x - pad:.1f}" y="{y - pad:.1f}" width="{w + 2 * pad:.1f}" height="{h + 2 * pad:.1f}" '
+            f'rx="{rx}" fill="{light(accent + "-t")}" stroke="{light(accent)}" '
+            f'class="rd-target ft-{accent} s-{accent}" stroke-width="3.5" opacity="0"/>')
+
+
+def _css():
+    lines = []
+    def block(idx_base, idx_s, idx_t):
+        out = []
+        for k, v in BASE.items():
+            out.append(f"--{k}:{v[idx_base]};")
+        for k, v in ACCENTS.items():
+            out.append(f"--{k}:{v[idx_s]};--{k}-t:{v[idx_t]};")
+        return "".join(out)
+    lines.append("svg{" + block(0, 0, 1) + "}")
+    lines.append("@media (prefers-color-scheme: dark){svg:not([data-theme=light]){" + block(1, 2, 3) + "}}")
+    lines.append("svg[data-theme=dark]{" + block(1, 2, 3) + "}")
+    lines.append("a:hover tspan,a:focus tspan,a:hover>text{text-decoration:underline}")
+    lines.append(".rd-target{opacity:0} g:target>.rd-target{opacity:1;animation:rd-pulse 0.9s ease-in-out 3} "
+                 "@keyframes rd-pulse{50%{stroke-width:9}} g[id]{scroll-margin-top:90px} "
+                 "g.rd-row:target>rect:first-child{fill:var(--amber-t);stroke:var(--amber);stroke-width:3;"
+                 "animation:rd-pulse 0.9s ease-in-out 3} "
+                 "@media (prefers-reduced-motion:reduce){g:target>.rd-target,g.rd-row:target>rect:first-child"
+                 "{animation:none}}")
+    for k in BASE:
+        lines.append(f".f-{k}{{fill:var(--{k})}} .s-{k}{{stroke:var(--{k})}}")
+    for k in ACCENTS:
+        lines.append(f".f-{k}{{fill:var(--{k})}} .ft-{k}{{fill:var(--{k}-t)}} .s-{k}{{stroke:var(--{k})}}")
+    return "\n".join(lines)
+
+
+def light(name):
+    if name in BASE:
+        return BASE[name][0]
+    if name.endswith("-t"):
+        return ACCENTS[name[:-2]][1]
+    return ACCENTS[name][0]
+
+
+def fill(name):
+    """fill attribute + class for a token ('ink', 'blue', 'blue-t')."""
+    cls = f"ft-{name[:-2]}" if name.endswith("-t") else f"f-{name}"
+    return f'fill="{light(name)}" class="{cls}"'
+
+
+def stroke(name):
+    return f'stroke="{light(name)}"'
+
+
+def fs(fill_name, stroke_name):
+    """fill + stroke on one element (classes combined)."""
+    fcls = f"ft-{fill_name[:-2]}" if fill_name.endswith("-t") else f"f-{fill_name}"
+    return (f'fill="{light(fill_name)}" stroke="{light(stroke_name)}" '
+            f'class="{fcls} s-{stroke_name}"')
+
+
+def sonly(stroke_name):
+    return f'fill="none" stroke="{light(stroke_name)}" class="s-{stroke_name}"'
+
+
+# ---------------------------------------------------------------------------------------------
+# Text measurement and rich-text wrapping
+
+_RUN = re.compile(r"(\*\*.+?\*\*|`.+?`|\[\[[a-z]+\|.+?\]\]|\[\[@[^|\]]+\|.+?\]\])")
+
+
+def parse(s):
+    """-> list of (text, style, accent) runs. style in r/b/m (regular, bold, mono). The accent of a run inside
+    [[@url|text]] is the url with its @, and render_line makes the run a link; text may hold code runs."""
+    runs = []
+    for part in _RUN.split(s):
+        if not part:
+            continue
+        if part.startswith("**") and part.endswith("**") and len(part) > 4:
+            # code inside bold: the code run is set in mono (which has no bold), the rest stays bold
+            for sub in re.split(r"(`[^`]+`)", part[2:-2]):
+                if sub.startswith("`") and sub.endswith("`") and len(sub) > 2:
+                    runs.append((sub[1:-1], "m", None))
+                elif sub:
+                    runs.append((sub, "b", None))
+        elif part.startswith("`") and part.endswith("`") and len(part) > 2:
+            runs.append((part[1:-1], "m", None))
+        elif part.startswith("[[@") and part.endswith("]]"):
+            url, txt = part[2:-2].split("|", 1)
+            runs.extend((t, st, url) for t, st, _ in parse(txt))
+        elif part.startswith("[[") and part.endswith("]]"):
+            acc, txt = part[2:-2].split("|", 1)
+            runs.append((txt, "b", acc))
+        else:
+            runs.append((part, "r", None))
+    return runs
+
+
+def width(s, size, style="r"):
+    if style == "m":
+        return len(s) * MONO_EM * size * MONO_SCALE
+    tbl = _W["b" if style == "b" else "r"]
+    return sum(tbl.get(c, 0.62) for c in s) * size
+
+
+def text_width(s, size, bold=False):
+    return sum(width(t, size, "b" if (bold and st == "r") else st) for t, st, _ in parse(s))
+
+
+def wrap(s, maxw, size, bold=False):
+    """Greedy wrap of rich text. Returns list of lines, each a list of runs. '\n' forces a break."""
+    lines_out = []
+    for para in s.split("\n"):
+        words = []  # (text, style, accent) with trailing space info
+        for txt, st, acc in parse(para):
+            if bold and st == "r":
+                st = "b"
+            parts = re.split(r"( )", txt)
+            for p in parts:
+                if p == "":
+                    continue
+                words.append((p, st, acc))
+        line, lw = [], 0.0
+        for w in words:
+            ww = width(w[0], size, w[1])
+            if w[0] == " ":
+                if line:
+                    line.append(w)
+                    lw += ww
+                continue
+            if line and lw + ww > maxw:
+                while line and line[-1][0] == " ":
+                    lw -= width(" ", size, line[-1][1]); line.pop()
+                lines_out.append(line)
+                line, lw = [], 0.0
+            line.append(w)
+            lw += ww
+        while line and line[-1][0] == " ":
+            line.pop()
+        lines_out.append(line)
+    return lines_out
+
+
+def _merge(line):
+    out = []
+    for t, st, acc in line:
+        if out and out[-1][1] == st and out[-1][2] == acc:
+            out[-1] = (out[-1][0] + t, st, acc)
+        else:
+            out.append((t, st, acc))
+    return out
+
+
+def line_width(line, size):
+    return sum(width(t, size, st) for t, st, _ in line)
+
+
+TEXT_BOXES = []   # (x0, y0, x1, y1, text) of every line drawn, for the overlap check
+
+
+def render_line(x, y, line, size, color="ink", anchor="start", bold=False):
+    lw = line_width(line, size)
+    bx = x if anchor == "start" else (x - lw / 2 if anchor == "middle" else x - lw)
+    TEXT_BOXES.append((bx, y - size * 0.75, bx + lw, y + size * 0.2, "".join(t for t, _, _ in line)))
+    spans, link, linked_ = [], None, []
+
+    def flush():
+        if linked_:
+            spans.append(f'<a href="{escape(link[1:])}">{"".join(linked_)}</a>')
+            linked_.clear()
+    for t, st, acc in _merge(line):
+        attrs = []
+        if st == "b" or bold:
+            attrs.append('font-weight="bold"')
+        if st == "m":
+            attrs.append(f'font-family="{MONO}" font-size="{size * MONO_SCALE:.1f}"')
+        url = acc if acc and acc.startswith("@") else None
+        if acc and not url:
+            attrs.append(fill(acc))
+        span = f'<tspan {" ".join(attrs)}>{escape(t)}</tspan>' if attrs else escape(t)
+        if url != link:
+            flush()
+            link = url
+        (linked_ if url else spans).append(span)
+    flush()
+    return (f'<text x="{x:.1f}" y="{y:.1f}" font-family="{SANS}" font-size="{size}" '
+            f'{fill(color)} text-anchor="{anchor}">{"".join(spans)}</text>')
+
+
+# ---------------------------------------------------------------------------------------------
+
+class Canvas:
+    """One diagram. Primitives append SVG and track the lowest y used so height is computed."""
+
+    def __init__(self, ident, title, subtitle, width, sources, pad=56, note=None, state=None):
+        self.ident, self.title, self.subtitle, self.W = ident, title, subtitle, width
+        self.sources = sources
+        self.note, self.state = note, state
+        self.pad = pad
+        self.out = []
+        self.ymax = 0
+        self.x0, self.x1 = pad, width - pad
+        self.blocks = []   # (x0, y0, x1, y1, name) of cards and tables, for the overlap check
+        self.module = POSTER_MODULE.get(ident)
+        self.anchors = []  # ids of anchored groups, in the order drawn: the manifest lists them
+        self.links = self.links_out = self.links_ext = 0   # made by link(): on this poster, to another, out
+        self.y = self._header()
+
+    # -- bookkeeping
+    def add(self, s, bottom=None):
+        self.out.append(s)
+        if bottom is not None:
+            self.ymax = max(self.ymax, bottom)
+
+    def _header(self):
+        p = self.pad
+        self.add(f'<g id="{TOP}">')
+        mark = len(self.out)
+        label = (f'<text x="{p}" y="{p + 8}" font-family="{SANS}" font-size="13" letter-spacing="1.5" '
+                 f'font-weight="bold" {fill("faint")}>GOV-TLA · {escape(self.ident)}</text>')
+        back = poster_link("A1", f"{self.module}.tla") if self.module else None
+        self.add(f'<a href="{escape(back)}">{label}</a>' if back else label)
+        y = p + 44
+        for ln in wrap(self.title, self.W - 2 * p, 30, bold=True):
+            self.add(render_line(p, y, ln, 30, "ink", bold=True))
+            y += 38
+        y += 2
+        for ln in wrap(self.subtitle, self.W - 2 * p, 16):
+            self.add(render_line(p, y, ln, 16, "muted"))
+            y += 23
+        y += 10
+        self.out.insert(mark, halo(p - 10, p - 12, self.W - 2 * p + 20, y - p + 4, "grey"))
+        self.add("</g>")
+        self.add(f'<line x1="{p}" y1="{y}" x2="{self.W - p}" y2="{y}" {sonly("line")} stroke-width="1.5"/>', y)
+        return y + 34
+
+    # -- anchors
+    def key_of(self, s, mono=False):
+        """The anchor a card title or a row's first cell names, when it is wholly one code run naming a source key
+        (`M_ORIGIN`, `Bicameralism`, `Override(b, c)` -> Override); None otherwise."""
+        s = (s or "").strip()
+        m = re.fullmatch(r"(?:\*\*)?`([^`]+)`(?:\*\*)?", s)
+        code = s if mono else (m.group(1) if m else None)
+        k = _KEY.fullmatch(code.strip()) if code else None
+        return k.group(1) if k else None
+
+    def open_anchor(self, anchor, explicit=False):
+        """Start an anchored group; returns the mark the halo goes at, or None when the id is taken or unusable
+        (an explicit anchor that cannot be used raises)."""
+        if not anchor or anchor in self.anchors or anchor in _RESERVED or anchor.startswith("arw-") \
+                or not _ANCHOR.fullmatch(anchor):
+            if explicit:
+                raise ValueError(f"{self.ident}: anchor {anchor!r} is taken or not an XML name")
+            return None
+        self.anchors.append(anchor)
+        self.add(f'<g id="{escape(anchor)}">')
+        return len(self.out)
+
+    def close_anchor(self, mark, x, y, w, h, accent="grey", pad=HALO_PAD, rx=14):
+        if mark is not None:
+            self.out.insert(mark, halo(x, y, w, h, accent, pad, rx))
+            self.add("</g>")
+
+    # -- primitives
+    def text(self, x, y, s, size=14, color="ink", anchor="start", bold=False):
+        self.add(render_line(x, y, _merge([(t, "b" if bold and st == "r" else st, a) for t, st, a in parse(s)]),
+                             size, color, anchor), y + size * 0.3)
+
+    def para(self, x, y, w, s, size=14, color="ink", lead=None, bold=False, anchor="start", draw=True):
+        lead = lead or round(size * 1.42, 1)
+        lines = wrap(s, w, size, bold)
+        if draw:
+            for i, ln in enumerate(lines):
+                ax = x if anchor == "start" else (x + w / 2 if anchor == "middle" else x + w)
+                self.add(render_line(ax, y + size + i * lead, ln, size, color, anchor, bold))
+            self.ymax = max(self.ymax, y + size * 0.35 + (len(lines) - 1) * lead + size)
+        return (len(lines) - 1) * lead + size * 1.35
+
+    def rect(self, x, y, w, h, accent="grey", tint=True, dash=None, rx=8, sw=1.6, fill_token=None):
+        d = f' stroke-dasharray="{dash}"' if dash else ""
+        f = fill_token or (f"{accent}-t" if tint else "bg")
+        self.add(f'<rect x="{x:.1f}" y="{y:.1f}" width="{w:.1f}" height="{h:.1f}" rx="{rx}" '
+                 f'{fs(f, accent)} stroke-width="{sw}"{d}/>', y + h)
+
+    def pill(self, x, y, label, accent="grey", size=12, dash=None, solid=False, anchor="start"):
+        w = text_width(label, size, bold=True) + 18
+        h = size + 10
+        if anchor == "end":
+            x -= w
+        elif anchor == "middle":
+            x -= w / 2
+        d = f' stroke-dasharray="{dash}"' if dash else ""
+        if solid:
+            self.add(f'<rect x="{x:.1f}" y="{y:.1f}" width="{w:.1f}" height="{h}" rx="{h / 2}" '
+                     f'{fs(accent, accent)} stroke-width="1.2"/>')
+            self.add(render_line(x + 9, y + size + 2.5, [(label, "b", None)], size, "bg"), y + h)
+        else:
+            self.add(f'<rect x="{x:.1f}" y="{y:.1f}" width="{w:.1f}" height="{h}" rx="{h / 2}" '
+                     f'{fs(accent + "-t", accent)} stroke-width="1.2"{d}/>')
+            self.add(render_line(x + 9, y + size + 2.5, [(label, "b", None)], size, accent), y + h)
+        return w
+
+    def status(self, x, y, key, extra="", size=11.5, anchor="start"):
+        label, acc, dash = STATUS[key]
+        return self.pill(x, y, label + (f" · {extra}" if extra else ""), acc, size, dash, anchor=anchor)
+
+    def card(self, x, y, w, title, body=(), accent="grey", status=None, status_extra="", dash=None,
+             h=None, size=14, tsize=16, tint=True, draw=True, sub=None, pad=16, bullets=True, lead=None,
+             anchor=None):
+        """A titled box. body: list of rich strings (bulleted when bullets=True). Returns height."""
+        inner = w - 2 * pad
+        lead = lead or round(size * 1.42, 1)
+        tlines = wrap(title, inner - (0 if not status else 0), tsize, bold=True) if title else []
+        hh = pad
+        hh += len(tlines) * (tsize + 6)
+        if sub:
+            sublines = wrap(sub, inner, size - 1)
+            hh += len(sublines) * round((size - 1) * 1.4, 1) + 2
+        else:
+            sublines = []
+        status_h = 0
+        if status:
+            status_h = 11.5 + 10 + 8
+            hh += status_h
+        if tlines and body:
+            hh += 6
+        blines = []
+        bul = "•  " if bullets else ""
+        indent = width(bul, size) if bullets else 0
+        for item in body:
+            ls = wrap(item, inner - indent, size)
+            blines.append(ls)
+            hh += len(ls) * lead + 3
+        hh += pad - 4
+        if h is not None:
+            hh = max(h, hh)
+        if not draw:
+            return hh
+        mark = self.open_anchor(anchor or self.key_of(title), explicit=bool(anchor))
+        if dash is None and status:
+            dash = STATUS[status][2]
+        self.blocks.append((x, y, x + w, y + hh, "card " + (title or "")[:40]))
+        self.rect(x, y, w, hh, accent, tint=tint, dash=dash)
+        cy = y + pad
+        for ln in tlines:
+            self.add(render_line(x + pad, cy + tsize - 2, ln, tsize, accent, bold=True))
+            cy += tsize + 6
+        for ln in sublines:
+            self.add(render_line(x + pad, cy + size - 3, ln, size - 1, "muted"))
+            cy += round((size - 1) * 1.4, 1)
+        if sublines:
+            cy += 2
+        if status:
+            cy += 2
+            self.status(x + pad, cy, status, status_extra)
+            cy += status_h - 2
+        if tlines and body:
+            cy += 6
+        for ls in blines:
+            for i, ln in enumerate(ls):
+                if i == 0 and bullets:
+                    self.add(render_line(x + pad, cy + size, [("•", "b", None)], size, accent))
+                self.add(render_line(x + pad + indent, cy + size, ln, size, "ink"))
+                cy += lead
+            cy += 3
+        self.close_anchor(mark, x, y, w, hh, accent)
+        return hh
+
+    def region(self, x, y, w, h, label, accent="grey", dash="10 6", sw=2.2, tint=False, size=14, rx=14):
+        """A boundary container with a label tab on its top edge."""
+        self.rect(x, y, w, h, accent, tint=tint, dash=dash, sw=sw, rx=rx, fill_token=None if tint else "bg")
+        if tint is False:
+            # transparent fill: overwrite the bg fill with none so nested content shows the canvas
+            self.out[-1] = self.out[-1].replace(f'fill="{light("bg")}" ', 'fill="none" ').replace("f-bg ", "")
+        if label:
+            tw = text_width(label, size, bold=True) + 20
+            self.add(f'<rect x="{x + 18:.1f}" y="{y - size / 2 - 6:.1f}" width="{tw:.1f}" height="{size + 12}" rx="6" '
+                     f'{fs("bg", accent)} stroke-width="1.4"/>')
+            self.add(render_line(x + 28, y + size / 2 - 1.5, parse(label), size, accent, bold=True))
+
+    def arrow(self, pts, accent="grey", dash=None, sw=2, label=None, lsize=12.5, lpos=0.5, head=True,
+              both=False, loff=(0, 0), lw=None):
+        d = f' stroke-dasharray="{dash}"' if dash else ""
+        path = "M " + " L ".join(f"{x:.1f} {y:.1f}" for x, y in pts)
+        me = f' marker-end="url(#arw-{accent})"' if head else ""
+        ms = f' marker-start="url(#arw-{accent})"' if both else ""
+        self.add(f'<path d="{path}" {sonly(accent)} stroke-width="{sw}"{d}{me}{ms} '
+                 f'stroke-linejoin="round"/>', max(p[1] for p in pts))
+        if label:
+            # label at fraction lpos along the polyline length
+            segs = list(zip(pts, pts[1:]))
+            lens = [abs(b[0] - a[0]) + abs(b[1] - a[1]) for a, b in segs]
+            tgt = sum(lens) * lpos
+            for (a, b), L in zip(segs, lens):
+                if tgt <= L or (a, b) == segs[-1]:
+                    f = 0 if L == 0 else min(1, tgt / L)
+                    mx, my = a[0] + (b[0] - a[0]) * f + loff[0], a[1] + (b[1] - a[1]) * f + loff[1]
+                    break
+                tgt -= L
+            self.label(mx, my, label, accent, lsize, lw)
+
+    def label(self, cx, cy, s, accent="grey", size=12.5, maxw=None):
+        maxw = maxw or 10_000
+        lines = wrap(s, maxw, size)
+        lw = max(line_width(ln, size) for ln in lines)
+        lead = size * 1.35
+        h = len(lines) * lead + 6
+        self.add(f'<rect x="{cx - lw / 2 - 7:.1f}" y="{cy - h / 2:.1f}" width="{lw + 14:.1f}" height="{h:.1f}" '
+                 f'rx="5" {fs("bg", accent)} stroke-width="1"/>')
+        for i, ln in enumerate(lines):
+            self.add(render_line(cx, cy - h / 2 + 3 + size + i * lead - 2, ln, size, accent, "middle"))
+
+    def line(self, x1, y1, x2, y2, accent="line", sw=1.4, dash=None):
+        d = f' stroke-dasharray="{dash}"' if dash else ""
+        self.add(f'<line x1="{x1:.1f}" y1="{y1:.1f}" x2="{x2:.1f}" y2="{y2:.1f}" {sonly(accent)} '
+                 f'stroke-width="{sw}"{d}/>', max(y1, y2))
+
+    def heading(self, x, y, s, accent="ink", size=19, w=None):
+        """A section heading with a short rule under it. Returns height used."""
+        self.text(x, y + size, s, size, accent, bold=True)
+        return size + 16
+
+    def table(self, x, y, cols, rows, size=13.5, header=True, hsize=13.5, pad=9, zebra=True, draw=True,
+              accent="grey", anchor=None):
+        """cols: list of (title, width[, opts]) where opts may hold mono/bold/accent/align.
+        rows: list of lists of rich strings; or {'group': label, 'accent': a}; or
+        {'cells': [...], 'accent': a, 'dash': bool} to tint a row. Returns height.
+        anchor names the whole table (a list a count opens). A row whose first cell is wholly one code run naming a
+        source key is anchored by that key, unless the poster anchors it already (the first drawn keeps it)."""
+        lead = round(size * 1.38, 1)
+        tw = sum(c[1] for c in cols)
+        cy = y
+        parts = []
+
+        def cell_lines(s, cw, opt):
+            s = s if s is not None else ""
+            if opt.get("mono") and s:
+                s = f"`{s}`"
+            return wrap(s, cw - 2 * pad, size, bold=opt.get("bold", False))
+
+        if header:
+            hl = [wrap(c[0], c[1] - 2 * pad, hsize, bold=True) for c in cols]
+            hh = max(len(l) for l in hl) * round(hsize * 1.35, 1) + 2 * pad - 2
+            if draw:
+                parts.append(f'<rect x="{x}" y="{cy:.1f}" width="{tw}" height="{hh:.1f}" {fs(accent, accent)} '
+                             f'stroke-width="1"/>')
+                cx = x
+                for (c, ls) in zip(cols, hl):
+                    for i, ln in enumerate(ls):
+                        parts.append(render_line(cx + pad, cy + pad + hsize - 1 + i * round(hsize * 1.35, 1),
+                                                 ln, hsize, "bg", bold=True))
+                    cx += c[1]
+            cy += hh
+        for ri, r in enumerate(rows):
+            if isinstance(r, dict) and "group" in r:
+                gacc = r.get("accent", accent)
+                gl = wrap(r["group"], tw - 2 * pad, size, bold=True)
+                gh = len(gl) * lead + 2 * pad - 4
+                if draw:
+                    parts.append(f'<rect x="{x}" y="{cy:.1f}" width="{tw}" height="{gh:.1f}" '
+                                 f'{fs(gacc + "-t", "line")} stroke-width="1"/>')
+                    for i, ln in enumerate(gl):
+                        parts.append(render_line(x + pad, cy + pad + size - 2 + i * lead, ln, size, gacc, bold=True))
+                cy += gh
+                continue
+            racc, rdash = None, False
+            if isinstance(r, dict):
+                racc, rdash, r = r.get("accent"), r.get("dash", False), r["cells"]
+            ls = [cell_lines(s, c[1], c[2] if len(c) > 2 else {}) for s, c in zip(r, cols)]
+            rh = max(max(len(l), 1) for l in ls) * lead + 2 * pad - 4
+            rkey = self.key_of(r[0], (cols[0][2] if len(cols[0]) > 2 else {}).get("mono")) if draw and r else None
+            rkey = rkey if rkey and rkey not in self.anchors and rkey not in _RESERVED \
+                and _ANCHOR.fullmatch(rkey) else None
+            if rkey:
+                self.anchors.append(rkey)
+                parts.append(f'<g id="{escape(rkey)}" class="rd-row">')   # framed by recolouring its own rect
+            if draw:
+                bgtok = f"{racc}-t" if racc else ("zebra" if zebra and ri % 2 else "bg")
+                parts.append(f'<rect x="{x}" y="{cy:.1f}" width="{tw}" height="{rh:.1f}" {fs(bgtok, "line")} '
+                             f'stroke-width="1"/>')
+                if racc:
+                    parts.append(f'<rect x="{x}" y="{cy:.1f}" width="5" height="{rh:.1f}" {fill(racc)}/>')
+                cx = x
+                for c, cl in zip(cols, ls):
+                    opt = c[2] if len(c) > 2 else {}
+                    col = opt.get("accent", "ink")
+                    for i, ln in enumerate(cl):
+                        parts.append(render_line(cx + pad, cy + pad + size - 2 + i * lead, ln, size, col,
+                                                 bold=opt.get("bold", False)))
+                    cx += c[1]
+            if rkey:
+                parts.append("</g>")
+            cy += rh
+        if draw:
+            self.blocks.append((x, y, x + tw, cy, "table " + cols[0][0][:30]))
+            # column rules
+            cx = x
+            for c in cols[:-1]:
+                cx += c[1]
+                parts.append(f'<line x1="{cx}" y1="{y}" x2="{cx}" y2="{cy:.1f}" {sonly("line")} stroke-width="1"/>')
+            parts.append(f'<rect x="{x}" y="{y}" width="{tw}" height="{cy - y:.1f}" {sonly(accent)} '
+                         f'stroke-width="1.4"/>')
+            mark = self.open_anchor(anchor, explicit=True) if anchor else None
+            self.add("\n".join(parts), cy)
+            self.close_anchor(mark, x, y, tw, cy - y, "amber")   # a list lands framed as a row does
+        return cy - y
+
+    def legend(self, x, y, items, title="Legend", size=13, maxw=None):
+        """items: list of (kind, accent, label, dash) where kind is 'box', 'line', 'arrow', 'status'."""
+        maxw = maxw or (self.x1 - x)
+        cx, cy = x, y
+        self.text(cx, cy + size, title, size, "faint", bold=True)
+        cx += text_width(title, size, True) + 18
+        for it in items:
+            kind, acc, lab = it[0], it[1], it[2]
+            dash = it[3] if len(it) > 3 else None
+            iw = 34 + text_width(lab, size) + 26
+            if cx + iw > x + maxw:
+                cx = x + text_width(title, size, True) + 18
+                cy += size + 16
+            d = f' stroke-dasharray="{dash}"' if dash else ""
+            if kind == "box":
+                self.add(f'<rect x="{cx}" y="{cy + 1}" width="26" height="{size + 3}" rx="4" {fs(acc + "-t", acc)} '
+                         f'stroke-width="1.6"{d}/>')
+            elif kind == "line":
+                self.add(f'<line x1="{cx}" y1="{cy + size / 2 + 2}" x2="{cx + 26}" y2="{cy + size / 2 + 2}" '
+                         f'{sonly(acc)} stroke-width="2.2"{d}/>')
+            elif kind == "arrow":
+                self.add(f'<path d="M {cx} {cy + size / 2 + 2} L {cx + 24} {cy + size / 2 + 2}" {sonly(acc)} '
+                         f'stroke-width="2"{d} marker-end="url(#arw-{acc})"/>')
+            self.text(cx + 34, cy + size, lab, size, "muted")
+            cx += iw
+        self.ymax = max(self.ymax, cy + size + 6)
+        return cy + size + 6 - y
+
+    # -- output
+    def check(self):
+        """Warn about text lines whose boxes intersect, or that leave the canvas. Returns the warnings."""
+        boxes = [b for b in TEXT_BOXES if b[4].strip()]
+        warn = []
+        for b in boxes:
+            if b[0] < 0 or b[2] > self.W + 0.5:
+                warn.append(f"off-canvas: {b[4][:60]!r} x={b[0]:.0f}..{b[2]:.0f}")
+        bl = self.blocks
+        for i, a in enumerate(bl):
+            for b in bl[i + 1:]:
+                inter = a[0] < b[2] - 1 and b[0] < a[2] - 1 and a[1] < b[3] - 1 and b[1] < a[3] - 1
+                if not inter:
+                    continue
+                a_in_b = b[0] <= a[0] and a[2] <= b[2] and b[1] <= a[1] and a[3] <= b[3]
+                b_in_a = a[0] <= b[0] and b[2] <= a[2] and a[1] <= b[1] and b[3] <= a[3]
+                if not (a_in_b or b_in_a):
+                    warn.append(f"block overlap: {a[4]!r} and {b[4]!r}")
+        boxes.sort(key=lambda b: b[1])
+        for i, a in enumerate(boxes):
+            for b in boxes[i + 1:]:
+                if b[1] >= a[3] - 1:
+                    break
+                if a[0] < b[2] - 1 and b[0] < a[2] - 1 and a[1] < b[3] - 1 and b[1] < a[3] - 1:
+                    warn.append(f"overlap: {a[4][:50]!r} @({a[0]:.0f},{a[1]:.0f}) with {b[4][:50]!r} "
+                                f"@({b[0]:.0f},{b[1]:.0f})")
+        return warn
+
+    _TOKEN = re.compile(r'(<g id="[^"]*"(?: class="rd-row")?>|</g>|<a href="[^"]*">.*?</a>|<tspan ((?:[^<>]*? )?font-family="'
+                        + re.escape(MONO) + r'"[^<>]*)>([^<>]+)</tspan>)', re.S)
+
+    def resolve(self, name, inside):
+        """Where a code run naming `name` links, or None. inside: the ids of the groups it is drawn in."""
+        import corpus
+        mod = re.fullmatch(r"(?:specs/)?(\w+?)(_proof)?\.(tla|cfg)", name)
+        if mod and mod.group(1) in POSTER_MODULE.values():
+            m, proof, ext = mod.groups()
+            pid = next(k for k, v in POSTER_MODULE.items() if v == m)
+            if proof or ext == "cfg" or m == self.module:
+                return corpus.file_url(f"specs/{name.split('/')[-1]}"), "ext"
+            return poster_link(pid), "out"
+        k = _KEY.fullmatch(name.strip())
+        key = k.group(1) if k else None
+        if key and key in self.anchors:
+            return (None, None) if key in inside else (f"#{key}", "in")
+        if key:
+            # A name this poster's own module defines is that module's, even where another module's poster anchors
+            # the same name (Elect, NoOne, Presentment are defined in several modules, and differ).
+            # A module diagram links a name only to its own module: the modules are independent, and one name
+            # declared in two (president, Senators, Elect) is two things. A diagram of no one module (A1) links a
+            # name to the one other diagram that anchors it, or else to the one module that defines it.
+            if key in self._sources and self.module:
+                return self._sources[key], "ext"
+            if not self.module:
+                homes = [f for f in sorted(ANCHORS_OF) if key in ANCHORS_OF[f] and f != POSTERS.get(self.ident)]
+                if len(homes) == 1:
+                    return f"{homes[0]}#{key}", "out"
+                if key in self._sources:
+                    return self._sources[key], "ext"
+        for rel in (name, f"results/{name}"):
+            u = corpus.file_url(rel) if "/" in rel or rel.endswith((".md", ".txt", ".py", ".yml")) else None
+            if u:
+                return u, "ext"
+        return None, None
+
+    def link(self):
+        """Every code run that names an anchor or a source becomes a link (resolve). Runs already inside a link, and
+        a run naming the group it is drawn in, are left alone. Plain href, SVG's own <a> inside <text>; no glyph is
+        added, so the measured widths and the overlap check are unchanged."""
+        import corpus
+        self._sources = corpus.source_links(self.module)
+        text = "\n".join(self.out)
+        stack, out, pos = [], [], 0
+        for m in self._TOKEN.finditer(text):
+            out.append(text[pos:m.start()])
+            pos = m.end()
+            tok = m.group(1)
+            if tok.startswith("<g id="):
+                stack.append(unescape(tok[7:tok.index('"', 7)]))
+            elif tok == "</g>":
+                stack.pop()
+            elif tok.startswith("<tspan"):
+                href, kind = self.resolve(unescape(m.group(3)), stack)
+                if href:
+                    setattr(self, {"in": "links", "out": "links_out", "ext": "links_ext"}[kind],
+                            getattr(self, {"in": "links", "out": "links_out", "ext": "links_ext"}[kind]) + 1)
+                    tok = f'<a href="{escape(href)}">{tok}</a>'
+            out.append(tok)
+        out.append(text[pos:])
+        if stack:
+            raise ValueError(f"{self.ident}: anchored groups left open: {stack}")
+        self.out = ["".join(out)]
+
+    def check_links(self):
+        """Every link lands: on an id of this poster, on an anchor the manifest lists for another, or on a file at
+        the pinned commit. No link markup is left as text, and no id is drawn twice."""
+        import corpus
+        body = "\n".join(self.out)
+        warn = []
+        ids = re.findall(r' id="([^"]*)"', body)
+        for i in sorted({i for i in ids if ids.count(i) > 1}):
+            warn.append(f"id drawn twice: {i!r}")
+        own = set(self.anchors) | {TOP}
+        for h in sorted(set(re.findall(r' href="([^"]*)"', body))):
+            f, _, frag = unescape(h).partition("#")
+            if f.startswith("http"):
+                if not f.startswith(corpus.BLOB):
+                    warn.append(f"link out not at the pinned commit: {h}")
+            elif not f:
+                if frag not in own:
+                    warn.append(f"link to no anchor on this poster: #{frag}")
+            elif f not in ANCHORS_OF:
+                warn.append(f"link to a poster the manifest does not list: {f}")
+            elif not frag:
+                warn.append(f"link to a poster with no target: {f}")
+            elif frag != TOP and frag not in ANCHORS_OF[f]:
+                warn.append(f"link to an anchor {f} does not draw: #{frag}")
+        if "[[@" in body:
+            warn.append("link markup left as text: [[@")
+        return warn
+
+    def svg(self):
+        p = self.pad
+        y = self.ymax + 44
+        self.add(f'<line x1="{p}" y1="{y}" x2="{self.W - p}" y2="{y}" {sonly("line")} stroke-width="1.2"/>')
+        y += 26
+        src = "Sources: " + self.sources
+        for ln in wrap(src, self.W - 2 * p, 13):
+            self.add(render_line(p, y, ln, 13, "faint"))
+            y += 19
+        foot = (f"{self.state or STATE}{' · ' + self.note if self.note else ''} · generated {DATE} by "
+                f"diagrams/gen-gov-tla-family.py · "
+                f"documentation licence CC BY 4.0 (LICENSE-DOCS)")
+        for ln in wrap(foot, self.W - 2 * p, 13):
+            self.add(render_line(p, y, ln, 13, "faint"))
+            y += 19
+        H = int(y + p - 20)
+        markers = "".join(
+            f'<marker id="arw-{k}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="13" markerHeight="13" '
+            f'orient="auto-start-reverse" markerUnits="userSpaceOnUse">'
+            f'<path d="M 0 0 L 10 5 L 0 10 z" {fill(k)}/></marker>'
+            for k in list(ACCENTS) + ["ink", "muted", "faint"])
+        head = (f'<svg xmlns="http://www.w3.org/2000/svg" width="{self.W}" height="{H}" '
+                f'viewBox="0 0 {self.W} {H}" aria-labelledby="t d">\n'
+                f'<title id="t">gov-tla {escape(self.ident)} — {escape(re.sub(r"[*`]", "", self.title))}</title>\n'
+                f'<desc id="d">{escape(re.sub(r"[*`]", "", self.subtitle))}</desc>\n'
+                f'<style>\n{_css()}\n</style>\n<defs>{markers}</defs>\n'
+                f'<rect width="{self.W}" height="{H}" {fill("bg")}/>\n')
+        self.warnings = self.check()
+        self.link()
+        self.warnings += self.check_links()
+        TEXT_BOXES.clear()
+        return head + "\n".join(self.out) + "\n</svg>\n"

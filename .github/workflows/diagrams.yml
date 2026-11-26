@@ -1,0 +1,74 @@
+# Regenerate the diagram family from the tree, fail if the committed files differ, and check that every link lands.
+#
+# The generator runs under the family's pinned interpreter, Python 3.9 (diagrams/README.md: sum() over floats changed
+# in 3.12, and with it the coordinates). It reads the results files, row lists, specs and README at build time, and
+# the sources at corpus.PIN_COMMIT with git, so the checkout has the full history. It prints WARNING for an overlap
+# or a link that lands nowhere, ERROR for a read that no longer parses or agrees (A1 is the gate: a README count, a
+# named results file or a spec digest that has moved), and a NOTE, with exit 1, when a diagram's anchors moved and
+# the committed manifest was stale. Any of these fails the job. The byte comparison then says whether the committed
+# SVGs and manifest are the ones the tree produces.
+#
+# check-links.py is the proof-posters plugin's (riemann-diagrams, plugins/proof-posters/skills/linking-posters),
+# fetched at a pinned commit and checked by its sha256 before it runs. Moving the pin is a change to this file.
+#
+# release.yml calls this on a tag before it publishes.
+name: diagrams
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+  workflow_call:
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  regenerate:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      # The repository allows GitHub-owned actions only, so the pinned interpreter comes from setup-python, not uv.
+      # It puts Python 3.9 first on PATH as `python`; the runner's own Python (/usr/bin/python3, 3.12 on
+      # ubuntu-24.04) stays for check-links.py, which needs 3.11 or later.
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.9"
+      - name: Regenerate under Python 3.9
+        run: |
+          set -euo pipefail
+          python -c 'import sys; assert sys.version_info[:2] == (3, 9), sys.version; print(sys.version)'
+          python diagrams/gen-gov-tla-family.py | tee gen.log
+          if grep -E '^\s*(WARNING|ERROR)|^NOTE ' gen.log; then
+            echo "::error::diagrams: the generator reported the lines above"
+            exit 1
+          fi
+      - name: The committed diagrams are the ones the tree produces
+        run: |
+          set -euo pipefail
+          changed=$(git status --porcelain -- diagrams)
+          if [ -n "$changed" ]; then
+            echo "$changed"
+            git --no-pager diff --stat -- diagrams
+            echo "::error::diagrams: regenerating changed the files above; regenerate under Python 3.9 and commit them"
+            exit 1
+          fi
+      - name: Every link lands
+        env:
+          CHECK_LINKS_COMMIT: 37fecadb9a2bb234ef1849d2467ae476f86829d4
+          CHECK_LINKS_SHA256: 55124504f6288a6626d021b57dead25696e01bee93296ad690e72a7da382bcaf
+        run: |
+          set -euo pipefail
+          f="$RUNNER_TEMP/check-links.py"
+          curl -fsSL -o "$f" "https://raw.githubusercontent.com/scottcochran/riemann-diagrams/$CHECK_LINKS_COMMIT/plugins/proof-posters/skills/linking-posters/scripts/check-links.py"
+          echo "$CHECK_LINKS_SHA256  $f" | sha256sum --strict -c
+          /usr/bin/python3 -c 'import sys; assert sys.version_info >= (3, 11), sys.version'
+          /usr/bin/python3 "$f" --config diagrams/proof-posters.toml

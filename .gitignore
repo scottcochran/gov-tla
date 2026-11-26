@@ -25,3 +25,6 @@ __pycache__/
 
 # Fresh results files CI writes with --out, compared with results/ and never committed
 out/
+
+# macOS Finder metadata
+.DS_Store
