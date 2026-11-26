@@ -70,7 +70,7 @@ practice.
 | `Judiciary.tla` | 451 | 23 | 12 | 2,150 |
 | `Executive.tla` | 208 | 14 | 19 | 814 |
 | `Government.tla` | 565 | 14 | 15 | 1,563 |
-| `Elections.tla` | 579 | 24 | 24 | 1,121 |
+| `Elections.tla` | 579 | 24 | 24 | 1,145 |
 | `SenateRules.tla` | 51 | 4 | 8 | 201 |
 
 Every flip test fails as required: with one mutation hypothesis flipped
